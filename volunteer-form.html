@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OurDAISY ボランティアフォーム / Volunteer Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Noto+Sans+Lao:wght@400;700&family=Noto+Sans+Khmer:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:    #005EAD;
+  --blue-d:  #003A70;
+  --blue-l:  #E8F1FB;
+  --orange:  #F0A500;
+  --green:   #2A9D5C;
+  --green-l: #E8F7EF;
+  --red:     #C0392B;
+  --red-l:   #FDECEA;
+  --gray:    #6B7280;
+  --gray-l:  #F5F8FC;
+  --white:   #FFFFFF;
+  --text:    #1A2A3A;
+  --radius:  12px;
+  --shadow:  0 4px 24px rgba(0,94,173,0.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'BIZ UDPGothic', sans-serif;
+  background: linear-gradient(135deg, #EEF5FF 0%, #F5F8FC 100%);
+  min-height: 100vh;
+  color: var(--text);
+  padding: 24px 16px 48px;
+}
+
+/* ── ヘッダー ── */
+.header {
+  max-width: 640px;
+  margin: 0 auto 28px;
+  text-align: center;
+}
+.header-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--blue);
+  color: var(--white);
+  padding: 8px 20px;
+  border-radius: 40px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+.header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--blue-d);
+  line-height: 1.35;
+}
+.header h1 span { color: var(--blue); }
+.header-sub {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--gray);
+}
+
+/* ── カード ── */
+.card {
+  max-width: 640px;
+  margin: 0 auto 16px;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-header {
+  background: var(--blue);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-header .step-badge {
+  background: rgba(255,255,255,0.25);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.08em;
+}
+.card-header h2 {
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.card-body { padding: 24px; }
+
+/* ── フォーム要素 ── */
+.field { margin-bottom: 20px; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--blue-d);
+  margin-bottom: 6px;
+}
+label .req {
+  color: var(--red);
+  margin-left: 4px;
+  font-size: 0.75rem;
+}
+label .sub {
+  font-weight: 400;
+  color: var(--gray);
+  font-size: 0.78rem;
+  margin-left: 6px;
+}
+
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #D1E3F8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--text);
+  background: #FAFCFF;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,94,173,0.12);
+  background: var(--white);
+}
+input.error, select.error, textarea.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.10);
+}
+textarea { resize: vertical; min-height: 100px; }
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23005EAD' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.hint {
+  font-size: 0.77rem;
+  color: var(--gray);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.error-msg {
+  font-size: 0.77rem;
+  color: var(--red);
+  margin-top: 4px;
+  display: none;
+}
+.error-msg.show { display: block; }
+
+/* ── チェックボックス ── */
+.checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+.checkbox-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px solid #D1E3F8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: #FAFCFF;
+}
+.checkbox-item:hover { border-color: var(--blue); background: var(--blue-l); }
+.checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  accent-color: var(--blue);
+  margin-top: 2px;
+  cursor: pointer;
+}
+.checkbox-item .item-label {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.checkbox-item .item-sub {
+  font-size: 0.75rem;
+  color: var(--gray);
+  margin-top: 2px;
+}
+.checkbox-item.checked {
+  border-color: var(--blue);
+  background: var(--blue-l);
+}
+
+/* ── ラジオボタン（アクション選択） ── */
+.action-group { display: flex; flex-direction: column; gap: 10px; }
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 2px solid #D1E3F8;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #FAFCFF;
+}
+.action-item:hover { border-color: var(--blue); background: var(--blue-l); transform: translateY(-1px); }
+.action-item input[type="radio"] { display: none; }
+.action-icon {
+  font-size: 1.4rem;
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.action-label { font-size: 0.92rem; font-weight: 700; color: var(--text); }
+.action-sub { font-size: 0.76rem; color: var(--gray); margin-top: 2px; }
+.action-item.selected {
+  border-color: var(--blue);
+  background: var(--blue-l);
+  box-shadow: 0 2px 8px rgba(0,94,173,0.15);
+}
+
+/* ── ファイルチェックリスト ── */
+.file-checklist {
+  background: var(--blue-l);
+  border: 2px solid var(--blue);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.file-checklist-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--blue-d);
+  margin-bottom: 10px;
+}
+.file-check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 0.83rem;
+  color: var(--text);
+}
+.file-check-item input[type="checkbox"] {
+  width: 16px; height: 16px; min-width: 16px;
+  accent-color: var(--blue);
+}
+
+/* ── Driveボタン ── */
+.drive-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  background: var(--white);
+  border: 2px solid var(--blue);
+  border-radius: 10px;
+  color: var(--blue);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+  text-decoration: none;
+}
+.drive-btn:hover { background: var(--blue-l); }
+
+/* ── 警告ボックス ── */
+.warn-box {
+  background: #FFF8E8;
+  border: 2px solid var(--orange);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  color: #7A5200;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.info-box {
+  background: var(--green-l);
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  color: #1A5C38;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+/* ── 送信ボタン ── */
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px;
+  background: var(--blue);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.submit-btn:hover:not(:disabled) { background: var(--blue-d); transform: translateY(-1px); }
+.submit-btn:disabled { background: #B0C4D8; cursor: not-allowed; }
+
+/* ── プログレスバー ── */
+.progress-bar {
+  max-width: 640px;
+  margin: 0 auto 20px;
+  display: flex;
+  gap: 4px;
+}
+.progress-step {
+  flex: 1;
+  height: 4px;
+  background: #D1E3F8;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+.progress-step.active { background: var(--blue); }
+.progress-step.done { background: var(--green); }
+
+/* ── ローディング ── */
+.loading {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 完了画面 ── */
+.complete-card {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px 28px;
+  text-align: center;
+  display: none;
+}
+.complete-icon { font-size: 3rem; margin-bottom: 16px; }
+.complete-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.complete-msg {
+  font-size: 0.9rem;
+  color: var(--gray);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.next-steps {
+  background: var(--blue-l);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+.next-steps h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--blue-d);
+  margin-bottom: 8px;
+}
+.next-step-item {
+  font-size: 0.83rem;
+  color: var(--text);
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+  line-height: 1.5;
+}
+.next-step-num {
+  background: var(--blue);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.again-btn {
+  background: var(--blue-l);
+  color: var(--blue);
+  border: 2px solid var(--blue);
+  border-radius: 10px;
+  padding: 11px 24px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.again-btn:hover { background: var(--blue); color: var(--white); }
+
+/* セクション非表示制御 */
+.section { display: none; }
+.section.active { display: block; }
+
+/* アニメーション */
+.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 480px) {
+  .header h1 { font-size: 1.3rem; }
+  .card-body { padding: 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">
+    <span>📚</span> OurDAISY Studio
+  </div>
+  <h1>ボランティア<span>フォーム</span><br><small style="font-size:0.7em;color:var(--gray)">Volunteer Work Form</small></h1>
+  <p class="header-sub">特定非営利活動法人 エファジャパン / EFA Japan</p>
+</div>
+
+<!-- プログレスバー -->
+<div class="progress-bar" id="progressBar">
+  <div class="progress-step active" id="prog1"></div>
+  <div class="progress-step" id="prog2"></div>
+  <div class="progress-step" id="prog3"></div>
+</div>
+
+<!-- ── Step 1：メール入力 ── -->
+<div class="section active" id="sec1">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-badge">STEP 1</span>
+      <h2>メールアドレスを入力してください / Enter your email</h2>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label for="email">メールアドレス / Email Address <span class="req">必須</span></label>
+        <input type="email" id="email" placeholder="example@email.com">
+        <div class="error-msg" id="emailErr">正しいメールアドレスを入力してください</div>
+        <p class="hint">通知・作業管理に使用します。EFA以外には公開されません。<br>Used for notifications. Not shared outside EFA.</p>
+      </div>
+      <button class="submit-btn" onclick="checkEmail()">
+        <span id="checkBtnText">次へ / Next →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Step 1b：新規登録 ── -->
+<div class="section" id="sec1b">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-badge">STEP 1</span>
+      <h2>初回登録 / First-time Registration</h2>
+    </div>
+    <div class="card-body">
+      <div class="info-box">
+        ✨ はじめてのご利用です。お名前と参加タイプを入力してください。<br>
+        Welcome! Please enter your name and participation type.
+      </div>
+      <div class="field">
+        <label for="name">お名前 / Your Name <span class="req">必須</span></label>
+        <input type="text" id="name" placeholder="例：山田 太郎">
+        <div class="error-msg" id="nameErr">お名前を入力してください</div>
+      </div>
+      <div class="field">
+        <label>参加タイプ / Participation Type <span class="req">必須</span>
+          <span class="sub">複数選択可 / Multiple OK</span>
+        </label>
+        <div class="checkbox-group">
+          <label class="checkbox-item" id="typeA-label">
+            <input type="checkbox" id="typeA" value="A">
+            <div>
+              <div class="item-label">🔵 タイプA：フルコース</div>
+              <div class="item-sub">Word作成→翻訳→EPUB（電子図書）生成→TTS（音声読み上げ）確認まで</div>
+            </div>
+          </label>
+          <label class="checkbox-item" id="typeB-label">
+            <input type="checkbox" id="typeB" value="B">
+            <div>
+              <div class="item-label">🟢 タイプB：日本語校正専門</div>
+              <div class="item-sub">やさしい日本語の確認・修正のみ</div>
+            </div>
+          </label>
+          <label class="checkbox-item" id="typeC-label">
+            <input type="checkbox" id="typeC" value="C">
+            <div>
+              <div class="item-label">🟡 タイプC：TTS確認専門</div>
+              <div class="item-sub">TTS（音声読み上げ）の確認のみ</div>
+            </div>
+          </label>
+        </div>
+        <div class="error-msg" id="typeErr">参加タイプを1つ以上選んでください</div>
+      </div>
+      <button class="submit-btn" onclick="register()">
+        <span id="regBtnText">登録して作業へ / Register & Continue →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Step 2：作業選択 ── -->
+<div class="section" id="sec2">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-badge">STEP 2</span>
+      <h2 id="sec2Title">今日の作業 / Today's Action</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:0.85rem;color:var(--gray);margin-bottom:16px;" id="welcomeMsg"></p>
+      <div class="action-group">
+        <div class="action-item" onclick="selectAction('reserve', this)">
+          <input type="radio" name="action" value="reserve">
+          <div class="action-icon">📖</div>
+          <div>
+            <div class="action-label">書籍を予約する / Reserve a book</div>
+            <div class="action-sub">担当したい書籍を選んで予約します</div>
+          </div>
+        </div>
+        <div class="action-item" onclick="selectAction('complete', this)">
+          <input type="radio" name="action" value="complete">
+          <div class="action-icon">📤</div>
+          <div>
+            <div class="action-label">作業完了を報告する / Report completion</div>
+            <div class="action-sub">完了した書籍・作業内容を報告します</div>
+          </div>
+        </div>
+        <div class="action-item" onclick="selectAction('help', this)">
+          <input type="radio" name="action" value="help">
+          <div class="action-icon">🆘</div>
+          <div>
+            <div class="action-label">困っています / I need help</div>
+            <div class="action-sub">エラー・トラブルを報告します</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Step 3A：予約 ── -->
+<div class="section" id="sec3a">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-badge">STEP 3</span>
+      <h2>書籍の予約 / Book Reservation</h2>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label for="bookSelect">担当したい書籍を選んでください <span class="req">必須</span><br>
+          <span class="sub">/ Select the book you'd like to work on</span>
+        </label>
+        <select id="bookSelect">
+          <option value="">-- 書籍を選んでください / Select a book --</option>
+        </select>
+        <div class="error-msg" id="bookErr">書籍を選んでください</div>
+        <p class="hint">リストは空き書籍のみ表示されます。/ Only available books are shown.</p>
+      </div>
+      <div class="warn-box">
+        ⚠️ 予約後、担当フォルダのURLをメールでお送りします。<br>
+        After reservation, we will email you the folder URL.
+      </div>
+      <button class="submit-btn" onclick="submitReserve()">
+        <span id="reserveBtnText">予約する / Reserve →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Step 3B：完了報告 ── -->
+<div class="section" id="sec3b">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-badge">STEP 3</span>
+      <h2>作業完了報告 / Work Completion Report</h2>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label for="completeBook">完了した書籍 / Completed Book <span class="req">必須</span></label>
+        <select id="completeBook">
+          <option value="">-- 書籍を選んでください --</option>
+        </select>
+        <div class="error-msg" id="completeBookErr">書籍を選んでください</div>
+      </div>
+
+      <div class="field">
+        <label>完了した作業内容 / Completed Tasks <span class="req">必須</span></label>
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox" name="task" value="Word原稿の作成">
+            <div>
+              <div class="item-label">📄 Word原稿の作成</div>
+              <div class="item-sub">スキャン・OCR・整形 / Word document creation</div>
+            </div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="task" value="翻訳アプリの実行">
+            <div>
+              <div class="item-label">🔄 翻訳アプリの実行</div>
+              <div class="item-sub">Word→4種類のWordを生成 / Translation app</div>
+            </div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="task" value="日本語校正">
+            <div>
+              <div class="item-label">✏️ 日本語校正</div>
+              <div class="item-sub">やさしい日本語の確認・修正 / Japanese proofreading</div>
+            </div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="task" value="OurDAISYアプリの実行">
+            <div>
+              <div class="item-label">📱 OurDAISYアプリの実行</div>
+              <div class="item-sub">EPUB（電子図書）を生成 / OurDAISY app</div>
+            </div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="task" value="TTS確認">
+            <div>
+              <div class="item-label">🔊 TTS（音声読み上げ）確認</div>
+              <div class="item-sub">音声の確認 / Audio check</div>
+            </div>
+          </label>
+        </div>
+        <div class="error-msg" id="taskErr">作業内容を1つ以上選んでください</div>
+      </div>
+
+      <!-- ファイルアップロード確認（OurDAISY実行を選んだ場合） -->
+      <div id="fileCheckSection" style="display:none;">
+        <div class="file-checklist">
+          <div class="file-checklist-title">
+            📁 アップロード必須ファイルの確認<br>
+            <span style="font-size:0.75rem;font-weight:400;">以下のファイルをすべてGoogleドライブにアップロードしてから送信してください</span>
+          </div>
+          <div class="file-check-item">
+            <input type="checkbox" id="fc1"> EPUB × 4種類（やさしい日本語・標準・ひらがな・母語）
+          </div>
+          <div class="file-check-item">
+            <input type="checkbox" id="fc2"> _books_import.tsv（ライブラリー登録用ファイル）
+          </div>
+          <div class="file-check-item">
+            <input type="checkbox" id="fc3"> _classify.json（分類情報ファイル・削除禁止）
+          </div>
+          <div class="file-check-item">
+            <input type="checkbox" id="fc4"> _proper_nouns.json（固有名詞ファイル・削除禁止）
+          </div>
+          <div class="error-msg show" id="fileCheckErr" style="display:none!important;"></div>
+        </div>
+        <div class="warn-box">
+          💡 アップロード方法：フォルダ内の全ファイルを選択（Ctrl+A）して<br>
+          Googleドライブにドラッグ＆ドロップしてください。<br>
+          <strong>ファイルを個別に選ばず、すべてアップロードしてください。</strong>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="notes">特記事項 / Additional Notes <span class="sub">任意 / Optional</span></label>
+        <textarea id="notes" placeholder="作業中に気づいたことがあれば記入してください。&#10;Note anything you noticed during the work."></textarea>
+      </div>
+
+      <button class="submit-btn" id="completeBtnEl" onclick="submitComplete()">
+        <span id="completeBtnText">完了報告を送信 / Submit →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Step 3C：サポート依頼 ── -->
+<div class="section" id="sec3c">
+  <div class="card fade-in">
+    <div class="card-header" style="background:var(--red);">
+      <span class="step-badge">STEP 3</span>
+      <h2>サポート依頼 / Support Request</h2>
+    </div>
+    <div class="card-body">
+      <div class="info-box">
+        📋 エラーメッセージはそのままコピーして貼り付けてください。<br>
+        スクリーンショット方法：Windowsキー + Shift + S<br>
+        Please copy and paste the error message as-is.
+      </div>
+      <div class="field">
+        <label for="helpBook">困っている書籍 / Book with Issues <span class="req">必須</span></label>
+        <select id="helpBook">
+          <option value="">-- 書籍を選んでください --</option>
+          <option value="不明">書籍がわからない / Unknown</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>問題の種類 / Problem Type <span class="req">必須</span></label>
+        <div class="action-group">
+          <div class="action-item" onclick="selectProblem('アプリが起動しない')">
+            <input type="radio" name="problem" value="アプリが起動しない">
+            <div class="action-icon">🚫</div>
+            <div>
+              <div class="action-label">アプリが起動しない</div>
+              <div class="action-sub">App won't start</div>
+            </div>
+          </div>
+          <div class="action-item" onclick="selectProblem('翻訳・変換でエラーが出た')">
+            <input type="radio" name="problem" value="翻訳・変換でエラーが出た">
+            <div class="action-icon">⚠️</div>
+            <div>
+              <div class="action-label">翻訳・変換でエラーが出た</div>
+              <div class="action-sub">Error during translation/conversion</div>
+            </div>
+          </div>
+          <div class="action-item" onclick="selectProblem('ファイルが見つからない')">
+            <input type="radio" name="problem" value="ファイルが見つからない">
+            <div class="action-icon">🔍</div>
+            <div>
+              <div class="action-label">ファイルが見つからない</div>
+              <div class="action-sub">File not found</div>
+            </div>
+          </div>
+          <div class="action-item" onclick="selectProblem('Googleドライブにアクセスできない')">
+            <input type="radio" name="problem" value="Googleドライブにアクセスできない">
+            <div class="action-icon">☁️</div>
+            <div>
+              <div class="action-label">Googleドライブにアクセスできない</div>
+              <div class="action-sub">Cannot access Google Drive</div>
+            </div>
+          </div>
+          <div class="action-item" onclick="selectProblem('その他')">
+            <input type="radio" name="problem" value="その他">
+            <div class="action-icon">❓</div>
+            <div>
+              <div class="action-label">その他 / Other</div>
+              <div class="action-sub"></div>
+            </div>
+          </div>
+        </div>
+        <div class="error-msg" id="problemErr">問題の種類を選んでください</div>
+      </div>
+      <div class="field">
+        <label for="helpDetail">エラーメッセージ・状況の詳細 <span class="req">必須</span></label>
+        <textarea id="helpDetail" placeholder="エラーメッセージをそのまま貼り付けてください。&#10;どんな操作をしたときにエラーが出たかも書いてください。&#10;&#10;Please paste the error message and describe what you were doing."></textarea>
+        <div class="error-msg" id="helpDetailErr">詳細を入力してください</div>
+      </div>
+      <button class="submit-btn" style="background:var(--red);" onclick="submitHelp()">
+        <span id="helpBtnText">サポート依頼を送信 / Submit →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 完了画面 ── -->
+<div class="complete-card" id="completeCard">
+  <div class="complete-icon" id="completeIcon">✅</div>
+  <div class="complete-title" id="completeTitle">送信完了 / Submitted!</div>
+  <div class="complete-msg" id="completeMsg"></div>
+  <div class="next-steps" id="nextSteps"></div>
+  <button class="again-btn" onclick="resetForm()">続けて報告する / Submit Another</button>
+</div>
+
+<script>
+// ── 定数 ──────────────────────────────────────────────
+var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec';
+var FORM_TOKEN = 'efa2026daisy';
+
+// ── 状態管理 ──────────────────────────────────────────
+var state = {
+  email:     '',
+  memberId:  '',
+  name:      '',
+  type:      '',
+  action:    '',
+  problem:   ''
+};
+
+// ── 初期化 ────────────────────────────────────────────
+window.addEventListener('load', function() {
+  loadDraft();
+  loadBookList();
+  setupCheckboxListeners();
+  setupTaskListeners();
+});
+
+// ── 書籍リスト読み込み ────────────────────────────────
+function loadBookList() {
+  var selects = ['bookSelect', 'completeBook', 'helpBook'];
+  selects.forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (sel) sel.options[0].textContent = '読み込み中... / Loading...';
+  });
+  gasPost({ action_type: 'get_books', token: FORM_TOKEN }, function(res) {
+    var selects2 = ['bookSelect', 'completeBook', 'helpBook'];
+    selects2.forEach(function(id) {
+      var sel = document.getElementById(id);
+      if (sel) sel.options[0].textContent = '-- 書籍を選んでください / Select a book --';
+    });
+    if (res.status === 'ok' && res.books) {
+      var selects = ['bookSelect', 'completeBook', 'helpBook'];
+      selects.forEach(function(id) {
+        var sel = document.getElementById(id);
+        if (!sel) return;
+        res.books.forEach(function(b) {
+          var opt = document.createElement('option');
+          opt.value = b.id;
+          opt.textContent = b.label;
+          sel.appendChild(opt);
+        });
+      });
+    }
+  });
+}
+
+// ── チェックボックスのvisual更新 ─────────────────────
+function setupCheckboxListeners() {
+  document.querySelectorAll('.checkbox-item input').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      var label = this.closest('.checkbox-item') || this.closest('label');
+      if (label) label.classList.toggle('checked', this.checked);
+    });
+  });
+}
+
+// ── タスク選択でファイルチェックリストを表示 ─────────
+function setupTaskListeners() {
+  document.querySelectorAll('[name="task"]').forEach(function(cb) {
+    cb.addEventListener('change', updateFileCheckSection);
+  });
+}
+
+function updateFileCheckSection() {
+  var ourdaisyChecked = document.querySelector('input[value="OurDAISYアプリの実行"]');
+  var show = ourdaisyChecked && ourdaisyChecked.checked;
+  document.getElementById('fileCheckSection').style.display = show ? 'block' : 'none';
+}
+
+// ── プログレス更新 ────────────────────────────────────
+function setProgress(step) {
+  for (var i = 1; i <= 3; i++) {
+    var el = document.getElementById('prog' + i);
+    if (el) {
+      el.className = 'progress-step' +
+        (i < step ? ' done' : '') +
+        (i === step ? ' active' : '');
+    }
+  }
+}
+
+// ── セクション切り替え ────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    el.classList.remove('fade-in');
+    void el.offsetWidth;
+    el.classList.add('fade-in');
+  }
+}
+
+// ── Step 1：メール照合 ───────────────────────────────
+function checkEmail() {
+  var email = document.getElementById('email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showErr('emailErr');
+    return;
+  }
+  hideErr('emailErr');
+  state.email = email;
+
+  setBtnLoading('checkBtnText', true);
+  gasPost({ action_type: 'member_check', email: email, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('checkBtnText', false);
+    if (res.status === 'ok') {
+      if (res.registered) {
+        state.memberId = res.memberId;
+        state.name     = res.name;
+        state.type     = res.type;
+        showWelcome();
+      } else {
+        setProgress(1);
+        showSection('sec1b');
+      }
+    } else {
+      alert('エラーが発生しました。しばらく後に再試行してください。\n' + (res.message || ''));
+    }
+    saveDraft();
+  });
+}
+
+function showWelcome() {
+  setProgress(2);
+  document.getElementById('welcomeMsg').textContent =
+    'ようこそ、' + state.name + ' さん！（担当者ID：' + state.memberId + '）';
+  showSection('sec2');
+}
+
+// ── Step 1b：新規登録 ────────────────────────────────
+function register() {
+  var name   = document.getElementById('name').value.trim();
+  var types  = [];
+  ['A', 'B', 'C'].forEach(function(t) {
+    if (document.getElementById('type' + t).checked) types.push(t);
+  });
+
+  var valid = true;
+  if (!name) { showErr('nameErr'); valid = false; } else hideErr('nameErr');
+  if (!types.length) { showErr('typeErr'); valid = false; } else hideErr('typeErr');
+  if (!valid) return;
+
+  setBtnLoading('regBtnText', true);
+  gasPost({
+    action_type: 'register',
+    email:    state.email,
+    name:     name,
+    type:     'volunteer',
+    token:    FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('regBtnText', false);
+    if (res.status === 'ok') {
+      state.memberId = res.memberId;
+      state.name     = name;
+      state.type     = 'volunteer';
+      showWelcome();
+    } else {
+      alert('登録に失敗しました。\n' + (res.message || ''));
+    }
+  });
+}
+
+// ── Step 2：アクション選択 ───────────────────────────
+function selectAction(action, el) {
+  state.action = action;
+  document.querySelectorAll('#sec2 .action-item').forEach(function(e) {
+    e.classList.remove('selected');
+  });
+  el.classList.add('selected');
+
+  setTimeout(function() {
+    setProgress(3);
+    if (action === 'reserve')  showSection('sec3a');
+    if (action === 'complete') showSection('sec3b');
+    if (action === 'help')     showSection('sec3c');
+  }, 200);
+}
+
+// ── 問題種別選択 ──────────────────────────────────────
+function selectProblem(problem) {
+  state.problem = problem;
+  document.querySelectorAll('#sec3c .action-item').forEach(function(el) {
+    var radio = el.querySelector('[name="problem"]');
+    if (radio) el.classList.toggle('selected', radio.value === problem);
+  });
+  hideErr('problemErr');
+}
+
+// ── Step 3A：予約送信 ────────────────────────────────
+function submitReserve() {
+  var bookId = document.getElementById('bookSelect').value;
+  if (!bookId) { showErr('bookErr'); return; }
+  hideErr('bookErr');
+
+  setBtnLoading('reserveBtnText', true);
+  gasPost({
+    action_type: 'reserve',
+    email:       state.email,
+    member_id:   state.memberId,
+    book_id:     bookId,
+    token:       FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('reserveBtnText', false);
+    if (res.status === 'ok') {
+      showComplete('reserve', res);
+    } else {
+      alert('エラー: ' + (res.message || '送信に失敗しました'));
+    }
+  });
+}
+
+// ── Step 3B：完了報告送信 ────────────────────────────
+function submitComplete() {
+  var bookId = document.getElementById('completeBook').value;
+  var tasks  = Array.from(document.querySelectorAll('[name="task"]:checked'))
+                    .map(function(cb) { return cb.value; });
+  var notes  = document.getElementById('notes').value;
+
+  var valid = true;
+  if (!bookId) { showErr('completeBookErr'); valid = false; } else hideErr('completeBookErr');
+  if (!tasks.length) { showErr('taskErr'); valid = false; } else hideErr('taskErr');
+
+  // OurDAISYアプリ実行時はファイルチェック必須
+  var ourdaisyTask = tasks.indexOf('OurDAISYアプリの実行') >= 0;
+  if (ourdaisyTask) {
+    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
+      return document.getElementById(id).checked;
+    });
+    if (!allChecked) {
+      alert('すべてのファイルをアップロードしてからチェックを入れてください。\nPlease upload all files and check all boxes.');
+      valid = false;
+    }
+  }
+  if (!valid) return;
+
+  setBtnLoading('completeBtnText', true);
+  gasPost({
+    action_type: 'complete',
+    email:       state.email,
+    member_id:   state.memberId,
+    book_id:     bookId,
+    tasks:       tasks,
+    notes:       notes,
+    token:       FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('completeBtnText', false);
+    if (res.status === 'ok') {
+      showComplete('complete', res);
+    } else {
+      alert('エラー: ' + (res.message || '送信に失敗しました'));
+    }
+  });
+}
+
+// ── Step 3C：サポート依頼送信 ────────────────────────
+function submitHelp() {
+  var bookId  = document.getElementById('helpBook').value;
+  var problem = state.problem;
+  var detail  = document.getElementById('helpDetail').value.trim();
+
+  var valid = true;
+  if (!problem) { showErr('problemErr'); valid = false; } else hideErr('problemErr');
+  if (!detail)  { showErr('helpDetailErr'); valid = false; } else hideErr('helpDetailErr');
+  if (!valid) return;
+
+  setBtnLoading('helpBtnText', true);
+  gasPost({
+    action_type:  'help',
+    email:        state.email,
+    member_id:    state.memberId,
+    book_id:      bookId || '不明',
+    problem_type: problem,
+    details:      detail,
+    token:        FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('helpBtnText', false);
+    if (res.status === 'ok') {
+      showComplete('help', res);
+    } else {
+      alert('エラー: ' + (res.message || '送信に失敗しました'));
+    }
+  });
+}
+
+// ── 完了画面表示 ──────────────────────────────────────
+function showComplete(type, res) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('progressBar').style.display = 'none';
+
+  var card  = document.getElementById('completeCard');
+  var icon  = document.getElementById('completeIcon');
+  var title = document.getElementById('completeTitle');
+  var msg   = document.getElementById('completeMsg');
+  var steps = document.getElementById('nextSteps');
+
+  if (type === 'reserve') {
+    icon.textContent  = '📖';
+    title.textContent = '予約完了 / Reservation Complete!';
+    msg.textContent   = res.message || '書籍の予約が完了しました。';
+    steps.innerHTML =
+      '<h3>📬 次にやること / Next Steps</h3>' +
+      '<div class="next-step-item"><span class="next-step-num">1</span>確認メールをご確認ください。作業フォルダのURLが記載されています。</div>' +
+      '<div class="next-step-item"><span class="next-step-num">2</span>マニュアルに従って作業を開始してください。</div>' +
+      '<div class="next-step-item"><span class="next-step-num">3</span>作業完了後、このフォームから「作業完了を報告する」を送信してください。</div>' +
+      (res.deadline ? '<div class="next-step-item"><span class="next-step-num">⏰</span>期限：' + res.deadline + '</div>' : '');
+  } else if (type === 'complete') {
+    icon.textContent  = '✅';
+    title.textContent = '完了報告を受け付けました / Report Received!';
+    msg.textContent   = res.message || '完了報告を受け付けました。';
+    steps.innerHTML =
+      '<h3>📬 次にやること / Next Steps</h3>' +
+      '<div class="next-step-item"><span class="next-step-num">1</span>確認メールをご確認ください。</div>' +
+      '<div class="next-step-item"><span class="next-step-num">2</span>ファイルが確認され次第、次のステージに進みます（最大1時間）。</div>' +
+      '<div class="next-step-item"><span class="next-step-num">3</span>次の作業があればまたフォームから報告してください。</div>';
+  } else {
+    icon.textContent  = '🆘';
+    title.style.color = 'var(--red)';
+    title.textContent = 'サポート依頼を受け付けました / Support Request Received!';
+    msg.textContent   = res.message || 'EFAより確認後ご連絡いたします。';
+    steps.innerHTML =
+      '<h3>📬 次にやること / Next Steps</h3>' +
+      '<div class="next-step-item"><span class="next-step-num">1</span>確認メールをご確認ください。</div>' +
+      '<div class="next-step-item"><span class="next-step-num">2</span>EFAより折り返しご連絡いたします。</div>';
+  }
+
+  card.style.display = 'block';
+  card.classList.add('fade-in');
+  clearDraft();
+}
+
+// ── フォームリセット ──────────────────────────────────
+function resetForm() {
+  document.getElementById('completeCard').style.display = 'none';
+  document.getElementById('progressBar').style.display = 'flex';
+  state.action  = '';
+  state.problem = '';
+  // 入力クリア
+  document.getElementById('completeBook').value = '';
+  document.getElementById('notes').value = '';
+  document.getElementById('helpBook').value = '';
+  document.getElementById('helpDetail').value = '';
+  document.querySelectorAll('[name="task"]').forEach(function(cb) { cb.checked = false; });
+  document.querySelectorAll('[name="problem"]').forEach(function(r) { r.checked = false; });
+  document.querySelectorAll('#sec3c .action-item').forEach(function(el) { el.classList.remove('selected'); });
+  document.querySelectorAll('.file-check-item input').forEach(function(cb) { cb.checked = false; });
+  document.getElementById('fileCheckSection').style.display = 'none';
+  document.getElementById('completeTitle').style.color = 'var(--green)';
+  setProgress(2);
+  showSection('sec2');
+}
+
+// ── GAS POST送信 ──────────────────────────────────────
+function gasPost(data, callback) {
+  fetch(GAS_URL, {
+    method:  'POST',
+    body:    JSON.stringify(data)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(res) { callback(res); })
+  .catch(function(err) {
+    console.error('送信エラー:', err);
+    document.querySelectorAll('.submit-btn').forEach(function(b) { b.disabled = false; });
+    callback({ status: 'error', message: 'ネットワークエラー。接続を確認して再試行してください。' });
+  });
+}
+
+// ── ボタンローディング ────────────────────────────────
+var btnOriginalText = {};
+function setBtnLoading(btnTextId, loading) {
+  var el = document.getElementById(btnTextId);
+  if (!el) return;
+  var btn = el.closest('button');
+  if (loading) {
+    // 元のテキストを保存
+    if (!btnOriginalText[btnTextId]) {
+      btnOriginalText[btnTextId] = el.innerHTML;
+    }
+    el.innerHTML = '<span class="loading"></span> 送信中... / Sending...';
+    if (btn) btn.disabled = true;
+  } else {
+    // 元のテキストを復元
+    if (btnOriginalText[btnTextId]) {
+      el.innerHTML = btnOriginalText[btnTextId];
+    }
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ── エラー表示 ────────────────────────────────────────
+function showErr(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+function hideErr(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+// ── localStorage 下書き保存 ──────────────────────────
+function saveDraft() {
+  try {
+    localStorage.setItem('ourdaisy_draft', JSON.stringify({ email: state.email }));
+  } catch(e) {}
+}
+function loadDraft() {
+  try {
+    var d = localStorage.getItem('ourdaisy_draft');
+    if (d) {
+      var parsed = JSON.parse(d);
+      if (parsed.email) document.getElementById('email').value = parsed.email;
+    }
+  } catch(e) {}
+}
+function clearDraft() {
+  try { localStorage.removeItem('ourdaisy_draft'); } catch(e) {}
+}
+</script>
+</body>
+</html>
