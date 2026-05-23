@@ -1147,12 +1147,10 @@ function resetForm() {
   showSection('sec2');
 }
 
-// ── GAS POST送信 ──────────────────────────────────────
+// ── GAS GET送信（CORS回避のためGETを使用）────────────
 function gasPost(data, callback) {
-  fetch(GAS_URL, {
-    method:  'POST',
-    body:    JSON.stringify(data)
-  })
+  var url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
+  fetch(url)
   .then(function(r) { return r.json(); })
   .then(function(res) { callback(res); })
   .catch(function(err) {
