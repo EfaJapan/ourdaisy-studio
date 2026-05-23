@@ -595,6 +595,13 @@ select {
         ⚠️ 予約後、担当フォルダのURLをメールでお送りします。<br>
         After reservation, we will email you the folder URL.
       </div>
+      <div class="info-box">
+        📖 作業マニュアルはこちらからダウンロードできます：<br>
+        Download the production manual here:<br>
+        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer" style="color:var(--green);font-weight:700;word-break:break-all;">
+          https://efajapan.github.io/ourdaisy-bilingual-updates/
+        </a>
+      </div>
       <button class="submit-btn" onclick="submitReserve()">
         <span id="reserveBtnText">予約する / Reserve →</span>
       </button>
@@ -791,6 +798,7 @@ select {
 // ── 定数 ──────────────────────────────────────────────
 var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec';
 var FORM_TOKEN = 'efa2026daisy';
+var MANUAL_URL = 'https://efajapan.github.io/ourdaisy-bilingual-updates/';
 
 // ── 状態管理 ──────────────────────────────────────────
 var state = {
@@ -1098,7 +1106,7 @@ function showComplete(type, res) {
     steps.innerHTML =
       '<h3>📬 次にやること / Next Steps</h3>' +
       '<div class="next-step-item"><span class="next-step-num">1</span>確認メールをご確認ください。作業フォルダのURLが記載されています。</div>' +
-      '<div class="next-step-item"><span class="next-step-num">2</span>マニュアルに従って作業を開始してください。</div>' +
+      '<div class="next-step-item"><span class="next-step-num">2</span>マニュアルをダウンロードして作業を開始してください。<br><a href="' + MANUAL_URL + '" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:0.8rem;">' + MANUAL_URL + '</a></div>' +
       '<div class="next-step-item"><span class="next-step-num">3</span>作業完了後、このフォームから「作業完了を報告する」を送信してください。</div>' +
       (res.deadline ? '<div class="next-step-item"><span class="next-step-num">⏰</span>期限：' + res.deadline + '</div>' : '');
   } else if (type === 'complete') {
@@ -1132,17 +1140,31 @@ function resetForm() {
   document.getElementById('progressBar').style.display = 'flex';
   state.action  = '';
   state.problem = '';
-  // 入力クリア
+
+  // 入力値クリア
+  document.getElementById('bookSelect').value   = '';  // バグA修正
   document.getElementById('completeBook').value = '';
-  document.getElementById('notes').value = '';
-  document.getElementById('helpBook').value = '';
-  document.getElementById('helpDetail').value = '';
+  document.getElementById('notes').value        = '';
+  document.getElementById('helpBook').value     = '';
+  document.getElementById('helpDetail').value   = '';
+
+  // チェックボックス・ラジオボタンをリセット
   document.querySelectorAll('[name="task"]').forEach(function(cb) { cb.checked = false; });
   document.querySelectorAll('[name="problem"]').forEach(function(r) { r.checked = false; });
+
+  // 視覚的なハイライトをリセット
+  document.querySelectorAll('#sec2 .action-item').forEach(function(el) { el.classList.remove('selected'); });  // バグB修正
   document.querySelectorAll('#sec3c .action-item').forEach(function(el) { el.classList.remove('selected'); });
+  document.querySelectorAll('#sec3b .checkbox-item').forEach(function(el) { el.classList.remove('checked'); }); // バグC修正
+  document.querySelectorAll('#sec1b .checkbox-item').forEach(function(el) { el.classList.remove('checked'); }); // バグC修正
+
+  // ファイルチェックリストをリセット
   document.querySelectorAll('.file-check-item input').forEach(function(cb) { cb.checked = false; });
   document.getElementById('fileCheckSection').style.display = 'none';
+
+  // 完了タイトルの色をリセット
   document.getElementById('completeTitle').style.color = 'var(--green)';
+
   setProgress(2);
   showSection('sec2');
 }
