@@ -886,13 +886,19 @@ function readImageFile(file) {
         var img = new Image();
         img.onload = function() {
           var canvas = document.createElement('canvas');
-          var maxW   = 800;
+          var maxW   = 300; // 800→300に変更（URLパラメータ上限対策）
           var scale  = Math.min(1, maxW / img.width);
           canvas.width  = img.width * scale;
           canvas.height = img.height * scale;
           canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-          state.screenshotB64 = canvas.toDataURL('image/jpeg', 0.7);
-          showScreenshotPreview(state.screenshotB64);
+          var b64 = canvas.toDataURL('image/jpeg', 0.4); // 0.7→0.4に変更
+          // サイズチェック（50000文字超はスキップ）
+          if (b64.length > 50000) {
+            alert('スクリーンショットのサイズが大きすぎます。\n解像度を下げてから再度貼り付けてください。\n（または省略して送信できます）');
+            return;
+          }
+          state.screenshotB64 = b64;
+          showScreenshotPreview(b64);
         };
         img.src = e.target.result;
       } catch(err) { console.error('画像処理エラー:', err); }
@@ -1101,8 +1107,19 @@ function submitComplete() {
   var tasks  = Array.from(document.querySelectorAll('[name="task"]:checked')).map(function(cb) { return cb.value; });
   var notes  = document.getElementById('notes').value;
   var valid  = true;
-  if (!bookId)    { showErr('completeBookErr'); valid = false; } else hideErr('completeBookErr');
+
+  if (!bookId) {
+    showErr('completeBookErr');
+    // 担当書籍がない場合の追加メッセージ
+    if (state.assignedBooks.length === 0) {
+      alert('担当している書籍がありません。\nまず「書籍を予約する」から書籍を予約してください。');
+    }
+    valid = false;
+  } else {
+    hideErr('completeBookErr');
+  }
   if (!tasks.length) { showErr('taskErr'); valid = false; } else hideErr('taskErr');
+
   // DAISYアプリ実行時はファイルチェック必須
   if (tasks.some(function(t) { return t.indexOf('EFAOurDaisyBilingual') >= 0; })) {
     var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
@@ -1113,7 +1130,13 @@ function submitComplete() {
       valid = false;
     }
   }
-  if (!valid) return;
+
+  if (!valid) {
+    // 最初のエラー箇所にスクロール
+    var firstErr = document.querySelector('.error-msg.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
 
   setBtnLoading('completeBtnText', true);
   gasCall({
