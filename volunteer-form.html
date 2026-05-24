@@ -1176,25 +1176,35 @@ function submitHelp() {
   console.log('[OurDAISY] エラー報告送信開始');
   console.log('[OurDAISY] スクショあり:', state.screenshotB64 ? ('YES (' + Math.round(state.screenshotB64.length/1024) + 'KB)') : 'NO');
 
-  // スクショがある場合は先に保存してからエラー報告送信
-  if (state.screenshotB64) {
-    console.log('[OurDAISY] save_screenshot呼び出し中...');
-    gasCall({
-      action_type: 'save_screenshot', image: state.screenshotB64,
-      book_id: bookId || 'unknown', token: FORM_TOKEN
-    }, function(ssRes) {
-      console.log('[OurDAISY] save_screenshot応答:', JSON.stringify(ssRes));
-      if (ssRes.status === 'ok' && ssRes.url) {
-        state.screenshotUrl = ssRes.url;
-        console.log('[OurDAISY] スクショURL取得:', ssRes.url);
-      } else {
-        console.log('[OurDAISY] スクショ保存失敗:', ssRes.message || '不明なエラー');
-      }
-      doSubmitHelp(bookId, problem, detail);
-    });
-  } else {
-    doSubmitHelp(bookId, problem, detail);
-  }
+  // helpアクションに画像データを直接含めて1回で送信
+  gasCall({
+    action_type:  'help',
+    email:        state.email,
+    member_id:    state.memberId,
+    book_id:      '不明',
+    problem_type: problem,
+    details:      detail,
+    image:        state.screenshotB64 || '',
+    token:        FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('helpBtnText', false);
+    console.log('[OurDAISY] help応答:', JSON.stringify(res));
+    if (res.status === 'ok') {
+      var isFaq = res.triage && res.triage.indexOf('FAQ') === 0;
+      showGenericComplete(
+        isFaq ? '💡' : '🆘',
+        isFaq ? 'よくある解決方法をメールでお送りしました！' : 'エラー報告を受け付けました！',
+        res.message || 'ご報告ありがとうございます。',
+        isFaq
+          ? ['登録メールに解決方法が届きます。まずお試しください。',
+             '解決しない場合は、返信メールにご連絡ください。']
+          : ['ご報告ありがとうございます。',
+             'EFAで内容を確認します。深刻な問題の場合は折り返しご連絡します。']
+      );
+    } else {
+      alert('エラー：' + (res.message || '送信に失敗しました。'));
+    }
+  });
 }
 
 function doSubmitHelp(bookId, problem, detail) {
