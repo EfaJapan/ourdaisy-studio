@@ -474,7 +474,7 @@ select {
         <label class="field-label">完了した作業にチェックしてください<span class="req">（必須・複数可）</span></label>
         <div class="check-list">
           <label class="check-item">
-            <input type="checkbox" name="task" value="Word原稿の作成（スキャン・OCR・整形）">
+            <input type="checkbox" name="task" value="Word原稿の作成（スキャン・OCR・整形）" id="taskWord">
             <div>
               <div class="check-text">📄 Word原稿の作成（スキャン・OCR・整形）</div>
               <div class="check-sub">本の内容をWordファイルにまとめる作業</div>
@@ -488,7 +488,7 @@ select {
             </div>
           </label>
           <label class="check-item">
-            <input type="checkbox" name="task" value="日本語校正（やさしい日本語の確認・修正）">
+            <input type="checkbox" name="task" value="日本語校正（やさしい日本語の確認・修正）" id="taskNihongo">
             <div>
               <div class="check-text">✏️ 日本語校正（やさしい日本語の確認・修正）</div>
               <div class="check-sub">子どもが読みやすい日本語に整える作業</div>
@@ -502,7 +502,7 @@ select {
             </div>
           </label>
           <label class="check-item">
-            <input type="checkbox" name="task" value="TTS（音声読み上げ）の確認">
+            <input type="checkbox" name="task" value="TTS（音声読み上げ）の確認" id="taskTTS">
             <div>
               <div class="check-text">🔊 TTS（音声読み上げ）の確認</div>
               <div class="check-sub">機械音声が正しく読み上げられているか確認する作業</div>
@@ -510,6 +510,16 @@ select {
           </label>
         </div>
         <div class="error-msg" id="taskErr">完了した作業を1つ以上選んでください</div>
+      </div>
+
+      <!-- アップロードガイド（Word/Translator/校正/TTS選択時に表示） -->
+      <div id="uploadGuideSection" style="display:none;">
+        <div class="tip-box">
+          💡 <strong>アップロードの方法</strong><br>
+          ① ファイルをすべて選択（<strong>Ctrl+A キー</strong>）<br>
+          ② 選択したままGoogleドライブにドラッグ＆ドロップ<br>
+          ③ 「フォルダにアップロード」を選択
+        </div>
       </div>
 
       <!-- ファイルチェックリスト（DAISY選択時のみ表示） -->
@@ -816,6 +826,18 @@ function setupListeners() {
   // DAISYアプリ選択でファイルチェックリスト表示
   document.getElementById('taskDaisy').addEventListener('change', function() {
     document.getElementById('daisyFileSection').style.display = this.checked ? 'block' : 'none';
+  });
+  // Word/Translator/校正/TTS選択でアップロードガイド表示
+  ['taskWord', 'taskTranslator', 'taskNihongo', 'taskTTS'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', function() {
+      var anyChecked = ['taskWord', 'taskTranslator', 'taskNihongo', 'taskTTS'].some(function(tid) {
+        var t = document.getElementById(tid);
+        return t && t.checked;
+      });
+      document.getElementById('uploadGuideSection').style.display = anyChecked ? 'block' : 'none';
+    });
   });
   // 完了報告：書籍選択でフォルダURLを取得
   document.getElementById('completeBook').addEventListener('change', function() {
