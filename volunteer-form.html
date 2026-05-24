@@ -1174,33 +1174,25 @@ function submitHelp() {
 
   setBtnLoading('helpBtnText', true);
   console.log('[OurDAISY] エラー報告送信開始');
-  console.log('[OurDAISY] スクショあり:', state.screenshotB64 ? ('YES (' + Math.round(state.screenshotB64.length/1024) + 'KB)') : 'NO');
+  var hasShot = state.screenshotB64 ? true : false;
+  console.log('[OurDAISY] スクショあり:', hasShot ? 'YES' : 'NO');
 
-  // helpアクションに画像データを直接含めて1回で送信
+  // 画像データは送らず、有無フラグのみ送信（URLサイズ制限回避）
   gasCall({
-    action_type:  'help',
-    email:        state.email,
-    member_id:    state.memberId,
-    book_id:      '不明',
-    problem_type: problem,
-    details:      detail,
-    image:        state.screenshotB64 || '',
-    token:        FORM_TOKEN
+    action_type:    'help',
+    email:          state.email,
+    member_id:      state.memberId,
+    book_id:        '不明',
+    problem_type:   problem,
+    details:        detail,
+    has_screenshot: hasShot,
+    token:          FORM_TOKEN
   }, function(res) {
     setBtnLoading('helpBtnText', false);
     console.log('[OurDAISY] help応答:', JSON.stringify(res));
     if (res.status === 'ok') {
       var isFaq = res.triage && res.triage.indexOf('FAQ') === 0;
-      showGenericComplete(
-        isFaq ? '💡' : '🆘',
-        isFaq ? 'よくある解決方法をメールでお送りしました！' : 'エラー報告を受け付けました！',
-        res.message || 'ご報告ありがとうございます。',
-        isFaq
-          ? ['登録メールに解決方法が届きます。まずお試しください。',
-             '解決しない場合は、返信メールにご連絡ください。']
-          : ['ご報告ありがとうございます。',
-             'EFAで内容を確認します。深刻な問題の場合は折り返しご連絡します。']
-      );
+      showHelpComplete(isFaq, hasShot, res);
     } else {
       alert('エラー：' + (res.message || '送信に失敗しました。'));
     }
@@ -1244,6 +1236,44 @@ function showGenericComplete(icon, title, msg, steps) {
   steps.forEach(function(s, i) {
     stepsHtml += '<div class="next-step-item"><span class="step-num">' + (i+1) + '</span>' + s + '</div>';
   });
+  document.getElementById('nextSteps').innerHTML = stepsHtml;
+  var card = document.getElementById('completeCard');
+  card.style.display = 'block';
+  card.classList.add('fade-in');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── エラー報告完了画面（スクショ有無で分岐）────────────
+var SCREENSHOT_DRIVE_URL = 'https://drive.google.com/drive/folders/1eXT64UKgMpZeJVa4IrPWzI4AO37VKRjl';
+function showHelpComplete(isFaq, hasShot, res) {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('completeIcon').textContent  = isFaq ? '💡' : '🆘';
+  document.getElementById('completeTitle').textContent = isFaq ? 'よくある解決方法をメールでお送りしました！' : 'エラー報告を受け付けました！';
+  document.getElementById('completeTitle').style.color = isFaq ? 'var(--green)' : 'var(--red)';
+  document.getElementById('completeMsg').textContent   = res.message || 'ご報告ありがとうございます。';
+
+  var stepsHtml = '<h3>📬 次にすること</h3>';
+  if (isFaq) {
+    stepsHtml += '<div class="next-step-item"><span class="step-num">1</span>登録メールに解決方法が届きます。まずお試しください。</div>';
+    stepsHtml += '<div class="next-step-item"><span class="step-num">2</span>解決しない場合は、返信メールにご連絡ください。</div>';
+  } else {
+    stepsHtml += '<div class="next-step-item"><span class="step-num">1</span>ご報告ありがとうございます。EFAで内容を確認します。</div>';
+    stepsHtml += '<div class="next-step-item"><span class="step-num">2</span>深刻な問題の場合は折り返しご連絡します。</div>';
+  }
+
+  // スクショがある場合：Driveへの直接アップロードを案内
+  if (hasShot) {
+    stepsHtml +=
+      '<div class="next-step-item" style="margin-top:12px;padding:12px;background:var(--org-l);border:2px solid var(--orange);border-radius:10px;flex-direction:column;gap:8px;">' +
+      '<div style="font-weight:700;color:#7A4200;">📸 スクリーンショットの提出</div>' +
+      '<div style="font-size:0.82rem;color:#7A4200;">撮影したスクリーンショットを以下のGoogleドライブフォルダに直接アップロードしてください。</div>' +
+      '<a href="' + SCREENSHOT_DRIVE_URL + '" target="_blank" rel="noopener noreferrer" ' +
+      'style="display:inline-block;padding:8px 16px;background:var(--orange);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;margin-top:4px;">' +
+      '📁 Googleドライブにアップロード</a>' +
+      '</div>';
+  }
+
   document.getElementById('nextSteps').innerHTML = stepsHtml;
   var card = document.getElementById('completeCard');
   card.style.display = 'block';
