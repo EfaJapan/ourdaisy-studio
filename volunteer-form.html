@@ -899,6 +899,8 @@ function readImageFile(file) {
           }
           state.screenshotB64 = b64;
           showScreenshotPreview(b64);
+          console.log('[OurDAISY] スクショ取得完了: ' + Math.round(b64.length/1024) + 'KB (' + b64.length + '文字)');
+          document.getElementById('ssZone').title = '✅ 画像取得済み: ' + Math.round(b64.length/1024) + 'KB';
         };
         img.src = e.target.result;
       } catch(err) { console.error('画像処理エラー:', err); }
@@ -1171,15 +1173,22 @@ function submitHelp() {
   if (!valid) return;
 
   setBtnLoading('helpBtnText', true);
+  console.log('[OurDAISY] エラー報告送信開始');
+  console.log('[OurDAISY] スクショあり:', state.screenshotB64 ? ('YES (' + Math.round(state.screenshotB64.length/1024) + 'KB)') : 'NO');
 
   // スクショがある場合は先に保存してからエラー報告送信
   if (state.screenshotB64) {
+    console.log('[OurDAISY] save_screenshot呼び出し中...');
     gasCall({
       action_type: 'save_screenshot', image: state.screenshotB64,
       book_id: bookId || 'unknown', token: FORM_TOKEN
     }, function(ssRes) {
+      console.log('[OurDAISY] save_screenshot応答:', JSON.stringify(ssRes));
       if (ssRes.status === 'ok' && ssRes.url) {
         state.screenshotUrl = ssRes.url;
+        console.log('[OurDAISY] スクショURL取得:', ssRes.url);
+      } else {
+        console.log('[OurDAISY] スクショ保存失敗:', ssRes.message || '不明なエラー');
       }
       doSubmitHelp(bookId, problem, detail);
     });
