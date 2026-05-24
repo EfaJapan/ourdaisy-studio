@@ -11,463 +11,266 @@
   --blue:   #005EAD;
   --blue-d: #003A70;
   --blue-l: #E8F1FB;
+  --blue-m: #C5DEFF;
   --green:  #2A9D5C;
   --green-l:#E8F7EF;
-  --orange: #F0A500;
   --red:    #C0392B;
   --red-l:  #FDECEA;
+  --orange: #E67E22;
+  --org-l:  #FFF3E0;
   --gray:   #6B7280;
   --gray-l: #F5F8FC;
   --white:  #FFFFFF;
   --text:   #1A2A3A;
   --radius: 14px;
-  --shadow: 0 4px 24px rgba(0,94,173,0.10);
+  --shadow: 0 4px 28px rgba(0,94,173,0.12);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: 'BIZ UDPGothic', sans-serif;
-  background: linear-gradient(135deg, #EEF5FF 0%, #F5F8FC 100%);
+  background: linear-gradient(160deg,#EEF5FF 0%,#F5F8FC 60%,#EAF7EF 100%);
   min-height: 100vh;
   color: var(--text);
   padding: 20px 16px 60px;
 }
 
 /* ── ヘッダー ── */
-.header {
-  max-width: 640px;
-  margin: 0 auto 24px;
-  text-align: center;
-}
+.header { max-width: 640px; margin: 0 auto 24px; text-align: center; }
 .header-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--blue);
-  color: var(--white);
-  padding: 6px 18px;
-  border-radius: 40px;
-  font-size: 0.82rem;
-  font-weight: 700;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue); color: var(--white);
+  padding: 6px 18px; border-radius: 40px;
+  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em;
   margin-bottom: 14px;
-  letter-spacing: 0.04em;
 }
 .header h1 {
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: var(--blue-d);
-  line-height: 1.3;
+  font-size: 1.7rem; font-weight: 700;
+  color: var(--blue-d); line-height: 1.3;
 }
 .header h1 .accent { color: var(--blue); }
-.header-sub {
-  margin-top: 6px;
-  font-size: 0.82rem;
-  color: var(--gray);
-}
+.header-sub { margin-top: 5px; font-size: 0.82rem; color: var(--gray); }
 
-/* ── プログレスバー ── */
+/* ── プログレス ── */
 .progress-wrap {
-  max-width: 640px;
-  margin: 0 auto 20px;
+  max-width: 640px; margin: 0 auto 20px;
+  display: flex; align-items: center; gap: 0;
 }
-.progress-bar {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 6px;
+.prog-step {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
-.progress-step {
-  flex: 1;
-  height: 6px;
-  background: #D1E3F8;
-  border-radius: 4px;
-  transition: background 0.3s;
+.prog-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #D1E3F8; color: var(--gray);
+  font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
 }
-.progress-step.active { background: var(--blue); }
-.progress-step.done   { background: var(--green); }
-.progress-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: var(--gray);
-  padding: 0 2px;
-}
+.prog-circle.active { background: var(--blue); color: var(--white); }
+.prog-circle.done   { background: var(--green); color: var(--white); }
+.prog-label { font-size: 0.68rem; color: var(--gray); }
+.prog-line { flex: 1; height: 2px; background: #D1E3F8; transition: background 0.3s; }
+.prog-line.done { background: var(--green); }
 
 /* ── カード ── */
 .card {
-  max-width: 640px;
-  margin: 0 auto 16px;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
+  max-width: 640px; margin: 0 auto 16px;
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
 }
 .card-header {
   background: linear-gradient(135deg, var(--blue) 0%, var(--blue-d) 100%);
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  padding: 16px 22px; display: flex; align-items: center; gap: 12px;
 }
-.step-badge {
-  background: rgba(255,255,255,0.22);
-  color: var(--white);
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
+.card-header .step-no {
+  background: rgba(255,255,255,0.2); color: var(--white);
+  font-size: 0.68rem; font-weight: 700; padding: 2px 10px;
+  border-radius: 20px; letter-spacing: 0.08em; white-space: nowrap;
 }
-.card-header h2 {
-  color: var(--white);
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1.4;
-}
-.card-header .header-icon { font-size: 1.3rem; }
-.card-body { padding: 24px; }
+.card-header h2 { color: var(--white); font-size: 0.97rem; font-weight: 700; line-height: 1.4; }
+.card-body { padding: 22px; }
 
 /* ── フォーム要素 ── */
 .field { margin-bottom: 20px; }
 .field:last-child { margin-bottom: 0; }
 label.field-label {
-  display: block;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--blue-d);
-  margin-bottom: 6px;
+  display: block; font-size: 0.88rem; font-weight: 700;
+  color: var(--blue-d); margin-bottom: 7px;
 }
-.req { color: var(--red); margin-left: 4px; font-size: 0.75rem; }
-.sub { font-weight: 400; color: var(--gray); font-size: 0.78rem; margin-left: 6px; }
+.req { color: var(--red); font-size: 0.72rem; margin-left: 4px; }
+.opt { color: var(--gray); font-size: 0.72rem; margin-left: 4px; font-weight: 400; }
 
-input[type="text"],
-input[type="email"],
-select,
-textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid #D1E3F8;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 0.92rem;
-  color: var(--text);
-  background: #FAFCFF;
-  transition: border-color 0.2s, box-shadow 0.2s;
+input[type="email"], input[type="text"], select, textarea {
+  width: 100%; padding: 12px 14px;
+  border: 2px solid #D1E3F8; border-radius: 9px;
+  font-family: inherit; font-size: 0.92rem; color: var(--text);
+  background: #FAFCFF; transition: border-color 0.2s, box-shadow 0.2s;
   appearance: none;
 }
 input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(0,94,173,0.12);
-  background: var(--white);
+  outline: none; border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,94,173,0.12); background: var(--white);
 }
-textarea { resize: vertical; min-height: 100px; }
+textarea { resize: vertical; min-height: 110px; }
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23005EAD' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
+  background-repeat: no-repeat; background-position: right 14px center;
+  padding-right: 38px;
 }
-.hint {
-  font-size: 0.77rem;
-  color: var(--gray);
-  margin-top: 5px;
-  line-height: 1.6;
-}
+.hint { font-size: 0.77rem; color: var(--gray); margin-top: 5px; line-height: 1.55; }
 .error-msg { font-size: 0.77rem; color: var(--red); margin-top: 4px; display: none; }
 .error-msg.show { display: block; }
 
-/* ── タイプ選択カード ── */
-.type-group { display: flex; flex-direction: column; gap: 10px; }
-.type-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 2px solid #D1E3F8;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: #FAFCFF;
+/* ── 選択カード（アクション・タイプ） ── */
+.choice-list { display: flex; flex-direction: column; gap: 10px; }
+.choice-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border: 2px solid #D1E3F8;
+  border-radius: 11px; cursor: pointer;
+  transition: all 0.2s; background: #FAFCFF;
 }
-.type-card:hover { border-color: var(--blue); background: var(--blue-l); }
-.type-card input[type="checkbox"] {
-  width: 20px; height: 20px; min-width: 20px;
-  accent-color: var(--blue); margin-top: 2px; cursor: pointer;
-}
-.type-icon { font-size: 1.6rem; }
-.type-info .type-name { font-size: 0.92rem; font-weight: 700; color: var(--text); }
-.type-info .type-desc { font-size: 0.78rem; color: var(--gray); margin-top: 3px; line-height: 1.5; }
-.type-card.checked { border-color: var(--blue); background: var(--blue-l); }
+.choice-item:hover { border-color: var(--blue); background: var(--blue-l); transform: translateY(-1px); }
+.choice-item.selected { border-color: var(--blue); background: var(--blue-l); box-shadow: 0 2px 10px rgba(0,94,173,0.15); }
+.choice-icon { font-size: 1.5rem; width: 38px; text-align: center; flex-shrink: 0; }
+.choice-title { font-size: 0.92rem; font-weight: 700; color: var(--text); }
+.choice-sub { font-size: 0.75rem; color: var(--gray); margin-top: 2px; line-height: 1.45; }
 
-/* ── アクション選択 ── */
-.action-group { display: flex; flex-direction: column; gap: 10px; }
-.action-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
-  border: 2px solid #D1E3F8;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: #FAFCFF;
+/* チェックボックスカード */
+.check-list { display: flex; flex-direction: column; gap: 9px; }
+.check-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; border: 2px solid #D1E3F8;
+  border-radius: 9px; cursor: pointer; background: #FAFCFF;
+  transition: border-color 0.2s, background 0.2s;
 }
-.action-card:hover { border-color: var(--blue); background: var(--blue-l); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,94,173,0.12); }
-.action-card.selected { border-color: var(--blue); background: var(--blue-l); box-shadow: 0 4px 12px rgba(0,94,173,0.15); }
-.action-card input[type="radio"] { display: none; }
-.action-icon { font-size: 1.8rem; width: 40px; text-align: center; flex-shrink: 0; }
-.action-name { font-size: 0.95rem; font-weight: 700; color: var(--text); }
-.action-desc { font-size: 0.78rem; color: var(--gray); margin-top: 2px; }
-
-/* ── タスクチェックボックス ── */
-.task-group { display: flex; flex-direction: column; gap: 8px; }
-.task-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 2px solid #D1E3F8;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: #FAFCFF;
+.check-item:hover { border-color: var(--blue); background: var(--blue-l); }
+.check-item.checked { border-color: var(--blue); background: var(--blue-l); }
+.check-item input[type="checkbox"] {
+  width: 18px; height: 18px; min-width: 18px; margin-top: 2px;
+  accent-color: var(--blue); cursor: pointer;
 }
-.task-card:hover { border-color: var(--blue); background: var(--blue-l); }
-.task-card.checked { border-color: var(--blue); background: var(--blue-l); }
-.task-card input[type="checkbox"] {
-  width: 18px; height: 18px; min-width: 18px;
-  accent-color: var(--blue); margin-top: 2px; cursor: pointer;
-}
-.task-icon { font-size: 1.2rem; }
-.task-info .task-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
-.task-info .task-desc { font-size: 0.76rem; color: var(--gray); margin-top: 2px; }
-
-/* ── 問題種別 ── */
-.problem-group { display: flex; flex-direction: column; gap: 8px; }
-.problem-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 13px 16px;
-  border: 2px solid #D1E3F8;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: #FAFCFF;
-}
-.problem-card:hover { border-color: var(--red); background: var(--red-l); }
-.problem-card.selected { border-color: var(--red); background: var(--red-l); }
-.problem-card input[type="radio"] { display: none; }
-.problem-icon { font-size: 1.3rem; }
-.problem-name { font-size: 0.88rem; font-weight: 700; }
+.check-text { font-size: 0.87rem; line-height: 1.5; }
+.check-sub { font-size: 0.74rem; color: var(--gray); margin-top: 2px; }
 
 /* ── ボックス ── */
 .info-box {
-  background: var(--green-l);
-  border: 2px solid var(--green);
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 0.83rem;
-  color: #1A5C38;
-  margin-bottom: 16px;
-  line-height: 1.7;
+  background: var(--green-l); border: 2px solid var(--green);
+  border-radius: 10px; padding: 13px 16px;
+  font-size: 0.82rem; color: #1A5C38; margin-bottom: 16px; line-height: 1.6;
 }
 .warn-box {
-  background: #FFF8E8;
-  border: 2px solid var(--orange);
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 0.83rem;
-  color: #7A5200;
-  margin-bottom: 16px;
-  line-height: 1.7;
+  background: var(--org-l); border: 2px solid var(--orange);
+  border-radius: 10px; padding: 13px 16px;
+  font-size: 0.82rem; color: #7A4200; margin-bottom: 16px; line-height: 1.6;
 }
 .tip-box {
-  background: var(--blue-l);
-  border: 2px solid var(--blue);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
+  background: var(--blue-l); border: 2px solid var(--blue-m);
+  border-radius: 10px; padding: 13px 16px;
+  font-size: 0.82rem; color: var(--blue-d); margin-bottom: 16px; line-height: 1.65;
 }
-.tip-box-title {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--blue-d);
-  margin-bottom: 8px;
+.faq-box {
+  background: #FFF8E8; border: 2px solid #F0C040;
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 0.82rem; color: #5A4000; margin: 12px 0 16px; line-height: 1.7;
+  display: none;
 }
-.tip-step {
-  display: flex;
-  gap: 10px;
-  font-size: 0.82rem;
-  color: var(--text);
-  padding: 4px 0;
-  line-height: 1.6;
-  align-items: flex-start;
-}
-.tip-num {
-  background: var(--blue);
-  color: var(--white);
-  font-size: 0.7rem;
-  font-weight: 700;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
+.faq-box.show { display: block; }
+.faq-box h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
 
-/* ── ファイルチェックリスト ── */
+/* ファイルチェックリスト */
 .file-checklist {
-  background: var(--blue-l);
-  border: 2px solid var(--blue);
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: var(--blue-l); border: 2px solid var(--blue);
+  border-radius: 10px; padding: 14px; margin-bottom: 14px;
 }
-.file-checklist-title {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--blue-d);
+.file-checklist-title { font-size: 0.84rem; font-weight: 700; color: var(--blue-d); margin-bottom: 10px; }
+.file-check-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; }
+.file-check-row input[type="checkbox"] { width: 16px; height: 16px; min-width: 16px; accent-color: var(--blue); margin-top: 2px; }
+.file-check-row span { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+
+/* スクリーンショットゾーン */
+.ss-zone {
+  border: 2px dashed #A0BFE0; border-radius: 10px;
+  padding: 20px 16px; text-align: center; cursor: pointer;
+  background: #F5F9FF; transition: border-color 0.2s, background 0.2s;
   margin-bottom: 10px;
 }
-.file-check-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 0.83rem;
-  color: var(--text);
-  line-height: 1.5;
-}
-.file-check-item input[type="checkbox"] {
-  width: 16px; height: 16px; min-width: 16px;
-  accent-color: var(--blue); margin-top: 2px;
-}
+.ss-zone:hover { border-color: var(--blue); background: var(--blue-l); }
+.ss-zone.has-image { border-style: solid; border-color: var(--green); background: var(--green-l); }
+.ss-zone-icon { font-size: 2rem; margin-bottom: 8px; }
+.ss-zone-text { font-size: 0.82rem; color: var(--gray); line-height: 1.6; }
+.ss-preview { max-width: 100%; border-radius: 6px; margin-top: 8px; display: none; }
 
-/* ── 自己解決チェック ── */
-.self-check-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-.self-check-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 2px solid #D1E3F8;
-  border-radius: 8px;
-  font-size: 0.83rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: #FAFCFF;
+/* フォルダボタン */
+.folder-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 13px;
+  background: var(--white); border: 2px solid var(--blue);
+  border-radius: 10px; color: var(--blue);
+  font-family: inherit; font-size: 0.9rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  margin-bottom: 12px;
 }
-.self-check-item:hover { border-color: var(--green); background: var(--green-l); }
-.self-check-item.checked { border-color: var(--green); background: var(--green-l); }
-.self-check-item input[type="checkbox"] {
-  width: 16px; height: 16px; min-width: 16px;
-  accent-color: var(--green);
-}
-
-/* ── Driveボタン ── */
-.drive-link-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 14px;
-  background: var(--white);
-  border: 2px solid var(--blue);
-  border-radius: 10px;
-  color: var(--blue);
-  font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 10px;
-  text-decoration: none;
-}
-.drive-link-btn:hover { background: var(--blue-l); }
+.folder-btn:hover { background: var(--blue-l); }
 
 /* ── ボタン群 ── */
-.btn-row { display: flex; gap: 10px; margin-top: 4px; }
-.back-btn {
-  flex: 0 0 auto;
-  padding: 14px 20px;
-  background: var(--white);
-  border: 2px solid #D1E3F8;
-  border-radius: 10px;
-  color: var(--gray);
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
+.btn-primary {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 15px;
+  background: var(--blue); color: var(--white);
+  border: none; border-radius: 10px;
+  font-family: inherit; font-size: 0.97rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px;
 }
-.back-btn:hover { border-color: var(--blue); color: var(--blue); }
-.submit-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px;
-  background: var(--blue);
-  color: var(--white);
-  border: none;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 0.97rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+.btn-primary:hover:not(:disabled) { background: var(--blue-d); transform: translateY(-1px); }
+.btn-primary:disabled { background: #B0C4D8; cursor: not-allowed; }
+.btn-primary.red-btn { background: var(--red); }
+.btn-primary.red-btn:hover:not(:disabled) { background: #a93226; }
+
+.btn-back {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: none; color: var(--blue);
+  font-family: inherit; font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; padding: 0; margin-bottom: 16px;
+  text-decoration: underline; text-underline-offset: 3px;
 }
-.submit-btn:hover:not(:disabled) { background: var(--blue-d); transform: translateY(-1px); }
-.submit-btn:disabled { background: #B0C4D8; cursor: not-allowed; }
-.submit-btn-full { flex: none; width: 100%; }
-.submit-btn-red { background: var(--red); }
-.submit-btn-red:hover:not(:disabled) { background: #9B2335; }
+.btn-back:hover { color: var(--blue-d); }
 
 /* ── ローディング ── */
 .loading {
-  display: inline-block;
-  width: 16px; height: 16px;
+  display: inline-block; width: 16px; height: 16px;
   border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: var(--white);
-  border-radius: 50%;
+  border-top-color: var(--white); border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── 完了画面 ── */
+/* ── 完了カード ── */
 .complete-card {
-  max-width: 640px;
-  margin: 0 auto;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 40px 28px;
-  text-align: center;
-  display: none;
+  max-width: 640px; margin: 0 auto;
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 40px 28px;
+  text-align: center; display: none;
 }
-.complete-icon { font-size: 3.5rem; margin-bottom: 16px; }
-.complete-title { font-size: 1.3rem; font-weight: 700; color: var(--green); margin-bottom: 8px; }
-.complete-msg { font-size: 0.9rem; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
-.next-steps { background: var(--blue-l); border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 24px; }
-.next-steps h3 { font-size: 0.85rem; font-weight: 700; color: var(--blue-d); margin-bottom: 10px; }
-.next-step-item { font-size: 0.83rem; color: var(--text); padding: 5px 0; display: flex; gap: 10px; line-height: 1.6; align-items: flex-start; }
-.next-step-num { background: var(--blue); color: var(--white); font-size: 0.7rem; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.complete-icon { font-size: 3.5rem; margin-bottom: 14px; }
+.complete-title { font-size: 1.3rem; font-weight: 700; color: var(--green); margin-bottom: 10px; }
+.complete-msg { font-size: 0.88rem; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+.next-steps { background: var(--blue-l); border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 20px; }
+.next-steps h3 { font-size: 0.84rem; font-weight: 700; color: var(--blue-d); margin-bottom: 10px; }
+.next-step-item { display: flex; gap: 10px; font-size: 0.83rem; color: var(--text); padding: 5px 0; line-height: 1.55; }
+.step-num {
+  background: var(--blue); color: var(--white); font-size: 0.68rem; font-weight: 700;
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
 
-/* ── セクション ── */
+/* ── セクション制御 ── */
 .section { display: none; }
 .section.active { display: block; }
 .fade-in { animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 
-@media (max-width: 480px) {
+@media(max-width:480px) {
   .header h1 { font-size: 1.35rem; }
-  .card-body { padding: 18px; }
+  .card-body { padding: 16px; }
 }
 </style>
 </head>
@@ -482,136 +285,129 @@ select {
 
 <!-- プログレスバー -->
 <div class="progress-wrap" id="progressWrap">
-  <div class="progress-bar">
-    <div class="progress-step active" id="prog1"></div>
-    <div class="progress-step" id="prog2"></div>
-    <div class="progress-step" id="prog3"></div>
+  <div class="prog-step">
+    <div class="prog-circle active" id="pc1">1</div>
+    <div class="prog-label">本人確認</div>
   </div>
-  <div class="progress-labels">
-    <span>メール確認</span><span>作業選択</span><span>送信</span>
+  <div class="prog-line" id="pl1"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc2">2</div>
+    <div class="prog-label">作業選択</div>
+  </div>
+  <div class="prog-line" id="pl2"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc3">3</div>
+    <div class="prog-label">内容入力</div>
   </div>
 </div>
 
-<!-- ── Step 1：メール入力 ── -->
+<!-- ══ STEP 1：メール確認 ══ -->
 <div class="section active" id="sec1">
   <div class="card fade-in">
     <div class="card-header">
-      <span class="header-icon">✉️</span>
-      <div>
-        <span class="step-badge">STEP 1</span>
-        <h2>メールアドレスを入力してください</h2>
-      </div>
+      <span class="step-no">STEP 1</span>
+      <h2>メールアドレスを入力してください</h2>
     </div>
     <div class="card-body">
-      <div class="field">
-        <label class="field-label" for="email">メールアドレス <span class="req">必須</span></label>
-        <input type="email" id="email" placeholder="例：taro@example.com" autocomplete="email">
-        <div class="error-msg" id="emailErr">正しいメールアドレスを入力してください</div>
-        <p class="hint">📌 通知・作業管理に使用します。EFA以外には公開されません。</p>
+      <div class="tip-box">
+        💡 前回と同じメールアドレスを入力すると<br>
+        登録情報が自動で読み込まれます。
       </div>
-      <button class="submit-btn submit-btn-full" onclick="checkEmail()">
+      <div class="field">
+        <label class="field-label" for="email">メールアドレス<span class="req">（必須）</span></label>
+        <input type="email" id="email" placeholder="例：yamada@email.com">
+        <div class="error-msg" id="emailErr">正しいメールアドレスを入力してください</div>
+        <p class="hint">📌 エファジャパン以外には公開しません。作業の連絡に使用します。</p>
+      </div>
+      <button class="btn-primary" onclick="checkEmail()">
         <span id="checkBtnText">次へ進む →</span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- ── Step 1b：初回登録 ── -->
+<!-- ══ STEP 1b：初回登録 ══ -->
 <div class="section" id="sec1b">
   <div class="card fade-in">
     <div class="card-header">
-      <span class="header-icon">🎉</span>
-      <div>
-        <span class="step-badge">STEP 1</span>
-        <h2>はじめまして！登録しましょう</h2>
-      </div>
+      <span class="step-no">STEP 1</span>
+      <h2>はじめての方：情報を入力してください</h2>
     </div>
     <div class="card-body">
+      <button class="btn-back" onclick="goBack('sec1')">← 戻る</button>
       <div class="info-box">
-        ✨ はじめてのご利用ありがとうございます。<br>
-        お名前と参加タイプを登録してください。<br>
-        次回からはメールアドレスを入力するだけでOKです！
+        ✨ はじめてご利用の方は、お名前と参加タイプを入力してください。<br>
+        次回からはメールアドレスだけで自動認識されます。
       </div>
       <div class="field">
-        <label class="field-label" for="name">お名前 <span class="req">必須</span></label>
+        <label class="field-label" for="name">お名前<span class="req">（必須）</span></label>
         <input type="text" id="name" placeholder="例：山田 太郎">
         <div class="error-msg" id="nameErr">お名前を入力してください</div>
       </div>
       <div class="field">
-        <label class="field-label">参加タイプ <span class="req">必須</span><span class="sub">複数選択可</span></label>
-        <div class="type-group">
-          <label class="type-card" id="typeA-card" onclick="toggleType('A', this)">
+        <label class="field-label">参加タイプを選んでください<span class="req">（必須・複数可）</span></label>
+        <p class="hint" style="margin-bottom:10px;">わからない場合はタイプAを選んでください</p>
+        <div class="check-list">
+          <label class="check-item" id="typeA-wrap">
             <input type="checkbox" id="typeA">
-            <span class="type-icon">🔵</span>
-            <div class="type-info">
-              <div class="type-name">タイプA：フルコース</div>
-              <div class="type-desc">Word原稿作成 → 翻訳アプリ実行 → EPUB生成 → 音声確認まで全て行います</div>
+            <div>
+              <div class="check-text">🔵 タイプA：フルコース</div>
+              <div class="check-sub">Word原稿作成 → EFATranslator（翻訳アプリ）実行 → EFAOurDaisyBilingual（DAISY図書アプリ）実行 → 音声確認まで</div>
             </div>
           </label>
-          <label class="type-card" id="typeB-card" onclick="toggleType('B', this)">
+          <label class="check-item" id="typeB-wrap">
             <input type="checkbox" id="typeB">
-            <span class="type-icon">🟢</span>
-            <div class="type-info">
-              <div class="type-name">タイプB：日本語校正専門</div>
-              <div class="type-desc">「やさしい日本語」の確認・修正のみ行います</div>
+            <div>
+              <div class="check-text">🟢 タイプB：日本語校正</div>
+              <div class="check-sub">やさしい日本語の確認・修正だけを担当します</div>
             </div>
           </label>
-          <label class="type-card" id="typeC-card" onclick="toggleType('C', this)">
+          <label class="check-item" id="typeC-wrap">
             <input type="checkbox" id="typeC">
-            <span class="type-icon">🟡</span>
-            <div class="type-info">
-              <div class="type-name">タイプC：音声確認専門</div>
-              <div class="type-desc">TTS（音声読み上げ）の確認のみ行います。スマホ・PCどちらでも可</div>
+            <div>
+              <div class="check-text">🟡 タイプC：音声確認</div>
+              <div class="check-sub">TTS（機械音声の読み上げ）の確認だけを担当します</div>
             </div>
           </label>
         </div>
         <div class="error-msg" id="typeErr">参加タイプを1つ以上選んでください</div>
       </div>
-      <div class="btn-row">
-        <button class="back-btn" onclick="goBack('sec1')">← 戻る</button>
-        <button class="submit-btn" onclick="register()">
-          <span id="regBtnText">登録して次へ →</span>
-        </button>
-      </div>
+      <button class="btn-primary" onclick="register()">
+        <span id="regBtnText">登録して次へ →</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ── Step 2：作業選択 ── -->
+<!-- ══ STEP 2：作業を選ぶ ══ -->
 <div class="section" id="sec2">
   <div class="card fade-in">
     <div class="card-header">
-      <span class="header-icon">🎯</span>
-      <div>
-        <span class="step-badge">STEP 2</span>
-        <h2>今日の作業を選んでください</h2>
-      </div>
+      <span class="step-no">STEP 2</span>
+      <h2 id="sec2Title">今日はどの作業をしますか？</h2>
     </div>
     <div class="card-body">
-      <p id="welcomeMsg" style="font-size:0.88rem;color:var(--gray);margin-bottom:16px;padding:10px 14px;background:var(--blue-l);border-radius:8px;"></p>
-      <div class="action-group">
-        <div class="action-card" onclick="selectAction('reserve', this)">
-          <input type="radio" name="action" value="reserve">
-          <div class="action-icon">📖</div>
+      <p style="font-size:0.85rem;color:var(--gray);margin-bottom:16px;" id="welcomeMsg"></p>
+      <div class="choice-list">
+        <div class="choice-item" onclick="selectAction('reserve', this)">
+          <div class="choice-icon">📖</div>
           <div>
-            <div class="action-name">書籍を予約する</div>
-            <div class="action-desc">担当したい書籍を選んで予約します。確認メールが届きます。</div>
+            <div class="choice-title">書籍を予約する</div>
+            <div class="choice-sub">担当したい書籍を選んで予約します。予約後にフォルダURLをメールでお送りします。</div>
           </div>
         </div>
-        <div class="action-card" onclick="selectAction('complete', this)">
-          <input type="radio" name="action" value="complete">
-          <div class="action-icon">📤</div>
+        <div class="choice-item" onclick="selectAction('complete', this)">
+          <div class="choice-icon">📤</div>
           <div>
-            <div class="action-name">作業完了を報告する</div>
-            <div class="action-desc">担当書籍の作業が終わったことを報告します。</div>
+            <div class="choice-title">作業完了を報告する</div>
+            <div class="choice-sub">作業が終わった書籍の完了報告をします。ファイルをGoogleドライブにアップロードしてから報告してください。</div>
           </div>
         </div>
-        <div class="action-card" onclick="selectAction('help', this)">
-          <input type="radio" name="action" value="help">
-          <div class="action-icon">🆘</div>
+        <div class="choice-item" onclick="selectAction('help', this)">
+          <div class="choice-icon">🆘</div>
           <div>
-            <div class="action-name">困っています・エラーを報告する</div>
-            <div class="action-desc">アプリのエラーやトラブルを報告します。</div>
+            <div class="choice-title">エラー・困っていることを報告する</div>
+            <div class="choice-sub">アプリのエラーや操作でわからないことを報告します。</div>
           </div>
         </div>
       </div>
@@ -619,263 +415,272 @@ select {
   </div>
 </div>
 
-<!-- ── Step 3A：書籍の予約 ── -->
+<!-- ══ STEP 3A：書籍予約 ══ -->
 <div class="section" id="sec3a">
   <div class="card fade-in">
     <div class="card-header">
-      <span class="header-icon">📖</span>
-      <div>
-        <span class="step-badge">STEP 3</span>
-        <h2>書籍を選んで予約する</h2>
-      </div>
+      <span class="step-no">STEP 3</span>
+      <h2>📖 書籍を予約する</h2>
     </div>
     <div class="card-body">
+      <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
       <div class="field">
-        <label class="field-label" for="bookSelect">担当したい書籍 <span class="req">必須</span></label>
+        <label class="field-label" for="bookSelect">担当したい書籍を選んでください<span class="req">（必須）</span></label>
         <select id="bookSelect">
-          <option value="">読み込み中...</option>
+          <option value="">-- 読み込み中... --</option>
         </select>
         <div class="error-msg" id="bookErr">書籍を選んでください</div>
-        <p class="hint">📌 リストには今すぐ担当可能な書籍のみ表示されています。</p>
+        <p class="hint">📌 リストに表示されているのは、まだ誰も担当していない書籍です。</p>
       </div>
-      <div class="info-box">
-        📘 <strong>マニュアルのダウンロードはこちら</strong><br>
-        予約後、マニュアルに従って作業を進めてください。<br>
-        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer"
-           style="color:var(--green);font-weight:700;word-break:break-all;">
+      <div class="tip-box">
+        📋 予約すると、担当フォルダのURLをメールでお送りします。<br>
+        作業マニュアルをよく読んでから作業を始めてください。<br>
+        <strong>📥 マニュアルのダウンロードはこちら：</strong><br>
+        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-weight:700;word-break:break-all;">
           https://efajapan.github.io/ourdaisy-bilingual-updates/
         </a>
       </div>
-      <div class="warn-box">
-        ⚠️ 予約が完了すると、作業フォルダのURLを<br>
-        メールでお送りします。確認メールをご確認ください。
-      </div>
-      <div class="btn-row">
-        <button class="back-btn" onclick="goBack('sec2')">← 戻る</button>
-        <button class="submit-btn" onclick="submitReserve()">
-          <span id="reserveBtnText">予約する →</span>
-        </button>
-      </div>
+      <button class="btn-primary" onclick="submitReserve()">
+        <span id="reserveBtnText">この書籍を予約する →</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ── Step 3B：作業完了報告 ── -->
+<!-- ══ STEP 3B：完了報告 ══ -->
 <div class="section" id="sec3b">
   <div class="card fade-in">
     <div class="card-header">
-      <span class="header-icon">📤</span>
-      <div>
-        <span class="step-badge">STEP 3</span>
-        <h2>作業完了を報告する</h2>
-      </div>
+      <span class="step-no">STEP 3</span>
+      <h2>📤 作業完了を報告する</h2>
     </div>
     <div class="card-body">
+      <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
+
       <div class="field">
-        <label class="field-label" for="completeBook">完了した書籍 <span class="req">必須</span></label>
+        <label class="field-label" for="completeBook">完了した書籍を選んでください<span class="req">（必須）</span></label>
         <select id="completeBook">
-          <option value="">読み込み中...</option>
+          <option value="">-- あなたの担当書籍を読み込み中... --</option>
         </select>
         <div class="error-msg" id="completeBookErr">書籍を選んでください</div>
-        <p class="hint">📌 あなたが予約した書籍のみ表示されます。</p>
+        <div class="warn-box" id="noBooksMsg" style="display:none;">
+          ⚠️ 現在担当している書籍がありません。<br>
+          まず「書籍を予約する」から書籍を予約してください。
+        </div>
+        <p class="hint">📌 表示されるのは、あなたが予約した書籍だけです。</p>
       </div>
+
       <div class="field">
-        <label class="field-label">完了した作業内容 <span class="req">必須</span></label>
-        <div class="task-group">
-          <label class="task-card" onclick="toggleTask(this)">
-            <input type="checkbox" name="task" value="Word原稿の作成">
-            <span class="task-icon">📄</span>
-            <div class="task-info">
-              <div class="task-name">Word原稿の作成</div>
-              <div class="task-desc">スキャン・文字起こし・整形が終わった</div>
+        <label class="field-label">完了した作業にチェックしてください<span class="req">（必須・複数可）</span></label>
+        <div class="check-list">
+          <label class="check-item">
+            <input type="checkbox" name="task" value="Word原稿の作成（スキャン・OCR・整形）">
+            <div>
+              <div class="check-text">📄 Word原稿の作成（スキャン・OCR・整形）</div>
+              <div class="check-sub">本の内容をWordファイルにまとめる作業</div>
             </div>
           </label>
-          <label class="task-card" onclick="toggleTask(this)">
-            <input type="checkbox" name="task" value="翻訳アプリ（EFATranslator）の実行">
-            <span class="task-icon">🔄</span>
-            <div class="task-info">
-              <div class="task-name">EFATranslator（翻訳アプリ）の実行</div>
-              <div class="task-desc">1種類のWordから4種類のWordを自動生成した</div>
+          <label class="check-item">
+            <input type="checkbox" name="task" value="EFATranslator（翻訳アプリ）の実行" id="taskTranslator">
+            <div>
+              <div class="check-text">🔄 EFATranslator（翻訳アプリ）の実行</div>
+              <div class="check-sub">翻訳アプリを使って4種類のWordファイルを作成する作業</div>
             </div>
           </label>
-          <label class="task-card" onclick="toggleTask(this)">
-            <input type="checkbox" name="task" value="日本語校正">
-            <span class="task-icon">✏️</span>
-            <div class="task-info">
-              <div class="task-name">日本語校正</div>
-              <div class="task-desc">「やさしい日本語」の確認・修正が終わった</div>
+          <label class="check-item">
+            <input type="checkbox" name="task" value="日本語校正（やさしい日本語の確認・修正）">
+            <div>
+              <div class="check-text">✏️ 日本語校正（やさしい日本語の確認・修正）</div>
+              <div class="check-sub">子どもが読みやすい日本語に整える作業</div>
             </div>
           </label>
-          <label class="task-card" id="ourdaisyTaskCard" onclick="toggleTask(this)">
-            <input type="checkbox" name="task" value="EFAOurDaisyBilingual（EPUB生成アプリ）の実行">
-            <span class="task-icon">📱</span>
-            <div class="task-info">
-              <div class="task-name">EFAOurDaisyBilingual（EPUB生成アプリ）の実行</div>
-              <div class="task-desc">WordからEPUB（電子図書ファイル）を生成した</div>
+          <label class="check-item">
+            <input type="checkbox" name="task" value="EFAOurDaisyBilingual（DAISY図書アプリ）の実行" id="taskDaisy">
+            <div>
+              <div class="check-text">📱 EFAOurDaisyBilingual（DAISY図書アプリ）の実行</div>
+              <div class="check-sub">DAISYアプリを使ってEPUB（電子図書）を作成する作業</div>
             </div>
           </label>
-          <label class="task-card" onclick="toggleTask(this)">
-            <input type="checkbox" name="task" value="TTS（音声読み上げ）確認">
-            <span class="task-icon">🔊</span>
-            <div class="task-info">
-              <div class="task-name">TTS（音声読み上げ）確認</div>
-              <div class="task-desc">EPUBを聴いて、音声の読み方を確認した</div>
+          <label class="check-item">
+            <input type="checkbox" name="task" value="TTS（音声読み上げ）の確認">
+            <div>
+              <div class="check-text">🔊 TTS（音声読み上げ）の確認</div>
+              <div class="check-sub">機械音声が正しく読み上げられているか確認する作業</div>
             </div>
           </label>
         </div>
         <div class="error-msg" id="taskErr">完了した作業を1つ以上選んでください</div>
       </div>
 
-      <!-- ファイルアップロード（EFAOurDaisyBilingual実行時のみ表示） -->
-      <div id="fileUploadSection" style="display:none;">
+      <!-- ファイルチェックリスト（DAISY選択時のみ表示） -->
+      <div id="daisyFileSection" style="display:none;">
         <div class="file-checklist">
           <div class="file-checklist-title">
-            📁 Googleドライブへのアップロード確認<br>
-            <span style="font-size:0.77rem;font-weight:400;color:var(--gray);">
-              以下のファイルをすべてアップロードしてからチェックを入れてください
+            ✅ アップロード必須ファイルの確認<br>
+            <span style="font-weight:400;font-size:0.76rem;">
+              以下のファイルをすべてGoogleドライブにアップロードしてから、チェックを入れてください
             </span>
           </div>
-          <div class="file-check-item">
-            <input type="checkbox" id="fc1"> EPUBファイル × 4種類（アプリが自動生成します）
-          </div>
-          <div class="file-check-item">
-            <input type="checkbox" id="fc2"> _books_import.tsv（アプリが自動生成するファイル）
-          </div>
-          <div class="file-check-item">
-            <input type="checkbox" id="fc3"> _classify.json（削除禁止・アプリが自動生成）
-          </div>
-          <div class="file-check-item">
-            <input type="checkbox" id="fc4"> _proper_nouns.json（削除禁止・アプリが自動生成）
-          </div>
+          <div class="file-check-row"><input type="checkbox" id="fc1"><span>EPUBファイル × 4種類（やさしい日本語・標準・ひらがな・母語）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc2"><span>_books_import.tsv（ライブラリー登録用ファイル）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc3"><span>_classify.json（分類情報ファイル ※絶対に削除しないでください）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc4"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）</span></div>
         </div>
-        <div class="tip-box">
-          <div class="tip-box-title">📂 ファイルのアップロード方法</div>
-          <div class="tip-step"><span class="tip-num">1</span>下の「Googleドライブを開く」ボタンを押す（別タブで開きます）</div>
-          <div class="tip-step"><span class="tip-num">2</span>アプリが出力したフォルダを開き、ファイルをすべて選択（Ctrl+A）</div>
-          <div class="tip-step"><span class="tip-num">3</span>選択したファイルをGoogleドライブにドラッグ＆ドロップ</div>
-          <div class="tip-step"><span class="tip-num">4</span>このタブに戻って、上のチェックを入れる</div>
-          <button class="drive-link-btn" onclick="openDriveFolder()">
-            📂 Googleドライブを開く（別タブ）
-          </button>
+        <div class="warn-box">
+          💡 <strong>アップロードの方法</strong><br>
+          ① ファイルをすべて選択（Ctrl+A キー）<br>
+          ② 選択したままGoogleドライブにドラッグ＆ドロップ<br>
+          ③ 「フォルダにアップロード」を選択<br><br>
+          ⚠️ JSONファイル（_classify.json等）を削除・移動しないでください。次の作業に必要です。
         </div>
       </div>
 
+      <!-- Gドライブ誘導ボタン（予約時のフォルダURL） -->
+      <div id="folderLinkSection" style="display:none; margin-bottom:14px;">
+        <a id="folderLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="folder-btn">
+          📁 Googleドライブの作業フォルダを開く
+        </a>
+        <p class="hint">↑ このボタンを押してファイルをアップロードしてから、下の報告を送信してください</p>
+      </div>
+
       <div class="field">
-        <label class="field-label" for="notes">気づいたこと・特記事項<span class="sub">任意</span></label>
-        <textarea id="notes" placeholder="作業中に気づいたことがあれば書いてください。（例：P12の音声がおかしい　など）"></textarea>
+        <label class="field-label" for="notes">気になったこと・特記事項<span class="opt">（任意）</span></label>
+        <textarea id="notes" placeholder="作業中に気になったこと、うまくいかなかったこと、エラーが出た場合は内容などを書いてください。"></textarea>
       </div>
-      <div class="btn-row">
-        <button class="back-btn" onclick="goBack('sec2')">← 戻る</button>
-        <button class="submit-btn" id="completeBtnEl" onclick="submitComplete()">
-          <span id="completeBtnText">完了報告を送信 →</span>
-        </button>
-      </div>
+      <button class="btn-primary" onclick="submitComplete()">
+        <span id="completeBtnText">完了報告を送信する →</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ── Step 3C：サポート依頼 ── -->
+<!-- ══ STEP 3C：エラー報告 ══ -->
 <div class="section" id="sec3c">
   <div class="card fade-in">
-    <div class="card-header" style="background:linear-gradient(135deg,#C0392B,#922B21);">
-      <span class="header-icon">🆘</span>
-      <div>
-        <span class="step-badge">STEP 3</span>
-        <h2>困っています・エラーを報告する</h2>
-      </div>
+    <div class="card-header" style="background:linear-gradient(135deg,#c0392b,#922b21);">
+      <span class="step-no">STEP 3</span>
+      <h2>🆘 エラー・困っていることを報告する</h2>
     </div>
     <div class="card-body">
-      <!-- 自己解決チェックリスト -->
-      <div class="warn-box">
-        ⚠️ <strong>まず以下を確認してみてください</strong><br>
-        多くの場合、これで解決します！
+      <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
+
+      <div class="tip-box">
+        💡 <strong>報告前に確認してください</strong><br>
+        問題の種類を選ぶと、よくある解決方法が表示されます。<br>
+        それで解決しない場合はそのまま送信してください。
       </div>
-      <div class="self-check-list">
-        <label class="self-check-item" onclick="this.classList.toggle('checked')">
-          <input type="checkbox" class="self-check"> アプリを一度閉じて、再起動してみた
-        </label>
-        <label class="self-check-item" onclick="this.classList.toggle('checked')">
-          <input type="checkbox" class="self-check"> ファイル名に日本語・スペースが入っていないか確認した
-        </label>
-        <label class="self-check-item" onclick="this.classList.toggle('checked')">
-          <input type="checkbox" class="self-check">
-          マニュアルのFAQセクションを確認した
-          （<a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer" style="color:var(--blue);">マニュアルを開く</a>）
-        </label>
-      </div>
-      <p style="font-size:0.8rem;color:var(--gray);margin-bottom:16px;">↑ 上記を試しても解決しない場合は、以下のフォームで報告してください。</p>
 
       <div class="field">
-        <label class="field-label" for="helpBook">どの書籍で起きていますか？</label>
+        <label class="field-label" for="helpBook">どの書籍の作業中ですか？<span class="opt">（任意）</span></label>
         <select id="helpBook">
-          <option value="">-- 選んでください（わからない場合は選ばなくてOK）--</option>
-          <option value="不明">わからない</option>
+          <option value="">-- 選んでください（わからない場合は空欄でOK）--</option>
+          <option value="書籍名がわからない">書籍名がわからない</option>
         </select>
       </div>
 
       <div class="field">
-        <label class="field-label">問題の種類 <span class="req">必須</span></label>
-        <div class="problem-group">
-          <div class="problem-card" onclick="selectProblem('アプリが起動しない', this)">
-            <input type="radio" name="problem" value="アプリが起動しない">
-            <span class="problem-icon">🚫</span>
-            <span class="problem-name">アプリが起動しない・開けない</span>
+        <label class="field-label">どんな問題が起きていますか？<span class="req">（必須）</span></label>
+        <div class="choice-list" id="problemList">
+          <div class="choice-item" onclick="selectProblem('アプリが起動しない（開かない）', this)">
+            <div class="choice-icon">🚫</div>
+            <div>
+              <div class="choice-title">アプリが起動しない（開かない）</div>
+              <div class="choice-sub">EFATranslatorやEFAOurDaisyBilingualが起動しない</div>
+            </div>
           </div>
-          <div class="problem-card" onclick="selectProblem('翻訳・変換でエラーが出た', this)">
-            <input type="radio" name="problem" value="翻訳・変換でエラーが出た">
-            <span class="problem-icon">⚠️</span>
-            <span class="problem-name">EFATranslator / EFAOurDaisyBilingual でエラーが出た</span>
+          <div class="choice-item" onclick="selectProblem('エラーメッセージが出た', this)">
+            <div class="choice-icon">⚠️</div>
+            <div>
+              <div class="choice-title">エラーメッセージが出た</div>
+              <div class="choice-sub">翻訳・変換の途中でエラーが表示された</div>
+            </div>
           </div>
-          <div class="problem-card" onclick="selectProblem('ファイルが見つからない', this)">
-            <input type="radio" name="problem" value="ファイルが見つからない">
-            <span class="problem-icon">🔍</span>
-            <span class="problem-name">ファイルが見つからない・消えた</span>
+          <div class="choice-item" onclick="selectProblem('ファイルが見つからない・消えた', this)">
+            <div class="choice-icon">🔍</div>
+            <div>
+              <div class="choice-title">ファイルが見つからない・消えた</div>
+              <div class="choice-sub">出力されたはずのファイルが見当たらない</div>
+            </div>
           </div>
-          <div class="problem-card" onclick="selectProblem('Googleドライブにアクセスできない', this)">
-            <input type="radio" name="problem" value="Googleドライブにアクセスできない">
-            <span class="problem-icon">☁️</span>
-            <span class="problem-name">Googleドライブが開けない・アクセスできない</span>
+          <div class="choice-item" onclick="selectProblem('Googleドライブにアクセスできない', this)">
+            <div class="choice-icon">☁️</div>
+            <div>
+              <div class="choice-title">Googleドライブにアクセスできない</div>
+              <div class="choice-sub">フォルダが開けない・アップロードできない</div>
+            </div>
           </div>
-          <div class="problem-card" onclick="selectProblem('その他', this)">
-            <input type="radio" name="problem" value="その他">
-            <span class="problem-icon">❓</span>
-            <span class="problem-name">その他・うまく説明できない</span>
+          <div class="choice-item" onclick="selectProblem('操作方法がわからない', this)">
+            <div class="choice-icon">❓</div>
+            <div>
+              <div class="choice-title">操作方法がわからない</div>
+              <div class="choice-sub">どうすれば良いかわからない</div>
+            </div>
+          </div>
+          <div class="choice-item" onclick="selectProblem('アプリの深刻なバグ・改善提案', this)">
+            <div class="choice-icon">🐛</div>
+            <div>
+              <div class="choice-title">アプリの深刻なバグ・改善提案</div>
+              <div class="choice-sub">全員に影響する問題、または改善したい機能がある</div>
+            </div>
           </div>
         </div>
         <div class="error-msg" id="problemErr">問題の種類を選んでください</div>
       </div>
 
-      <div class="field">
-        <label class="field-label" for="helpDetail">エラーの内容・状況を教えてください <span class="req">必須</span></label>
-        <div class="tip-box" style="margin-bottom:12px;">
-          <div class="tip-box-title">📸 エラー画面のスクリーンショットの撮り方</div>
-          <div class="tip-step"><span class="tip-num">1</span>キーボードの「Windowsキー」＋「Shift」＋「S」を同時に押す</div>
-          <div class="tip-step"><span class="tip-num">2</span>画面が暗くなったら、エラーが出ている部分をマウスでドラッグして囲む</div>
-          <div class="tip-step"><span class="tip-num">3</span>撮れたら「クリップボードにコピーされました」と出る</div>
-          <div class="tip-step"><span class="tip-num">4</span>エラーメッセージの文字は、そのままコピーして下の欄に貼り付けてください（Ctrl+V）</div>
-        </div>
-        <textarea id="helpDetail"
-          placeholder="エラーメッセージや状況をここに貼り付けてください。&#10;&#10;例：&#10;「EFATranslatorを実行したら『ModuleNotFoundError』というエラーが出た」&#10;「Googleドライブを開こうとしたら真っ白な画面になった」&#10;&#10;スクリーンショットの文字もコピーして貼り付けてOKです。"></textarea>
-        <div class="error-msg" id="helpDetailErr">状況を入力してください</div>
+      <!-- FAQ自動回答（インライン表示） -->
+      <div class="faq-box" id="faqBox">
+        <h4>💡 まずこれを試してみてください</h4>
+        <div id="faqContent"></div>
+        <p style="margin-top:12px;font-size:0.8rem;">
+          ✅ 上記で解決した場合は送信不要です。<br>
+          解決しない場合は、下にエラーの詳細を入力して送信してください。
+        </p>
       </div>
 
-      <div class="btn-row">
-        <button class="back-btn" onclick="goBack('sec2')">← 戻る</button>
-        <button class="submit-btn submit-btn-red" onclick="submitHelp()">
-          <span id="helpBtnText">報告を送信する →</span>
-        </button>
+      <!-- スクリーンショット -->
+      <div class="field">
+        <label class="field-label">エラー画面のスクリーンショット<span class="opt">（あれば貼り付けてください）</span></label>
+        <div class="tip-box" style="margin-bottom:10px;">
+          📸 <strong>スクリーンショットの撮り方（Windows）</strong><br>
+          ① キーボードの「Windowsキー」＋「Shift」＋「S」を同時に押す<br>
+          ② エラー画面をドラッグで囲む<br>
+          ③ 下の枠の中で「Ctrl」＋「V」を押して貼り付ける<br><br>
+          📸 <strong>スクリーンショットの撮り方（Mac）</strong><br>
+          ① 「Command」＋「Shift」＋「4」を同時に押す<br>
+          ② エラー画面をドラッグで囲む<br>
+          ③ 下の枠の中で「Command」＋「V」を押して貼り付ける
+        </div>
+        <div class="ss-zone" id="ssZone" onclick="document.getElementById('ssFile').click()">
+          <div class="ss-zone-icon">📋</div>
+          <div class="ss-zone-text">
+            ここをクリックして画像を選ぶか<br>
+            <strong>Ctrl+V（Mac：Command+V）</strong> で貼り付けられます
+          </div>
+          <img class="ss-preview" id="ssPreview" alt="スクリーンショット">
+        </div>
+        <input type="file" id="ssFile" accept="image/*" style="display:none;">
+        <p class="hint">※スクリーンショットは省略しても送信できます</p>
       </div>
+
+      <div class="field">
+        <label class="field-label" for="helpDetail">エラーの状況を詳しく教えてください<span class="req">（必須）</span></label>
+        <textarea id="helpDetail" placeholder="【記入例】&#10;・どの作業をしていたとき？（例：EFATranslatorを実行しようとしたとき）&#10;・どんなメッセージが出た？（できればそのままコピーして貼り付けてください）&#10;・何度試してもなりますか？&#10;&#10;エラーメッセージはそのままコピー（Ctrl+C）して貼り付けると伝わりやすいです。"></textarea>
+        <div class="error-msg" id="helpDetailErr">状況の詳細を入力してください</div>
+      </div>
+
+      <button class="btn-primary red-btn" onclick="submitHelp()">
+        <span id="helpBtnText">報告を送信する →</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ── 完了画面 ── -->
+<!-- ══ 完了カード ══ -->
 <div class="complete-card" id="completeCard">
   <div class="complete-icon" id="completeIcon">✅</div>
   <div class="complete-title" id="completeTitle">送信完了！</div>
   <div class="complete-msg" id="completeMsg"></div>
   <div class="next-steps" id="nextSteps"></div>
-  <div id="anotherBtnWrap"></div>
 </div>
 
 <script>
@@ -884,95 +689,206 @@ var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSY
 var FORM_TOKEN = 'efa2026daisy';
 var MANUAL_URL = 'https://efajapan.github.io/ourdaisy-bilingual-updates/';
 
+// ── FAQ内容 ──────────────────────────────────────────
+var FAQ_CONTENT = {
+  'アプリが起動しない（開かない）':
+    '① パソコンを再起動して、もう一度アプリを開いてみてください。<br>' +
+    '② 画面下のタスクバーにアプリが隠れていないか確認してください。<br>' +
+    '③ アプリのアイコンを右クリック→「管理者として実行」を試してください。',
+
+  'エラーメッセージが出た':
+    '以下を確認してください：<br>' +
+    '① ファイル名に日本語・スペースが入っていませんか？（例：「作業ファイル.docx」→NG）<br>' +
+    '　 ファイル名は半角英数字のみにしてください。<br>' +
+    '② Wordファイルが別のウィンドウで開いたままになっていませんか？<br>' +
+    '　 Wordをすべて閉じてから再実行してください。<br>' +
+    '③ _classify.jsonや_proper_nouns.jsonを削除・移動していませんか？<br>' +
+    '　 出力フォルダのファイルはすべてそのままにしてください。',
+
+  'ファイルが見つからない・消えた':
+    '① アプリの「出力先フォルダ」の設定を確認してください。<br>' +
+    '② デスクトップや「ドキュメント」フォルダを確認してください。<br>' +
+    '③ Windowsの検索（Windowsキー+S）でファイル名を入力して探してください。<br>' +
+    '　 上記で見つからない場合は、アプリを再実行してみてください。',
+
+  'Googleドライブにアクセスできない':
+    '① ブラウザでGoogleドライブを直接開いてください。<br>' +
+    '　 → <a href="https://drive.google.com" target="_blank" style="color:var(--blue);">https://drive.google.com</a><br>' +
+    '② Googleアカウントにログインしているか確認してください。<br>' +
+    '③ EFAから届いたメールのフォルダリンクをブラウザに直接貼り付けてください。'
+};
+
 // ── 状態管理 ──────────────────────────────────────────
-var state = { email:'', memberId:'', name:'', type:'', action:'', problem:'' };
-var btnOriginalText = {};
+var state = {
+  email:          '',
+  memberId:       '',
+  name:           '',
+  type:           '',
+  action:         '',
+  problem:        '',
+  screenshotUrl:  '',
+  screenshotB64:  '',
+  assignedBooks:  [],
+  fetchedAssigned: false
+};
 
 // ── 初期化 ────────────────────────────────────────────
 window.addEventListener('load', function() {
-  loadEmailDraft();
-  loadBookList();
-  setupTaskListeners();
+  loadEmailFromStorage();
+  loadAvailableBooks();
+  setupListeners();
+  setupScreenshotPaste();
 });
 
-// ── メール自動入力 ─────────────────────────────────────
-function loadEmailDraft() {
+// ── メールをlocalStorageから復元 ─────────────────────
+function loadEmailFromStorage() {
   try {
     var saved = localStorage.getItem('ourdaisy_email');
     if (saved) document.getElementById('email').value = saved;
   } catch(e) {}
 }
-function saveEmailDraft() {
-  try { localStorage.setItem('ourdaisy_email', state.email); } catch(e) {}
+
+function saveEmailToStorage(email) {
+  try { localStorage.setItem('ourdaisy_email', email); } catch(e) {}
 }
 
-// ── 書籍リスト読み込み ────────────────────────────────
-function loadBookList() {
-  // 予約用（空き書籍）
-  gasPost({ action_type:'get_books', token:FORM_TOKEN }, function(res) {
+// ── 空き書籍リスト読み込み ────────────────────────────
+function loadAvailableBooks() {
+  gasCall({ action_type: 'get_books', token: FORM_TOKEN }, function(res) {
     var sel = document.getElementById('bookSelect');
     sel.options[0].textContent = '-- 書籍を選んでください --';
-    if (res.status==='ok' && res.books) {
-      res.books.forEach(function(b) {
-        var opt = document.createElement('option');
-        opt.value = b.id; opt.textContent = b.label;
-        sel.appendChild(opt);
-      });
-    }
-    // helpBookにも追加
-    var helpSel = document.getElementById('helpBook');
-    if (res.status==='ok' && res.books) {
-      res.books.forEach(function(b) {
-        var opt = document.createElement('option');
-        opt.value = b.id; opt.textContent = b.label;
-        helpSel.appendChild(opt);
-      });
-    }
-  });
-}
-
-// 担当済み書籍リスト読み込み（完了報告用）
-function loadAssignedBooks() {
-  if (!state.email) return;
-  var sel = document.getElementById('completeBook');
-  sel.innerHTML = '<option value="">読み込み中...</option>';
-  gasPost({ action_type:'get_books', list_type:'assigned', email:state.email, token:FORM_TOKEN }, function(res) {
-    sel.innerHTML = '<option value="">-- 書籍を選んでください --</option>';
-    if (res.status==='ok' && res.books && res.books.length > 0) {
+    if (res.status === 'ok' && res.books && res.books.length > 0) {
       res.books.forEach(function(b) {
         var opt = document.createElement('option');
         opt.value = b.id; opt.textContent = b.label;
         sel.appendChild(opt);
       });
     } else {
-      sel.innerHTML = '<option value="">担当中の書籍がありません</option>';
+      sel.options[0].textContent = '-- 現在予約可能な書籍がありません --';
+    }
+    // helpBookにも追加
+    var hSel = document.getElementById('helpBook');
+    if (res.status === 'ok' && res.books) {
+      res.books.forEach(function(b) {
+        var opt = document.createElement('option');
+        opt.value = b.id; opt.textContent = b.label;
+        hSel.appendChild(opt);
+      });
     }
   });
 }
 
-// ── タスク選択でファイルアップロードセクションを表示 ─
-function setupTaskListeners() {
-  document.querySelectorAll('[name="task"]').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-      var ourdaisy = document.querySelector('[value="EFAOurDaisyBilingual（EPUB生成アプリ）の実行"]');
-      document.getElementById('fileUploadSection').style.display =
-        (ourdaisy && ourdaisy.checked) ? 'block' : 'none';
-    });
+// ── 担当書籍リスト読み込み ────────────────────────────
+function loadAssignedBooks() {
+  if (state.fetchedAssigned) { renderAssignedBooks(); return; }
+  gasCall({ action_type: 'get_assigned_books', email: state.email, token: FORM_TOKEN }, function(res) {
+    state.fetchedAssigned = true;
+    if (res.status === 'ok' && res.books) {
+      state.assignedBooks = res.books;
+    } else {
+      state.assignedBooks = [];
+    }
+    renderAssignedBooks();
   });
 }
 
-function toggleTask(el) {
-  var cb = el.querySelector('input[type="checkbox"]');
-  if (cb) el.classList.toggle('checked', cb.checked);
+function renderAssignedBooks() {
+  var sel = document.getElementById('completeBook');
+  sel.innerHTML = '';
+  var def = document.createElement('option');
+  def.value = ''; def.textContent = '-- 書籍を選んでください --';
+  sel.appendChild(def);
+
+  if (state.assignedBooks.length === 0) {
+    document.getElementById('noBooksMsg').style.display = 'block';
+    sel.style.display = 'none';
+  } else {
+    document.getElementById('noBooksMsg').style.display = 'none';
+    sel.style.display = 'block';
+    state.assignedBooks.forEach(function(b) {
+      var opt = document.createElement('option');
+      opt.value = b.id; opt.textContent = b.label;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+// ── イベント設定 ──────────────────────────────────────
+function setupListeners() {
+  // チェックボックスのビジュアル更新
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      var item = this.closest('.check-item');
+      if (item) item.classList.toggle('checked', this.checked);
+    });
+  });
+  // DAISYアプリ選択でファイルチェックリスト表示
+  document.getElementById('taskDaisy').addEventListener('change', function() {
+    document.getElementById('daisyFileSection').style.display = this.checked ? 'block' : 'none';
+  });
+  // スクショファイル入力
+  document.getElementById('ssFile').addEventListener('change', function(e) {
+    if (e.target.files[0]) readImageFile(e.target.files[0]);
+  });
+}
+
+// ── スクショ貼り付け設定 ──────────────────────────────
+function setupScreenshotPaste() {
+  document.addEventListener('paste', function(e) {
+    var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') === 0) {
+        readImageFile(items[i].getAsFile());
+        break;
+      }
+    }
+  });
+}
+
+function readImageFile(file) {
+  if (!file) return;
+  try {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var maxW   = 800;
+          var scale  = Math.min(1, maxW / img.width);
+          canvas.width  = img.width * scale;
+          canvas.height = img.height * scale;
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          state.screenshotB64 = canvas.toDataURL('image/jpeg', 0.7);
+          showScreenshotPreview(state.screenshotB64);
+        };
+        img.src = e.target.result;
+      } catch(err) { console.error('画像処理エラー:', err); }
+    };
+    reader.readAsDataURL(file);
+  } catch(err) { console.error('ファイル読み込みエラー:', err); }
+}
+
+function showScreenshotPreview(dataUrl) {
+  var zone    = document.getElementById('ssZone');
+  var preview = document.getElementById('ssPreview');
+  preview.src     = dataUrl;
+  preview.style.display = 'block';
+  zone.classList.add('has-image');
+  zone.querySelector('.ss-zone-text').textContent = '✅ 画像が設定されました（クリックで変更）';
 }
 
 // ── プログレス更新 ────────────────────────────────────
 function setProgress(step) {
-  for (var i=1; i<=3; i++) {
-    var el = document.getElementById('prog'+i);
-    if (!el) continue;
-    el.className = 'progress-step' +
-      (i < step ? ' done' : '') + (i===step ? ' active' : '');
+  for (var i = 1; i <= 3; i++) {
+    var circle = document.getElementById('pc' + i);
+    var line   = document.getElementById('pl' + i);
+    if (circle) {
+      circle.className = 'prog-circle' +
+        (i < step ? ' done' : '') + (i === step ? ' active' : '');
+      circle.textContent = i < step ? '✓' : String(i);
+    }
+    if (line) line.className = 'prog-line' + (i < step ? ' done' : '');
   }
 }
 
@@ -990,9 +906,15 @@ function showSection(id) {
 }
 
 // ── Backボタン ────────────────────────────────────────
-function goBack(target) {
-  setProgress(target === 'sec1' ? 1 : 2);
-  showSection(target);
+function goBack(targetSection) {
+  if (targetSection === 'sec2') {
+    setProgress(2);
+    // sec2のselectedをリセット
+    document.querySelectorAll('#sec2 .choice-item').forEach(function(el) { el.classList.remove('selected'); });
+  } else if (targetSection === 'sec1') {
+    setProgress(1);
+  }
+  showSection(targetSection);
 }
 
 // ── Step 1：メール照合 ───────────────────────────────
@@ -1003,12 +925,12 @@ function checkEmail() {
   }
   hideErr('emailErr');
   state.email = email;
-  saveEmailDraft();
+  saveEmailToStorage(email);
 
   setBtnLoading('checkBtnText', true);
-  gasPost({ action_type:'member_check', email:email, token:FORM_TOKEN }, function(res) {
+  gasCall({ action_type: 'member_check', email: email, token: FORM_TOKEN }, function(res) {
     setBtnLoading('checkBtnText', false);
-    if (res.status==='ok') {
+    if (res.status === 'ok') {
       if (res.registered) {
         state.memberId = res.memberId;
         state.name     = res.name;
@@ -1019,7 +941,7 @@ function checkEmail() {
         showSection('sec1b');
       }
     } else {
-      alert('エラーが発生しました。しばらく後に再試行してください。\n' + (res.message||''));
+      alert('エラーが発生しました。\n' + (res.message || 'しばらく後に再試行してください。'));
     }
   });
 }
@@ -1027,33 +949,34 @@ function checkEmail() {
 function showWelcome() {
   setProgress(2);
   document.getElementById('welcomeMsg').textContent =
-    'こんにちは、' + state.name + ' さん！（担当者ID：' + state.memberId + '）';
+    state.name + ' さん、ようこそ！（担当者ID：' + state.memberId + '）';
   showSection('sec2');
 }
 
 // ── Step 1b：新規登録 ────────────────────────────────
-function toggleType(t, card) {
-  var cb = document.getElementById('type'+t);
-  if (!cb) return;
-  card.classList.toggle('checked', cb.checked);
-}
-
 function register() {
   var name  = document.getElementById('name').value.trim();
-  var types = ['A','B','C'].filter(function(t){ return document.getElementById('type'+t).checked; });
+  var types = ['A','B','C'].filter(function(t) {
+    return document.getElementById('type' + t).checked;
+  });
   var valid = true;
-  if (!name) { showErr('nameErr'); valid=false; } else hideErr('nameErr');
-  if (!types.length) { showErr('typeErr'); valid=false; } else hideErr('typeErr');
+  if (!name)        { showErr('nameErr'); valid = false; } else hideErr('nameErr');
+  if (!types.length){ showErr('typeErr'); valid = false; } else hideErr('typeErr');
   if (!valid) return;
 
   setBtnLoading('regBtnText', true);
-  gasPost({ action_type:'register', email:state.email, name:name, type:'volunteer', token:FORM_TOKEN }, function(res) {
+  gasCall({
+    action_type: 'register', email: state.email,
+    name: name, type: 'volunteer', token: FORM_TOKEN
+  }, function(res) {
     setBtnLoading('regBtnText', false);
-    if (res.status==='ok') {
-      state.memberId=res.memberId; state.name=name; state.type='volunteer';
+    if (res.status === 'ok') {
+      state.memberId = res.memberId;
+      state.name     = name;
+      state.type     = 'volunteer';
       showWelcome();
     } else {
-      alert('登録に失敗しました。\n'+(res.message||''));
+      alert('登録に失敗しました。\n' + (res.message || ''));
     }
   });
 }
@@ -1061,22 +984,36 @@ function register() {
 // ── Step 2：アクション選択 ───────────────────────────
 function selectAction(action, el) {
   state.action = action;
-  document.querySelectorAll('#sec2 .action-card').forEach(function(c){ c.classList.remove('selected'); });
+  document.querySelectorAll('#sec2 .choice-item').forEach(function(e) { e.classList.remove('selected'); });
   el.classList.add('selected');
   setTimeout(function() {
     setProgress(3);
-    if (action==='reserve')  showSection('sec3a');
-    if (action==='complete') { loadAssignedBooks(); showSection('sec3b'); }
-    if (action==='help')     showSection('sec3c');
-  }, 180);
+    if (action === 'reserve') {
+      showSection('sec3a');
+    } else if (action === 'complete') {
+      showSection('sec3b');
+      loadAssignedBooks();
+    } else if (action === 'help') {
+      showSection('sec3c');
+    }
+  }, 200);
 }
 
 // ── 問題種別選択 ──────────────────────────────────────
-function selectProblem(prob, el) {
-  state.problem = prob;
-  document.querySelectorAll('#sec3c .problem-card').forEach(function(c){ c.classList.remove('selected'); });
+function selectProblem(problem, el) {
+  state.problem = problem;
+  document.querySelectorAll('#problemList .choice-item').forEach(function(e) { e.classList.remove('selected'); });
   el.classList.add('selected');
   hideErr('problemErr');
+  // FAQ自動回答表示
+  var faqBox  = document.getElementById('faqBox');
+  var faqContent = document.getElementById('faqContent');
+  if (FAQ_CONTENT[problem]) {
+    faqContent.innerHTML = FAQ_CONTENT[problem];
+    faqBox.classList.add('show');
+  } else {
+    faqBox.classList.remove('show');
+  }
 }
 
 // ── Step 3A：予約送信 ────────────────────────────────
@@ -1086,160 +1023,173 @@ function submitReserve() {
   hideErr('bookErr');
 
   setBtnLoading('reserveBtnText', true);
-  gasPost({ action_type:'reserve', email:state.email, member_id:state.memberId, book_id:bookId, token:FORM_TOKEN }, function(res) {
+  gasCall({
+    action_type: 'reserve', email: state.email,
+    member_id: state.memberId, book_id: bookId, token: FORM_TOKEN
+  }, function(res) {
     setBtnLoading('reserveBtnText', false);
-    if (res.status==='ok') { showComplete('reserve', res); }
-    else { alert('エラー: '+(res.message||'送信に失敗しました')); }
+    if (res.status === 'ok') {
+      // 予約完了後は完了画面のみ（STEP2には戻らない）
+      showReserveComplete(res);
+    } else {
+      alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
+    }
   });
 }
 
-// Driveフォルダを開く
-function openDriveFolder() {
-  // GASから返ってきたfolderUrlを使う（state.folderUrlに保存）
-  var url = state.folderUrl || 'https://drive.google.com';
-  window.open(url, '_blank');
+function showReserveComplete(res) {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  var card = document.getElementById('completeCard');
+  document.getElementById('completeIcon').textContent  = '📖';
+  document.getElementById('completeTitle').textContent = '予約完了！';
+  document.getElementById('completeMsg').textContent   =
+    res.message || '書籍の予約が完了しました。';
+  document.getElementById('nextSteps').innerHTML =
+    '<h3>📬 これから行うこと</h3>' +
+    '<div class="next-step-item"><span class="step-num">1</span>登録したメールアドレスに確認メールが届きます。作業フォルダのURLが記載されています。</div>' +
+    '<div class="next-step-item"><span class="step-num">2</span>マニュアルをダウンロードして、作業方法を確認してください。<br>' +
+    '<a href="' + MANUAL_URL + '" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:0.8rem;">' + MANUAL_URL + '</a></div>' +
+    '<div class="next-step-item"><span class="step-num">3</span>作業が完了したら、このフォームにアクセスして「作業完了を報告する」を選んでください。</div>' +
+    (res.deadline ? '<div class="next-step-item"><span class="step-num">⏰</span>期限：<strong>' + res.deadline + '</strong></div>' : '');
+  card.style.display = 'block';
+  card.classList.add('fade-in');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // 担当書籍キャッシュをリセット（次回ロード時に再取得）
+  state.fetchedAssigned = false;
 }
 
 // ── Step 3B：完了報告送信 ────────────────────────────
 function submitComplete() {
   var bookId = document.getElementById('completeBook').value;
-  var tasks  = Array.from(document.querySelectorAll('[name="task"]:checked')).map(function(cb){ return cb.value; });
+  var tasks  = Array.from(document.querySelectorAll('[name="task"]:checked')).map(function(cb) { return cb.value; });
   var notes  = document.getElementById('notes').value;
   var valid  = true;
-
-  if (!bookId) { showErr('completeBookErr'); valid=false; } else hideErr('completeBookErr');
-  if (!tasks.length) { showErr('taskErr'); valid=false; } else hideErr('taskErr');
-
-  // EFAOurDaisyBilingual実行時はファイルチェック必須
-  var ourdaisyDone = tasks.some(function(t){ return t.indexOf('EFAOurDaisyBilingual') >= 0; });
-  if (ourdaisyDone) {
-    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id){ return document.getElementById(id).checked; });
+  if (!bookId)    { showErr('completeBookErr'); valid = false; } else hideErr('completeBookErr');
+  if (!tasks.length) { showErr('taskErr'); valid = false; } else hideErr('taskErr');
+  // DAISYアプリ実行時はファイルチェック必須
+  if (tasks.some(function(t) { return t.indexOf('EFAOurDaisyBilingual') >= 0; })) {
+    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
+      return document.getElementById(id).checked;
+    });
     if (!allChecked) {
-      alert('すべてのファイルをGoogleドライブにアップロードしてから\nチェックを入れてください。');
+      alert('「EFAOurDaisyBilingual（DAISY図書アプリ）」を選択した場合は、\nすべてのファイルをGoogleドライブにアップロードしてから\nチェックボックスにチェックを入れてください。');
       valid = false;
     }
   }
   if (!valid) return;
 
   setBtnLoading('completeBtnText', true);
-  gasPost({ action_type:'complete', email:state.email, member_id:state.memberId, book_id:bookId, tasks:tasks, notes:notes, token:FORM_TOKEN }, function(res) {
+  gasCall({
+    action_type: 'complete', email: state.email,
+    member_id: state.memberId, book_id: bookId,
+    tasks: tasks, notes: notes, token: FORM_TOKEN
+  }, function(res) {
     setBtnLoading('completeBtnText', false);
-    if (res.status==='ok') { showComplete('complete', res); }
-    else { alert('エラー: '+(res.message||'送信に失敗しました')); }
+    if (res.status === 'ok') {
+      showGenericComplete('✅', '完了報告を送信しました！',
+        res.message || '完了報告を受け付けました。',
+        [
+          '確認メールが届きます。ご確認ください。',
+          'ファイルを確認後、次の工程に進みます（最大1時間以内）。',
+          '次の書籍を担当する場合は、再度このフォームから予約してください。'
+        ]
+      );
+    } else {
+      alert('エラー：' + (res.message || '送信に失敗しました。'));
+    }
   });
 }
 
-// ── Step 3C：サポート依頼送信 ────────────────────────
+// ── Step 3C：エラー報告送信 ──────────────────────────
 function submitHelp() {
   var bookId  = document.getElementById('helpBook').value;
+  var problem = state.problem;
   var detail  = document.getElementById('helpDetail').value.trim();
   var valid   = true;
-  if (!state.problem) { showErr('problemErr'); valid=false; } else hideErr('problemErr');
-  if (!detail) { showErr('helpDetailErr'); valid=false; } else hideErr('helpDetailErr');
+  if (!problem) { showErr('problemErr'); valid = false; } else hideErr('problemErr');
+  if (!detail)  { showErr('helpDetailErr'); valid = false; } else hideErr('helpDetailErr');
   if (!valid) return;
 
   setBtnLoading('helpBtnText', true);
-  gasPost({ action_type:'help', email:state.email, member_id:state.memberId, book_id:bookId||'不明', problem_type:state.problem, details:detail, token:FORM_TOKEN }, function(res) {
+
+  // スクショがある場合は先に保存してからエラー報告送信
+  if (state.screenshotB64) {
+    gasCall({
+      action_type: 'save_screenshot', image: state.screenshotB64,
+      book_id: bookId || 'unknown', token: FORM_TOKEN
+    }, function(ssRes) {
+      if (ssRes.status === 'ok' && ssRes.url) {
+        state.screenshotUrl = ssRes.url;
+      }
+      doSubmitHelp(bookId, problem, detail);
+    });
+  } else {
+    doSubmitHelp(bookId, problem, detail);
+  }
+}
+
+function doSubmitHelp(bookId, problem, detail) {
+  gasCall({
+    action_type: 'help', email: state.email, member_id: state.memberId,
+    book_id: bookId || '不明', problem_type: problem,
+    details: detail, screenshot_url: state.screenshotUrl, token: FORM_TOKEN
+  }, function(res) {
     setBtnLoading('helpBtnText', false);
-    if (res.status==='ok') { showComplete('help', res); }
-    else { alert('エラー: '+(res.message||'送信に失敗しました')); }
+    if (res.status === 'ok') {
+      var isFaq = res.triage && res.triage.indexOf('FAQ') === 0;
+      showGenericComplete(
+        isFaq ? '💡' : '🆘',
+        isFaq ? 'よくある解決方法をメールでお送りしました！' : 'エラー報告を受け付けました！',
+        res.message || 'ご報告ありがとうございます。',
+        isFaq
+          ? ['登録メールに解決方法が届きます。まずお試しください。',
+             '解決しない場合は、返信メールにご連絡ください。']
+          : ['ご報告ありがとうございます。',
+             'EFAで内容を確認します。深刻な問題の場合は折り返しご連絡します。']
+      );
+    } else {
+      alert('エラー：' + (res.message || '送信に失敗しました。'));
+    }
   });
 }
 
-// ── 完了画面表示 ──────────────────────────────────────
-function showComplete(type, res) {
-  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+// ── 汎用完了画面 ──────────────────────────────────────
+function showGenericComplete(icon, title, msg, steps) {
   document.getElementById('progressWrap').style.display = 'none';
-
-  var card  = document.getElementById('completeCard');
-  var icon  = document.getElementById('completeIcon');
-  var title = document.getElementById('completeTitle');
-  var msg   = document.getElementById('completeMsg');
-  var steps = document.getElementById('nextSteps');
-  var btnWrap = document.getElementById('anotherBtnWrap');
-
-  if (type==='reserve') {
-    // folderUrlを保存（Driveボタン用）
-    state.folderUrl = res.folderUrl || '';
-    icon.textContent  = '🎉';
-    title.textContent = '予約完了！';
-    title.style.color = 'var(--blue)';
-    msg.textContent   = '「' + document.getElementById('bookSelect').options[document.getElementById('bookSelect').selectedIndex].text + '」の予約が完了しました。';
-    steps.innerHTML =
-      '<h3>📬 次にやること</h3>' +
-      '<div class="next-step-item"><span class="next-step-num">1</span>確認メールをご確認ください。作業フォルダのURLが記載されています。</div>' +
-      '<div class="next-step-item"><span class="next-step-num">2</span>マニュアルをダウンロードして作業を開始してください。<br><a href="'+MANUAL_URL+'" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:0.8rem;word-break:break-all;">'+MANUAL_URL+'</a></div>' +
-      (res.deadline ? '<div class="next-step-item"><span class="next-step-num">⏰</span>作業期限：'+res.deadline+'</div>' : '');
-    // 予約完了後は「続けて」ボタンを表示しない
-    btnWrap.innerHTML = '';
-
-  } else if (type==='complete') {
-    icon.textContent  = '✅';
-    title.textContent = '完了報告を受け付けました！';
-    title.style.color = 'var(--green)';
-    msg.textContent   = res.message || '完了報告を受け付けました。';
-    steps.innerHTML =
-      '<h3>📬 次にやること</h3>' +
-      '<div class="next-step-item"><span class="next-step-num">1</span>確認メールをご確認ください。</div>' +
-      '<div class="next-step-item"><span class="next-step-num">2</span>ファイルが確認され次第、次のステージに進みます（最大1時間）。</div>';
-    btnWrap.innerHTML = '<button style="margin-top:8px;padding:12px 24px;background:var(--blue-l);color:var(--blue);border:2px solid var(--blue);border-radius:10px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;" onclick="resetAndContinue()">続けて別の作業を報告する</button>';
-
-  } else {
-    icon.textContent  = '📨';
-    title.textContent = 'サポート依頼を受け付けました';
-    title.style.color = 'var(--red)';
-    msg.textContent   = 'マニュアルのFAQセクションもご確認ください。解決しない場合は2週間以内に対応いたします。';
-    steps.innerHTML =
-      '<h3>📬 次にやること</h3>' +
-      '<div class="next-step-item"><span class="next-step-num">1</span>確認メールをご確認ください。</div>' +
-      '<div class="next-step-item"><span class="next-step-num">2</span><a href="'+MANUAL_URL+'" target="_blank" rel="noopener noreferrer" style="color:var(--blue);">マニュアルのFAQセクション</a>も確認してみてください。</div>';
-    btnWrap.innerHTML = '';
-  }
-
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('completeIcon').textContent  = icon;
+  document.getElementById('completeTitle').textContent = title;
+  document.getElementById('completeTitle').style.color = icon === '🆘' ? 'var(--red)' : 'var(--green)';
+  document.getElementById('completeMsg').textContent   = msg;
+  var stepsHtml = '<h3>📬 次にすること</h3>';
+  steps.forEach(function(s, i) {
+    stepsHtml += '<div class="next-step-item"><span class="step-num">' + (i+1) + '</span>' + s + '</div>';
+  });
+  document.getElementById('nextSteps').innerHTML = stepsHtml;
+  var card = document.getElementById('completeCard');
   card.style.display = 'block';
   card.classList.add('fade-in');
-  window.scrollTo({ top:0, behavior:'smooth' });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── 続けて報告する（完了報告のみ） ───────────────────
-function resetAndContinue() {
-  document.getElementById('completeCard').style.display = 'none';
-  document.getElementById('progressWrap').style.display = 'block';
-  state.action=''; state.problem=''; state.folderUrl='';
-  // 入力クリア
-  document.getElementById('bookSelect').value='';
-  document.getElementById('completeBook').innerHTML='<option value="">読み込み中...</option>';
-  document.getElementById('notes').value='';
-  document.getElementById('helpBook').value='';
-  document.getElementById('helpDetail').value='';
-  document.querySelectorAll('[name="task"]').forEach(function(cb){ cb.checked=false; });
-  document.querySelectorAll('[name="problem"]').forEach(function(r){ r.checked=false; });
-  document.querySelectorAll('#sec2 .action-card').forEach(function(el){ el.classList.remove('selected'); });
-  document.querySelectorAll('#sec3c .problem-card').forEach(function(el){ el.classList.remove('selected'); });
-  document.querySelectorAll('#sec3b .task-card').forEach(function(el){ el.classList.remove('checked'); });
-  document.querySelectorAll('.file-check-item input').forEach(function(cb){ cb.checked=false; });
-  document.getElementById('fileUploadSection').style.display='none';
-  document.getElementById('completeTitle').style.color='var(--green)';
-  setProgress(2);
-  showSection('sec2');
-}
-
-// ── GAS GET送信 ───────────────────────────────────────
-function gasPost(data, callback) {
+// ── GAS通信 ──────────────────────────────────────────
+function gasCall(data, callback) {
   var url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
   fetch(url)
-  .then(function(r){ return r.json(); })
-  .then(function(res){ callback(res); })
-  .catch(function(err){
-    console.error('送信エラー:', err);
-    document.querySelectorAll('.submit-btn').forEach(function(b){ b.disabled=false; });
-    callback({ status:'error', message:'ネットワークエラー。接続を確認して再試行してください。' });
+  .then(function(r) { return r.json(); })
+  .then(function(res) { callback(res); })
+  .catch(function(err) {
+    console.error('通信エラー:', err);
+    document.querySelectorAll('.btn-primary').forEach(function(b) { b.disabled = false; });
+    callback({ status: 'error', message: 'ネットワークエラーが発生しました。インターネット接続を確認して再試行してください。' });
   });
 }
 
 // ── ボタンローディング ────────────────────────────────
+var btnOriginalText = {};
 function setBtnLoading(btnTextId, loading) {
-  var el = document.getElementById(btnTextId);
+  var el  = document.getElementById(btnTextId);
   if (!el) return;
   var btn = el.closest('button');
   if (loading) {
@@ -1252,9 +1202,9 @@ function setBtnLoading(btnTextId, loading) {
   }
 }
 
-// ── エラー表示 ────────────────────────────────────────
-function showErr(id){ var el=document.getElementById(id); if(el) el.classList.add('show'); }
-function hideErr(id){ var el=document.getElementById(id); if(el) el.classList.remove('show'); }
+// ── バリデーション補助 ────────────────────────────────
+function showErr(id) { var el = document.getElementById(id); if (el) el.classList.add('show'); }
+function hideErr(id) { var el = document.getElementById(id); if (el) el.classList.remove('show'); }
 </script>
 </body>
 </html>
