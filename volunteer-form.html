@@ -571,14 +571,6 @@ select {
       </div>
 
       <div class="field">
-        <label class="field-label" for="helpBook">どの書籍の作業中ですか？<span class="opt">（任意）</span></label>
-        <select id="helpBook">
-          <option value="">-- 選んでください（わからない場合は空欄でOK）--</option>
-          <option value="書籍名がわからない">書籍名がわからない</option>
-        </select>
-      </div>
-
-      <div class="field">
         <label class="field-label">どんな問題が起きていますか？<span class="req">（必須）</span></label>
         <div class="choice-list" id="problemList">
           <div class="choice-item" onclick="selectProblem('アプリが起動しない（開かない）', this)">
@@ -631,13 +623,20 @@ select {
       <div class="faq-box" id="faqBox">
         <h4>💡 まずこれを試してみてください</h4>
         <div id="faqContent"></div>
-        <p style="margin-top:12px;font-size:0.8rem;">
-          ✅ 上記で解決した場合は送信不要です。<br>
-          解決しない場合は、下にエラーの詳細を入力して送信してください。
-        </p>
+        <div style="margin-top:14px;padding:10px 12px;background:rgba(255,255,255,0.6);border-radius:7px;font-size:0.8rem;">
+          ✅ 上記で解決した場合は、送信不要です。このページを閉じてください。
+        </div>
       </div>
 
-      <!-- スクリーンショット -->
+      <!-- フェーズ区切り -->
+      <div id="reportPhaseDiv" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin:20px 0 16px;">
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+          <div style="background:#C0392B;color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">
+            ↓ 解決しない場合は、ここから報告してください
+          </div>
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+        </div>
       <div class="field">
         <label class="field-label">エラー画面のスクリーンショット<span class="opt">（あれば貼り付けてください）</span></label>
         <div class="tip-box" style="margin-bottom:10px;">
@@ -671,6 +670,7 @@ select {
       <button class="btn-primary red-btn" onclick="submitHelp()">
         <span id="helpBtnText">報告を送信する →</span>
       </button>
+      </div><!-- /reportPhaseDiv -->
     </div>
   </div>
 </div>
@@ -766,15 +766,6 @@ function loadAvailableBooks() {
     } else {
       sel.options[0].textContent = '-- 現在予約可能な書籍がありません --';
     }
-    // helpBookにも追加
-    var hSel = document.getElementById('helpBook');
-    if (res.status === 'ok' && res.books) {
-      res.books.forEach(function(b) {
-        var opt = document.createElement('option');
-        opt.value = b.id; opt.textContent = b.label;
-        hSel.appendChild(opt);
-      });
-    }
   });
 }
 
@@ -825,6 +816,25 @@ function setupListeners() {
   // DAISYアプリ選択でファイルチェックリスト表示
   document.getElementById('taskDaisy').addEventListener('change', function() {
     document.getElementById('daisyFileSection').style.display = this.checked ? 'block' : 'none';
+  });
+  // 完了報告：書籍選択でフォルダURLを取得
+  document.getElementById('completeBook').addEventListener('change', function() {
+    var bookId = this.value;
+    var section = document.getElementById('folderLinkSection');
+    if (!bookId) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    var btn = document.getElementById('folderLinkBtn');
+    btn.textContent = '📁 Googleドライブのフォルダを読み込み中...';
+    btn.href = '#';
+    gasCall({ action_type: 'get_book_folder', book_id: bookId, token: FORM_TOKEN }, function(res) {
+      if (res.status === 'ok' && res.url) {
+        btn.textContent = '📁 Googleドライブの作業フォルダを開く';
+        btn.href = res.url;
+      } else {
+        btn.textContent = '⚠️ フォルダが見つかりません（メールのURLをご確認ください）';
+        btn.href = '#';
+      }
+    });
   });
   // スクショファイル入力
   document.getElementById('ssFile').addEventListener('change', function(e) {
@@ -1008,12 +1018,15 @@ function selectProblem(problem, el) {
   // FAQ自動回答表示
   var faqBox  = document.getElementById('faqBox');
   var faqContent = document.getElementById('faqContent');
+  var reportDiv = document.getElementById('reportPhaseDiv');
   if (FAQ_CONTENT[problem]) {
     faqContent.innerHTML = FAQ_CONTENT[problem];
     faqBox.classList.add('show');
   } else {
     faqBox.classList.remove('show');
   }
+  // 常に報告フェーズを表示（FAQがあっても報告可能）
+  reportDiv.style.display = 'block';
 }
 
 // ── Step 3A：予約送信 ────────────────────────────────
@@ -1047,7 +1060,8 @@ function showReserveComplete(res) {
     res.message || '書籍の予約が完了しました。';
   document.getElementById('nextSteps').innerHTML =
     '<h3>📬 これから行うこと</h3>' +
-    '<div class="next-step-item"><span class="step-num">1</span>登録したメールアドレスに確認メールが届きます。作業フォルダのURLが記載されています。</div>' +
+    (res.folderUrl ? '<div class="next-step-item" style="margin-bottom:10px;"><span class="step-num">📁</span><div style="width:100%;"><strong>Googleドライブで書籍を確認・ダウンロードする</strong><br><a href="' + res.folderUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:6px;padding:8px 16px;background:var(--blue);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;">📁 Googleドライブを開く</a></div></div>' : '') +
+    '<div class="next-step-item"><span class="step-num">1</span>登録したメールアドレスに確認メールが届きます。フォルダURLも記載されています。</div>' +
     '<div class="next-step-item"><span class="step-num">2</span>マニュアルをダウンロードして、作業方法を確認してください。<br>' +
     '<a href="' + MANUAL_URL + '" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:0.8rem;">' + MANUAL_URL + '</a></div>' +
     '<div class="next-step-item"><span class="step-num">3</span>作業が完了したら、このフォームにアクセスして「作業完了を報告する」を選んでください。</div>' +
@@ -1103,7 +1117,7 @@ function submitComplete() {
 
 // ── Step 3C：エラー報告送信 ──────────────────────────
 function submitHelp() {
-  var bookId  = document.getElementById('helpBook').value;
+  var bookId  = '不明';
   var problem = state.problem;
   var detail  = document.getElementById('helpDetail').value.trim();
   var valid   = true;
