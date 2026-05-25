@@ -569,121 +569,153 @@ select {
   <div class="card fade-in">
     <div class="card-header" style="background:linear-gradient(135deg,#c0392b,#922b21);">
       <span class="step-no">STEP 3</span>
-      <h2>🆘 エラー・困っていることを報告する</h2>
+      <h2>SOS エラー・困っていることを報告する</h2>
     </div>
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
 
-      <div class="tip-box">
-        💡 <strong>報告前に確認してください</strong><br>
-        問題の種類を選ぶと、よくある解決方法が表示されます。<br>
-        それで解決しない場合はそのまま送信してください。
-      </div>
-
-      <div class="field">
-        <label class="field-label">どんな問題が起きていますか？<span class="req">（必須）</span></label>
-        <div class="choice-list" id="problemList">
-          <div class="choice-item" onclick="selectProblem('アプリが起動しない（開かない）', this)">
-            <div class="choice-icon">🚫</div>
+      <!-- Phase 1: 問題の分類 -->
+      <div id="err-step1">
+        <p style="font-size:0.88rem;font-weight:700;color:var(--blue-d);margin-bottom:12px;">どちらの問題ですか？</p>
+        <div class="choice-list">
+          <div class="choice-item" onclick="selectErrorPath('app', this)">
+            <div class="choice-icon">&#9888;</div>
             <div>
-              <div class="choice-title">アプリが起動しない（開かない）</div>
-              <div class="choice-sub">EFATranslatorやEFAOurDaisyBilingualが起動しない</div>
+              <div class="choice-title">アプリが動かない・エラーが出た</div>
+              <div class="choice-sub">EFATranslatorまたはEFAOurDaisyBilingualで問題が発生した</div>
             </div>
           </div>
-          <div class="choice-item" onclick="selectProblem('エラーメッセージが出た', this)">
-            <div class="choice-icon">⚠️</div>
+          <div class="choice-item" onclick="selectErrorPath('op', this)">
+            <div class="choice-icon">&#10067;</div>
             <div>
-              <div class="choice-title">エラーメッセージが出た</div>
-              <div class="choice-sub">翻訳・変換の途中でエラーが表示された</div>
-            </div>
-          </div>
-          <div class="choice-item" onclick="selectProblem('ファイルが見つからない・消えた', this)">
-            <div class="choice-icon">🔍</div>
-            <div>
-              <div class="choice-title">ファイルが見つからない・消えた</div>
-              <div class="choice-sub">出力されたはずのファイルが見当たらない</div>
-            </div>
-          </div>
-          <div class="choice-item" onclick="selectProblem('Googleドライブにアクセスできない', this)">
-            <div class="choice-icon">☁️</div>
-            <div>
-              <div class="choice-title">Googleドライブにアクセスできない</div>
-              <div class="choice-sub">フォルダが開けない・アップロードできない</div>
-            </div>
-          </div>
-          <div class="choice-item" onclick="selectProblem('操作方法がわからない', this)">
-            <div class="choice-icon">❓</div>
-            <div>
-              <div class="choice-title">操作方法がわからない</div>
-              <div class="choice-sub">どうすれば良いかわからない</div>
-            </div>
-          </div>
-          <div class="choice-item" onclick="selectProblem('アプリの深刻なバグ・改善提案', this)">
-            <div class="choice-icon">🐛</div>
-            <div>
-              <div class="choice-title">アプリの深刻なバグ・改善提案</div>
-              <div class="choice-sub">全員に影響する問題、または改善したい機能がある</div>
+              <div class="choice-title">操作方法・手順がわからない</div>
+              <div class="choice-sub">どうすれば良いかわからない・操作に迷っている</div>
             </div>
           </div>
         </div>
-        <div class="error-msg" id="problemErr">問題の種類を選んでください</div>
       </div>
 
-      <!-- FAQ自動回答（インライン表示） -->
-      <div class="faq-box" id="faqBox">
-        <h4>💡 まずこれを試してみてください</h4>
-        <div id="faqContent"></div>
-        <div style="margin-top:14px;padding:10px 12px;background:rgba(255,255,255,0.6);border-radius:7px;font-size:0.8rem;">
-          ✅ 上記で解決した場合は、送信不要です。このページを閉じてください。
-        </div>
-      </div>
-
-      <!-- フェーズ区切り -->
-      <div id="reportPhaseDiv" style="display:none;">
-        <div style="display:flex;align-items:center;gap:10px;margin:20px 0 16px;">
+      <!-- Phase 2: FAQ確認 -->
+      <div id="err-step2" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
-          <div style="background:#C0392B;color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">
-            ↓ 解決しない場合は、ここから報告してください
-          </div>
+          <div style="background:var(--blue);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 1：まず試してみてください</div>
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
         </div>
-      <div class="field">
-        <label class="field-label">エラー画面のスクリーンショット<span class="opt">（あれば貼り付けてください）</span></label>
-        <div class="tip-box" style="margin-bottom:10px;">
-          📸 <strong>スクリーンショットの撮り方（Windows）</strong><br>
-          ① キーボードの「Windowsキー」＋「Shift」＋「S」を同時に押す<br>
-          ② エラー画面をドラッグで囲む<br>
-          ③ 下の枠の中で「Ctrl」＋「V」を押して貼り付ける<br><br>
-          📸 <strong>スクリーンショットの撮り方（Mac）</strong><br>
-          ① 「Command」＋「Shift」＋「4」を同時に押す<br>
-          ② エラー画面をドラッグで囲む<br>
-          ③ 下の枠の中で「Command」＋「V」を押して貼り付ける
+        <div class="tip-box" id="err-faq-content" style="margin-bottom:16px;"></div>
+        <p style="font-size:0.85rem;margin-bottom:12px;font-weight:700;color:var(--text);">上記を試して解決しましたか？</p>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-primary" style="background:var(--green);" onclick="resolveError()">解決した</button>
+          <button class="btn-primary" onclick="showErrorStep(3)">解決しない → 次へ</button>
         </div>
-        <div class="ss-zone" id="ssZone" onclick="document.getElementById('ssFile').click()">
-          <div class="ss-zone-icon">📋</div>
-          <div class="ss-zone-text">
-            ここをクリックして画像を選ぶか<br>
-            <strong>Ctrl+V（Mac：Command+V）</strong> で貼り付けられます
+      </div>
+
+      <!-- Phase 3: マニュアル確認 -->
+      <div id="err-step3" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+          <div style="background:var(--orange);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 2：マニュアルを確認</div>
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+        </div>
+        <div class="tip-box">
+          制作マニュアルのトラブルシューティング章に多くの解決策が記載されています。<br>
+          下のボタンからマニュアルを開いて確認してください。
+        </div>
+        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer" class="folder-btn">マニュアルを開く</a>
+        <p style="font-size:0.85rem;margin-bottom:12px;font-weight:700;color:var(--text);">マニュアルを確認して解決しましたか？</p>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-primary" style="background:var(--green);" onclick="resolveError()">解決した</button>
+          <button class="btn-primary red-btn" onclick="showErrorStep(4)">解決しない → EFAに報告</button>
+        </div>
+      </div>
+
+      <!-- Phase 4a: バグ報告フォーム（アプリエラー） -->
+      <div id="err-step4-app" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+          <div style="background:#C0392B;color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 3：EFAにバグ報告</div>
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+        </div>
+        <div class="warn-box">
+          以下の情報をできるだけ正確に入力してください。<br>
+          これらの情報がないとバグを修正できません。
+        </div>
+        <div class="field">
+          <label class="field-label">どのアプリで問題が起きましたか？<span class="req">（必須）</span></label>
+          <div class="choice-list" id="app-choice-list">
+            <div class="choice-item" onclick="selectApp('EFATranslator（翻訳アプリ）', this)">
+              <div class="choice-icon">&#128260;</div>
+              <div><div class="choice-title">EFATranslator（翻訳アプリ）</div></div>
+            </div>
+            <div class="choice-item" onclick="selectApp('EFAOurDaisyBilingual（DAISY図書アプリ）', this)">
+              <div class="choice-icon">&#128241;</div>
+              <div><div class="choice-title">EFAOurDaisyBilingual（DAISY図書アプリ）</div></div>
+            </div>
           </div>
-          <img class="ss-preview" id="ssPreview" alt="スクリーンショット">
+          <div class="error-msg" id="appErr">アプリを選択してください</div>
         </div>
-        <input type="file" id="ssFile" accept="image/*" style="display:none;">
-        <p class="hint">※スクリーンショットは省略しても送信できます</p>
+        <div class="field">
+          <label class="field-label" for="errorMsg">エラーメッセージを全文コピーして貼り付けてください<span class="req">（必須）</span></label>
+          <div class="tip-box" style="margin-bottom:8px;">
+            コピーの方法：エラー画面のテキストをすべて選択（Ctrl+A）→コピー（Ctrl+C）→下の欄に貼り付け（Ctrl+V）<br>
+            エラーメッセージがない場合は何が起きているかを詳しく書いてください。
+          </div>
+          <textarea id="errorMsg" placeholder="エラーメッセージをここに貼り付けてください&#10;&#10;エラーメッセージがない場合は、何が起きているかを書いてください。"></textarea>
+          <div class="error-msg" id="errorMsgErr">エラーメッセージまたは状況の説明を入力してください</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="bugBookId">作業していた書籍IDを入力してください<span class="req">（必須）</span></label>
+          <input type="text" id="bugBookId" placeholder="例：LAO-001">
+          <div class="error-msg" id="bugBookIdErr">書籍IDを入力してください</div>
+        </div>
+        <div class="field">
+          <label class="field-label">パソコンのOSを選んでください<span class="req">（必須）</span></label>
+          <div class="choice-list" id="os-choice-list" style="flex-direction:row;gap:10px;">
+            <div class="choice-item" style="flex:1;" onclick="selectOS('Windows', this)">
+              <div class="choice-icon">&#129695;</div>
+              <div><div class="choice-title">Windows</div></div>
+            </div>
+            <div class="choice-item" style="flex:1;" onclick="selectOS('Mac', this)">
+              <div class="choice-icon">&#127822;</div>
+              <div><div class="choice-title">Mac</div></div>
+            </div>
+          </div>
+          <div class="error-msg" id="osErr">OSを選択してください</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="appVersion">アプリのバージョン<span class="opt">（任意・アプリ起動画面に表示）</span></label>
+          <input type="text" id="appVersion" placeholder="例：v1.2.27">
+        </div>
+        <button class="btn-primary red-btn" onclick="submitBugReport()">
+          <span id="bugBtnText">EFAにバグを報告する</span>
+        </button>
       </div>
 
-      <div class="field">
-        <label class="field-label" for="helpDetail">エラーの状況を詳しく教えてください<span class="req">（必須）</span></label>
-        <textarea id="helpDetail" placeholder="【記入例】&#10;・どの作業をしていたとき？（例：EFATranslatorを実行しようとしたとき）&#10;・どんなメッセージが出た？（できればそのままコピーして貼り付けてください）&#10;・何度試してもなりますか？&#10;&#10;エラーメッセージはそのままコピー（Ctrl+C）して貼り付けると伝わりやすいです。"></textarea>
-        <div class="error-msg" id="helpDetailErr">状況の詳細を入力してください</div>
+      <!-- Phase 4b: EFA直接連絡（操作疑問） -->
+      <div id="err-step4-op" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+          <div style="background:var(--blue);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 3：EFAに直接連絡</div>
+          <div style="flex:1;height:2px;background:#E0E0E0;"></div>
+        </div>
+        <div class="info-box">
+          連絡先：info@efa-japan.org<br><br>
+          メールに書いてほしいこと：<br>
+          (1) どの作業をしようとしていたか<br>
+          (2) 何がわからないか・どこで詰まっているか<br>
+          (3) マニュアルのどこを確認したか（ページ番号など）<br>
+          (4) 担当者ID（例：V001）・書籍ID（例：LAO-001）
+        </div>
+        <a href="mailto:info@efa-japan.org?subject=OurDAISY%20%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6&body=%E6%8B%85%E5%BD%93%E8%80%85ID%EF%BC%9A%0D%0A%E6%9B%B8%E7%B1%8DID%EF%BC%9A%0D%0A%0D%0A%E8%B3%AA%E5%95%8F%E5%86%85%E5%AE%B9%EF%BC%9A%0D%0A%0D%0A%E8%A9%A6%E3%81%97%E3%81%9F%E3%81%93%E3%81%A8%EF%BC%9A"
+           class="btn-primary" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;">
+          メールを書く
+        </a>
       </div>
 
-      <button class="btn-primary red-btn" onclick="submitHelp()">
-        <span id="helpBtnText">報告を送信する →</span>
-      </button>
-      </div><!-- /reportPhaseDiv -->
     </div>
   </div>
 </div>
+
 
 <!-- ══ 完了カード ══ -->
 <div class="complete-card" id="completeCard">
@@ -739,7 +771,10 @@ var state = {
   screenshotUrl:  '',
   screenshotB64:  '',
   assignedBooks:  [],
-  fetchedAssigned: false
+  fetchedAssigned: false,
+  errorPath:      '',
+  selectedApp:    '',
+  selectedOS:     ''
 };
 
 // ── 初期化 ────────────────────────────────────────────
@@ -949,8 +984,8 @@ function showSection(id) {
 function goBack(targetSection) {
   if (targetSection === 'sec2') {
     setProgress(2);
-    // sec2のselectedをリセット
     document.querySelectorAll('#sec2 .choice-item').forEach(function(el) { el.classList.remove('selected'); });
+    resetErrorForm();
   } else if (targetSection === 'sec1') {
     setProgress(1);
   }
@@ -1039,190 +1074,132 @@ function selectAction(action, el) {
   }, 200);
 }
 
-// ── 問題種別選択 ──────────────────────────────────────
-function selectProblem(problem, el) {
-  state.problem = problem;
-  document.querySelectorAll('#problemList .choice-item').forEach(function(e) { e.classList.remove('selected'); });
-  el.classList.add('selected');
-  hideErr('problemErr');
-  // FAQ自動回答表示
-  var faqBox  = document.getElementById('faqBox');
-  var faqContent = document.getElementById('faqContent');
-  var reportDiv = document.getElementById('reportPhaseDiv');
-  if (FAQ_CONTENT[problem]) {
-    faqContent.innerHTML = FAQ_CONTENT[problem];
-    faqBox.classList.add('show');
-  } else {
-    faqBox.classList.remove('show');
-  }
-  // 常に報告フェーズを表示（FAQがあっても報告可能）
-  reportDiv.style.display = 'block';
+// ── エラー報告：フォームリセット ─────────────────────────
+function resetErrorForm() {
+  state.errorPath   = '';
+  state.selectedApp = '';
+  state.selectedOS  = '';
+  ['err-step2','err-step3','err-step4-app','err-step4-op'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  ['err-step1','app-choice-list','os-choice-list'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.querySelectorAll('.choice-item').forEach(function(e) { e.classList.remove('selected'); });
+  });
+  var em = document.getElementById('errorMsg');
+  var bi = document.getElementById('bugBookId');
+  var av = document.getElementById('appVersion');
+  if (em) em.value = '';
+  if (bi) bi.value = '';
+  if (av) av.value = '';
 }
 
-// ── Step 3A：予約送信 ────────────────────────────────
-function submitReserve() {
-  var bookId = document.getElementById('bookSelect').value;
-  if (!bookId) { showErr('bookErr'); return; }
-  hideErr('bookErr');
+// ── エラー報告：パス選択 ─────────────────────────────────
+function selectErrorPath(path, el) {
+  state.errorPath = path;
+  document.querySelectorAll('#err-step1 .choice-item').forEach(function(e) { e.classList.remove('selected'); });
+  el.classList.add('selected');
+  var faq = document.getElementById('err-faq-content');
+  if (faq) {
+    if (path === 'app') {
+      faq.innerHTML =
+        'まず以下を試してください：<br><br>' +
+        '(1) パソコンを再起動してから、もう一度アプリを起動する<br>' +
+        '(2) Wordファイルが別のウィンドウで開いたままになっていないか確認する<br>' +
+        '&nbsp;&nbsp;&nbsp;&nbsp;→ Wordをすべて閉じてから再実行する<br>' +
+        '(3) ファイル名に日本語・スペースが含まれていないか確認する<br>' +
+        '&nbsp;&nbsp;&nbsp;&nbsp;→ ファイル名は半角英数字のみにする（例：lao001.docx）<br>' +
+        '(4) アプリのアイコンを右クリック →「管理者として実行」で起動する';
+    } else {
+      faq.innerHTML =
+        'まず以下を確認してください：<br><br>' +
+        '(1) 制作マニュアルの該当ページを読む<br>' +
+        '(2) マニュアルの「よくある質問（FAQ）」章を確認する<br>' +
+        '(3) 不明な用語は（括弧内の説明）を参照する';
+    }
+  }
+  setTimeout(function() { showErrorStep(2); }, 200);
+}
 
-  setBtnLoading('reserveBtnText', true);
+// ── エラー報告：ステップ表示 ─────────────────────────────
+function showErrorStep(step) {
+  var target = step === 4
+    ? (state.errorPath === 'app' ? 'err-step4-app' : 'err-step4-op')
+    : 'err-step' + step;
+  var el = document.getElementById(target);
+  if (!el) return;
+  el.style.display = 'block';
+  setTimeout(function() { el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+}
+
+// ── エラー報告：解決完了 ─────────────────────────────────
+function resolveError() {
+  showGenericComplete('OK', '解決できました！',
+    'お疲れ様でした。作業を続けてください。',
+    ['引き続き作業をお続けください。', '書籍の作業が完了したら完了報告を忘れずに送信してください。']
+  );
+}
+
+// ── エラー報告：アプリ選択 ───────────────────────────────
+function selectApp(appName, el) {
+  state.selectedApp = appName;
+  document.querySelectorAll('#app-choice-list .choice-item').forEach(function(e) { e.classList.remove('selected'); });
+  el.classList.add('selected');
+  hideErr('appErr');
+}
+
+// ── エラー報告：OS選択 ───────────────────────────────────
+function selectOS(osName, el) {
+  state.selectedOS = osName;
+  document.querySelectorAll('#os-choice-list .choice-item').forEach(function(e) { e.classList.remove('selected'); });
+  el.classList.add('selected');
+  hideErr('osErr');
+}
+
+// ── エラー報告：バグ報告送信 ─────────────────────────────
+function submitBugReport() {
+  var errorMsg = document.getElementById('errorMsg').value.trim();
+  var bookId   = document.getElementById('bugBookId').value.trim();
+  var version  = document.getElementById('appVersion').value.trim();
+  var valid    = true;
+  if (!state.selectedApp) { showErr('appErr');       valid = false; } else hideErr('appErr');
+  if (!errorMsg)           { showErr('errorMsgErr');  valid = false; } else hideErr('errorMsgErr');
+  if (!bookId)             { showErr('bugBookIdErr'); valid = false; } else hideErr('bugBookIdErr');
+  if (!state.selectedOS)   { showErr('osErr');        valid = false; } else hideErr('osErr');
+  if (!valid) {
+    var firstErr = document.querySelector('#err-step4-app .error-msg.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  var details =
+    '【アプリ】' + state.selectedApp + '\n' +
+    '【エラーメッセージ】\n' + errorMsg + '\n\n' +
+    '【書籍ID】' + bookId + '\n' +
+    '【OS】' + state.selectedOS + '\n' +
+    '【アプリバージョン】' + (version || '不明');
+  setBtnLoading('bugBtnText', true);
+  console.log('[OurDAISY] バグ報告送信開始');
   gasCall({
-    action_type: 'reserve', email: state.email,
-    member_id: state.memberId, book_id: bookId, token: FORM_TOKEN
+    action_type:    'help',
+    email:          state.email,
+    member_id:      state.memberId,
+    book_id:        bookId,
+    problem_type:   'アプリバグ報告：' + state.selectedApp,
+    details:        details,
+    has_screenshot: false,
+    token:          FORM_TOKEN
   }, function(res) {
-    setBtnLoading('reserveBtnText', false);
+    setBtnLoading('bugBtnText', false);
+    console.log('[OurDAISY] バグ報告応答:', JSON.stringify(res));
     if (res.status === 'ok') {
-      // 予約完了後は完了画面のみ（STEP2には戻らない）
-      showReserveComplete(res);
+      showHelpComplete(false, false, res);
     } else {
       alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
     }
   });
 }
 
-function showReserveComplete(res) {
-  document.getElementById('progressWrap').style.display = 'none';
-  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-  var card = document.getElementById('completeCard');
-  document.getElementById('completeIcon').textContent  = '📖';
-  document.getElementById('completeTitle').textContent = '予約完了！';
-  document.getElementById('completeMsg').textContent   =
-    res.message || '書籍の予約が完了しました。';
-  document.getElementById('nextSteps').innerHTML =
-    '<h3>📬 これから行うこと</h3>' +
-    (res.folderUrl ? '<div class="next-step-item" style="margin-bottom:10px;"><span class="step-num">📁</span><div style="width:100%;"><strong>Googleドライブで書籍を確認・ダウンロードする</strong><br><a href="' + res.folderUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:6px;padding:8px 16px;background:var(--blue);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;">📁 Googleドライブを開く</a></div></div>' : '') +
-    '<div class="next-step-item"><span class="step-num">1</span>登録したメールアドレスに確認メールが届きます。フォルダURLも記載されています。</div>' +
-    '<div class="next-step-item"><span class="step-num">2</span>マニュアルをダウンロードして、作業方法を確認してください。<br>' +
-    '<a href="' + MANUAL_URL + '" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-size:0.8rem;">' + MANUAL_URL + '</a></div>' +
-    '<div class="next-step-item"><span class="step-num">3</span>作業が完了したら、このフォームにアクセスして「作業完了を報告する」を選んでください。</div>' +
-    (res.deadline ? '<div class="next-step-item"><span class="step-num">⏰</span>期限：<strong>' + res.deadline + '</strong></div>' : '');
-  card.style.display = 'block';
-  card.classList.add('fade-in');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  // 担当書籍キャッシュをリセット（次回ロード時に再取得）
-  state.fetchedAssigned = false;
-}
-
-// ── Step 3B：完了報告送信 ────────────────────────────
-function submitComplete() {
-  var bookId = document.getElementById('completeBook').value;
-  var tasks  = Array.from(document.querySelectorAll('[name="task"]:checked')).map(function(cb) { return cb.value; });
-  var notes  = document.getElementById('notes').value;
-  var valid  = true;
-
-  if (!bookId) {
-    showErr('completeBookErr');
-    // 担当書籍がない場合の追加メッセージ
-    if (state.assignedBooks.length === 0) {
-      alert('担当している書籍がありません。\nまず「書籍を予約する」から書籍を予約してください。');
-    }
-    valid = false;
-  } else {
-    hideErr('completeBookErr');
-  }
-  if (!tasks.length) { showErr('taskErr'); valid = false; } else hideErr('taskErr');
-
-  // DAISYアプリ実行時はファイルチェック必須
-  if (tasks.some(function(t) { return t.indexOf('EFAOurDaisyBilingual') >= 0; })) {
-    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
-      return document.getElementById(id).checked;
-    });
-    if (!allChecked) {
-      alert('「EFAOurDaisyBilingual（DAISY図書アプリ）」を選択した場合は、\nすべてのファイルをGoogleドライブにアップロードしてから\nチェックボックスにチェックを入れてください。');
-      valid = false;
-    }
-  }
-
-  if (!valid) {
-    // 最初のエラー箇所にスクロール
-    var firstErr = document.querySelector('.error-msg.show');
-    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-
-  setBtnLoading('completeBtnText', true);
-  gasCall({
-    action_type: 'complete', email: state.email,
-    member_id: state.memberId, book_id: bookId,
-    tasks: tasks, notes: notes, token: FORM_TOKEN
-  }, function(res) {
-    setBtnLoading('completeBtnText', false);
-    if (res.status === 'ok') {
-      showGenericComplete('✅', '完了報告を送信しました！',
-        res.message || '完了報告を受け付けました。',
-        [
-          '確認メールが届きます。ご確認ください。',
-          'ファイルを確認後、次の工程に進みます（最大1時間以内）。',
-          '次の書籍を担当する場合は、再度このフォームから予約してください。'
-        ]
-      );
-    } else {
-      alert('エラー：' + (res.message || '送信に失敗しました。'));
-    }
-  });
-}
-
-// ── Step 3C：エラー報告送信 ──────────────────────────
-function submitHelp() {
-  var bookId  = '不明';
-  var problem = state.problem;
-  var detail  = document.getElementById('helpDetail').value.trim();
-  var valid   = true;
-  if (!problem) { showErr('problemErr'); valid = false; } else hideErr('problemErr');
-  if (!detail)  { showErr('helpDetailErr'); valid = false; } else hideErr('helpDetailErr');
-  if (!valid) return;
-
-  setBtnLoading('helpBtnText', true);
-  console.log('[OurDAISY] エラー報告送信開始');
-  var hasShot = state.screenshotB64 ? true : false;
-  console.log('[OurDAISY] スクショあり:', hasShot ? 'YES' : 'NO');
-
-  // 画像データは送らず、有無フラグのみ送信（URLサイズ制限回避）
-  gasCall({
-    action_type:    'help',
-    email:          state.email,
-    member_id:      state.memberId,
-    book_id:        '不明',
-    problem_type:   problem,
-    details:        detail,
-    has_screenshot: hasShot,
-    token:          FORM_TOKEN
-  }, function(res) {
-    setBtnLoading('helpBtnText', false);
-    console.log('[OurDAISY] help応答:', JSON.stringify(res));
-    if (res.status === 'ok') {
-      var isFaq = res.triage && res.triage.indexOf('FAQ') === 0;
-      showHelpComplete(isFaq, hasShot, res);
-    } else {
-      alert('エラー：' + (res.message || '送信に失敗しました。'));
-    }
-  });
-}
-
-function doSubmitHelp(bookId, problem, detail) {
-  gasCall({
-    action_type: 'help', email: state.email, member_id: state.memberId,
-    book_id: bookId || '不明', problem_type: problem,
-    details: detail, screenshot_url: state.screenshotUrl, token: FORM_TOKEN
-  }, function(res) {
-    setBtnLoading('helpBtnText', false);
-    if (res.status === 'ok') {
-      var isFaq = res.triage && res.triage.indexOf('FAQ') === 0;
-      showGenericComplete(
-        isFaq ? '💡' : '🆘',
-        isFaq ? 'よくある解決方法をメールでお送りしました！' : 'エラー報告を受け付けました！',
-        res.message || 'ご報告ありがとうございます。',
-        isFaq
-          ? ['登録メールに解決方法が届きます。まずお試しください。',
-             '解決しない場合は、返信メールにご連絡ください。']
-          : ['ご報告ありがとうございます。',
-             'EFAで内容を確認します。深刻な問題の場合は折り返しご連絡します。']
-      );
-    } else {
-      alert('エラー：' + (res.message || '送信に失敗しました。'));
-    }
-  });
-}
 
 // ── 汎用完了画面 ──────────────────────────────────────
 function showGenericComplete(icon, title, msg, steps) {
