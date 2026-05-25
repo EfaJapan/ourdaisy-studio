@@ -436,7 +436,7 @@ select {
         📋 予約すると、担当フォルダのURLをメールでお送りします。<br>
         作業マニュアルをよく読んでから作業を始めてください。<br>
         <strong>📥 マニュアルのダウンロードはこちら：</strong><br>
-        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-weight:700;word-break:break-all;">
+        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" style="color:var(--blue);font-weight:700;word-break:break-all;">
           https://efajapan.github.io/ourdaisy-bilingual-updates/
         </a>
       </div>
@@ -545,9 +545,31 @@ select {
         </div>
       </div>
 
-      <!-- Gドライブ誘導ボタン（予約時のフォルダURL） -->
+      <!-- TTSファイル案内（TTS確認選択時のみ表示） -->
+      <div id="ttsFileSection" style="display:none;">
+        <div class="file-checklist">
+          <div class="file-checklist-title">
+            📋 TTS確認時のファイル提出について<br>
+            <span style="font-weight:400;font-size:0.76rem;">
+              以下のファイルをGoogleドライブにアップロードしてから完了報告を送信してください
+            </span>
+          </div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tts1"><span>TTS（音声読み上げ）確認レポートフォーム.docx（作業中に記録したもの）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tts2"><span>_proper_nouns.json（固有名詞ファイル）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tts3"><span>_classify.json（分類情報ファイル）</span></div>
+        </div>
+        <div class="warn-box">
+          📝 <strong>TTSレポートフォームの記入方法</strong><br>
+          作業中に読み上げの問題を見つけたら、その都度レポートフォームに記録してください。<br>
+          ページ番号・該当テキスト・実際の読み方・正しい読み方・問題の種類を記入します。<br><br>
+          💡 <strong>アップロードの方法</strong><br>
+          ① ファイルをすべて選択（Ctrl+A キー）<br>
+          ② 選択したままGoogleドライブにドラッグ＆ドロップ<br>
+          ③ 「フォルダにアップロード」を選択
+        </div>
+      </div>
       <div id="folderLinkSection" style="display:none; margin-bottom:14px;">
-        <a id="folderLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="folder-btn">
+        <a id="folderLinkBtn" href="#" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" class="folder-btn">
           📁 Googleドライブの作業フォルダを開く
         </a>
         <p class="hint">↑ このボタンを押してファイルをアップロードしてから、下の報告を送信してください</p>
@@ -621,7 +643,7 @@ select {
           制作マニュアルのトラブルシューティング章に多くの解決策が記載されています。<br>
           下のボタンからマニュアルを開いて確認してください。
         </div>
-        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer" class="folder-btn">マニュアルを開く</a>
+        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" class="folder-btn">マニュアルを開く</a>
         <p style="font-size:0.85rem;margin-bottom:12px;font-weight:700;color:var(--text);">マニュアルを確認して解決しましたか？</p>
         <div style="display:flex;gap:10px;">
           <button class="btn-primary" style="background:var(--green);" onclick="resolveError()">解決した</button>
@@ -695,21 +717,27 @@ select {
       <div id="err-step4-op" style="display:none;">
         <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
-          <div style="background:var(--blue);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 3：EFAに直接連絡</div>
+          <div style="background:var(--blue);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 3：EFAに報告する</div>
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
         </div>
-        <div class="info-box">
-          連絡先：info@efa-japan.org<br><br>
-          メールに書いてほしいこと：<br>
-          (1) どの作業をしようとしていたか<br>
-          (2) 何がわからないか・どこで詰まっているか<br>
-          (3) マニュアルのどこを確認したか（ページ番号など）<br>
-          (4) 担当者ID（例：V001）・書籍ID（例：LAO-001）
+        <div class="warn-box">
+          マニュアルでも解決しない場合は、以下の内容を記入してEFAに報告してください。
         </div>
-        <a href="mailto:info@efa-japan.org?subject=OurDAISY%20%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6&body=%E6%8B%85%E5%BD%93%E8%80%85ID%EF%BC%9A%0D%0A%E6%9B%B8%E7%B1%8DID%EF%BC%9A%0D%0A%0D%0A%E8%B3%AA%E5%95%8F%E5%86%85%E5%AE%B9%EF%BC%9A%0D%0A%0D%0A%E8%A9%A6%E3%81%97%E3%81%9F%E3%81%93%E3%81%A8%EF%BC%9A"
-           class="btn-primary" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;">
-          メールを書く
-        </a>
+        <div class="field">
+          <label class="field-label" for="opDetail">わからないこと・詰まっている箇所を詳しく教えてください<span class="req">（必須）</span></label>
+          <div class="tip-box" style="margin-bottom:8px;">
+            どの作業をしようとしていたか・何がわからないか・マニュアルのどこを確認したか（ページ番号など）を書いてください。
+          </div>
+          <textarea id="opDetail" placeholder="例：EFATranslatorを実行しようとしているが、どのボタンを押せばよいかわからない。マニュアルのP.12を読んだが解決しなかった。"></textarea>
+          <div class="error-msg" id="opDetailErr">詳細を入力してください</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="opBookId">作業していた書籍ID<span class="opt">（任意）</span></label>
+          <input type="text" id="opBookId" placeholder="例：LAO-001">
+        </div>
+        <button class="btn-primary" onclick="submitOperationReport()">
+          <span id="opBtnText">EFAに報告する →</span>
+        </button>
       </div>
 
     </div>
@@ -730,6 +758,12 @@ select {
 var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec';
 var FORM_TOKEN = 'efa2026daisy';
 var MANUAL_URL = 'https://efajapan.github.io/ourdaisy-bilingual-updates/';
+
+// 新ウィンドウで開く（作業画面に戻りやすくするため）
+function openInNewWindow(url) {
+  if (!url || url === '#') return;
+  window.open(url, '_blank', 'noopener,noreferrer,width=1200,height=800');
+}
 
 // ── FAQ内容 ──────────────────────────────────────────
 var FAQ_CONTENT = {
@@ -861,6 +895,10 @@ function setupListeners() {
   // DAISYアプリ選択でファイルチェックリスト表示
   document.getElementById('taskDaisy').addEventListener('change', function() {
     document.getElementById('daisyFileSection').style.display = this.checked ? 'block' : 'none';
+  });
+  // TTS確認選択でTTSファイル案内を表示
+  document.getElementById('taskTTS').addEventListener('change', function() {
+    document.getElementById('ttsFileSection').style.display = this.checked ? 'block' : 'none';
   });
   // Word/Translator/校正/TTS選択でアップロードガイド表示
   ['taskWord', 'taskTranslator', 'taskNihongo', 'taskTTS'].forEach(function(id) {
@@ -1074,7 +1112,145 @@ function selectAction(action, el) {
   }, 200);
 }
 
-// ── エラー報告：フォームリセット ─────────────────────────
+// ── Step 3A：予約送信 ────────────────────────────────
+function submitReserve() {
+  var bookId = document.getElementById('bookSelect').value;
+  if (!bookId) { showErr('bookErr'); return; }
+  hideErr('bookErr');
+  setBtnLoading('reserveBtnText', true);
+  gasCall({
+    action_type: 'reserve', email: state.email,
+    member_id: state.memberId, book_id: bookId, token: FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('reserveBtnText', false);
+    if (res.status === 'ok') {
+      showReserveComplete(res);
+    } else {
+      alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
+    }
+  });
+}
+
+function showReserveComplete(res) {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('completeIcon').textContent  = '📖';
+  document.getElementById('completeTitle').textContent = '予約完了！';
+  document.getElementById('completeTitle').style.color = 'var(--green)';
+  document.getElementById('completeMsg').textContent   = res.message || '書籍の予約が完了しました。';
+  document.getElementById('nextSteps').innerHTML =
+    '<h3>📬 これから行うこと</h3>' +
+    (res.folderUrl ? '<div class="next-step-item"><span class="step-num">📁</span><div style="width:100%;"><strong>Googleドライブで書籍を確認・ダウンロードする</strong><br><a href="' + res.folderUrl + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" style="display:inline-block;margin-top:6px;padding:8px 16px;background:var(--blue);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;">📁 Googleドライブを開く</a></div></div>' : '') +
+    '<div class="next-step-item"><span class="step-num">1</span>登録したメールアドレスに確認メールが届きます。</div>' +
+    '<div class="next-step-item"><span class="step-num">2</span>マニュアルをダウンロードして作業方法を確認してください。<br><a href="' + MANUAL_URL + '" onclick="openInNewWindow(this.href); return false;" style="color:var(--blue);font-size:0.8rem;">' + MANUAL_URL + '</a></div>' +
+    '<div class="next-step-item"><span class="step-num">3</span>作業が完了したら、このフォームから「作業完了を報告する」を選んでください。</div>' +
+    (res.deadline ? '<div class="next-step-item"><span class="step-num">⏰</span>期限：<strong>' + res.deadline + '</strong></div>' : '');
+  var card = document.getElementById('completeCard');
+  card.style.display = 'block';
+  card.classList.add('fade-in');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  state.fetchedAssigned = false;
+}
+
+// ── Step 3B：完了報告送信 ────────────────────────────
+function submitComplete() {
+  var bookId = document.getElementById('completeBook').value;
+  var tasks  = Array.from(document.querySelectorAll('[name="task"]:checked')).map(function(cb) { return cb.value; });
+  var notes  = document.getElementById('notes').value;
+  var valid  = true;
+
+  if (!bookId) {
+    showErr('completeBookErr');
+    alert('書籍を選択してください。\n担当している書籍をプルダウンから選んでから送信してください。');
+    valid = false;
+  } else {
+    hideErr('completeBookErr');
+  }
+  if (!tasks.length) { showErr('taskErr'); valid = false; } else hideErr('taskErr');
+
+  // DAISYアプリ実行時はファイルチェック必須
+  if (tasks.some(function(t) { return t.indexOf('EFAOurDaisyBilingual') >= 0; })) {
+    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
+      return document.getElementById(id).checked;
+    });
+    if (!allChecked) {
+      alert('「EFAOurDaisyBilingual（DAISY図書アプリ）」を選択した場合は、\nすべてのファイルをGoogleドライブにアップロードしてから\nチェックボックスにチェックを入れてください。');
+      valid = false;
+    }
+  }
+
+  // TTS確認時はレポートフォームの提出チェック
+  if (tasks.some(function(t) { return t.indexOf('TTS') >= 0; })) {
+    var ttsChecked = ['fc-tts1','fc-tts2','fc-tts3'].every(function(id) {
+      return document.getElementById(id).checked;
+    });
+    if (!ttsChecked) {
+      alert('「TTS（音声読み上げ）の確認」を選択した場合は、\nTTSレポートフォームと_proper_nouns.json・_classify.jsonを\nGoogleドライブにアップロードしてからチェックを入れてください。');
+      valid = false;
+    }
+  }
+
+  if (!valid) {
+    var firstErr = document.querySelector('.error-msg.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  setBtnLoading('completeBtnText', true);
+  gasCall({
+    action_type: 'complete', email: state.email,
+    member_id: state.memberId, book_id: bookId,
+    tasks: tasks, notes: notes, token: FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('completeBtnText', false);
+    if (res.status === 'ok') {
+      showGenericComplete('✅', '完了報告を送信しました！',
+        res.message || '完了報告を受け付けました。',
+        [
+          '確認メールが届きます。ご確認ください。',
+          'ファイルを確認後、次の工程に進みます（最大1時間以内）。',
+          '次の書籍を担当する場合は、再度このフォームから予約してください。'
+        ]
+      );
+    } else {
+      alert('エラー：' + (res.message || '送信に失敗しました。'));
+    }
+  });
+}
+
+// ── エラー報告：解決完了 ─────────────────────────────────
+function resolveError() {
+  showGenericComplete('✅', '解決できました！',
+    'お疲れ様でした。作業を続けてください。',
+    ['引き続き作業をお続けください。', '書籍の作業が完了したら完了報告を忘れずに送信してください。']
+  );
+}
+
+// ── エラー報告：操作疑問フォーム送信 ────────────────────
+function submitOperationReport() {
+  var detail = document.getElementById('opDetail').value.trim();
+  var bookId = document.getElementById('opBookId').value.trim();
+  if (!detail) { showErr('opDetailErr'); return; }
+  hideErr('opDetailErr');
+  setBtnLoading('opBtnText', true);
+  gasCall({
+    action_type:    'help',
+    email:          state.email,
+    member_id:      state.memberId,
+    book_id:        bookId || '不明',
+    problem_type:   '操作方法の疑問',
+    details:        detail,
+    has_screenshot: false,
+    token:          FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('opBtnText', false);
+    if (res.status === 'ok') {
+      showHelpComplete(false, false, res);
+    } else {
+      alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
+    }
+  });
+}
 function resetErrorForm() {
   state.errorPath   = '';
   state.selectedApp = '';
@@ -1113,10 +1289,10 @@ function selectErrorPath(path, el) {
         '(4) アプリのアイコンを右クリック →「管理者として実行」で起動する';
     } else {
       faq.innerHTML =
-        'まず以下を確認してください：<br><br>' +
-        '(1) 制作マニュアルの該当ページを読む<br>' +
-        '(2) マニュアルの「よくある質問（FAQ）」章を確認する<br>' +
-        '(3) 不明な用語は（括弧内の説明）を参照する';
+        'まず以下を自分で試してください：<br><br>' +
+        '(1) 該当の作業手順を最初からゆっくり読み直してやり直してみる<br>' +
+        '(2) 不明な用語は（括弧内の説明）を参照する<br>' +
+        '(3) 同じ操作を別の書籍ファイルや別のフォルダで試してみる';
     }
   }
   setTimeout(function() { showErrorStep(2); }, 200);
@@ -1245,7 +1421,7 @@ function showHelpComplete(isFaq, hasShot, res) {
       '<div class="next-step-item" style="margin-top:12px;padding:12px;background:var(--org-l);border:2px solid var(--orange);border-radius:10px;flex-direction:column;gap:8px;">' +
       '<div style="font-weight:700;color:#7A4200;">📸 スクリーンショットの提出</div>' +
       '<div style="font-size:0.82rem;color:#7A4200;">撮影したスクリーンショットを以下のGoogleドライブフォルダに直接アップロードしてください。</div>' +
-      '<a href="' + SCREENSHOT_DRIVE_URL + '" target="_blank" rel="noopener noreferrer" ' +
+      '<a href="' + SCREENSHOT_DRIVE_URL + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" ' +
       'style="display:inline-block;padding:8px 16px;background:var(--orange);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;margin-top:4px;">' +
       '📁 Googleドライブにアップロード</a>' +
       '</div>';
