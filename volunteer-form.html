@@ -425,12 +425,12 @@ select {
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
       <div class="field">
-        <label class="field-label" for="bookSelect">担当したい書籍を選んでください<span class="req">（必須）</span></label>
-        <select id="bookSelect">
+        <label class="field-label" for="taskSelect">担当したい作業を選んでください<span class="req">（必須）</span></label>
+        <select id="taskSelect">
           <option value="">-- 読み込み中... --</option>
         </select>
-        <div class="error-msg" id="bookErr">書籍を選んでください</div>
-        <p class="hint">📌 リストに表示されているのは、まだ誰も担当していない書籍です。</p>
+        <div class="error-msg" id="taskSelectErr">作業を選んでください</div>
+        <p class="hint">📌 リストに表示されているのは、現在予約できる作業です。フォルダが準備できた順に表示されます。</p>
       </div>
       <div class="tip-box">
         📋 予約すると、担当フォルダのURLをメールでお送りします。<br>
@@ -441,7 +441,7 @@ select {
         </a>
       </div>
       <button class="btn-primary" onclick="submitReserve()">
-        <span id="reserveBtnText">この書籍を予約する →</span>
+        <span id="reserveBtnText">この作業を予約する →</span>
       </button>
     </div>
   </div>
@@ -457,72 +457,37 @@ select {
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
 
-      <div class="field">
-        <label class="field-label" for="completeBook">完了した書籍を選んでください<span class="req">（必須）</span></label>
-        <select id="completeBook">
-          <option value="">-- あなたの担当書籍を読み込み中... --</option>
-        </select>
-        <div class="error-msg" id="completeBookErr">書籍を選んでください</div>
-        <div class="warn-box" id="noBooksMsg" style="display:none;">
-          ⚠️ 現在担当している書籍がありません。<br>
-          まず「書籍を予約する」から書籍を予約してください。
-        </div>
-        <p class="hint">📌 表示されるのは、あなたが予約した書籍だけです。</p>
+      <!-- 担当タスク自動表示エリア -->
+      <div id="myTaskDisplay">
+        <p class="hint">読み込み中...</p>
       </div>
 
-      <div class="field">
-        <label class="field-label">完了した作業にチェックしてください<span class="req">（必須・複数可）</span></label>
-        <div class="check-list">
-          <label class="check-item">
-            <input type="checkbox" name="task" value="Word原稿の作成（スキャン・OCR・整形）" id="taskWord">
-            <div>
-              <div class="check-text">📄 Word原稿の作成（スキャン・OCR・整形）</div>
-              <div class="check-sub">本の内容をWordファイルにまとめる作業</div>
-            </div>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" name="task" value="EFATranslator（翻訳アプリ）の実行" id="taskTranslator">
-            <div>
-              <div class="check-text">🔄 EFATranslator（翻訳アプリ）の実行</div>
-              <div class="check-sub">翻訳アプリを使って4種類のWordファイルを作成する作業</div>
-            </div>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" name="task" value="日本語校正（やさしい日本語の確認・修正）" id="taskNihongo">
-            <div>
-              <div class="check-text">✏️ 日本語校正（やさしい日本語の確認・修正）</div>
-              <div class="check-sub">子どもが読みやすい日本語に整える作業</div>
-            </div>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" name="task" value="EFAOurDaisyBilingual（DAISY図書アプリ）の実行" id="taskDaisy">
-            <div>
-              <div class="check-text">📱 EFAOurDaisyBilingual（DAISY図書アプリ）の実行</div>
-              <div class="check-sub">DAISYアプリを使ってEPUB（電子図書）を作成する作業</div>
-            </div>
-          </label>
-          <label class="check-item">
-            <input type="checkbox" name="task" value="TTS（音声読み上げ）の確認" id="taskTTS">
-            <div>
-              <div class="check-text">🔊 TTS（音声読み上げ）の確認</div>
-              <div class="check-sub">機械音声が正しく読み上げられているか確認する作業</div>
-            </div>
-          </label>
-        </div>
-        <div class="error-msg" id="taskErr">完了した作業を1つ以上選んでください</div>
+      <!-- 担当タスクなしメッセージ -->
+      <div class="warn-box" id="noTaskMsg" style="display:none;">
+        ⚠️ 現在担当中の作業がありません。<br>
+        まず「書籍の作業を予約する」から作業を予約してください。
       </div>
 
-      <!-- アップロードガイド（Word/Translator/校正/TTS選択時に表示） -->
-      <div id="uploadGuideSection" style="display:none;">
+      <!-- Word・EFATranslatorガイド（WORDタスク時） -->
+      <div id="wordGuideSection" style="display:none;">
         <div class="tip-box">
           💡 <strong>アップロードの方法</strong><br>
-          ① ファイルをすべて選択（<strong>Ctrl+A キー</strong>）<br>
-          ② 選択したままGoogleドライブにドラッグ＆ドロップ<br>
-          ③ 「フォルダにアップロード」を選択
+          ① 作業フォルダを開く<br>
+          ② 作成したWordファイルと出力ファイルをすべてアップロード<br>
+          ③ ファイルをすべて選択（Ctrl+A）→ Googleドライブにドラッグ＆ドロップ
         </div>
       </div>
 
-      <!-- ファイルチェックリスト（DAISY選択時のみ表示） -->
+      <!-- 日本語校正ガイド（PROOFREADINGタスク時） -->
+      <div id="proofGuideSection" style="display:none;">
+        <div class="tip-box">
+          💡 <strong>校正完了後のアップロード</strong><br>
+          ① 修正したWordファイルを作業フォルダに上書きアップロード<br>
+          ② 元のファイルを削除せず、同じ名前で上書き保存してください
+        </div>
+      </div>
+
+      <!-- ファイルチェックリスト（DAISYタスク時） -->
       <div id="daisyFileSection" style="display:none;">
         <div class="file-checklist">
           <div class="file-checklist-title">
@@ -541,11 +506,11 @@ select {
           ① ファイルをすべて選択（Ctrl+A キー）<br>
           ② 選択したままGoogleドライブにドラッグ＆ドロップ<br>
           ③ 「フォルダにアップロード」を選択<br><br>
-          ⚠️ JSONファイル（_classify.json等）を削除・移動しないでください。次の作業に必要です。
+          ⚠️ JSONファイルを削除・移動しないでください。次の作業に必要です。
         </div>
       </div>
 
-      <!-- TTSファイル案内（TTS確認選択時のみ表示） -->
+      <!-- TTSファイル案内（TTSタスク時） -->
       <div id="ttsFileSection" style="display:none;">
         <div class="file-checklist">
           <div class="file-checklist-title">
@@ -560,14 +525,14 @@ select {
         </div>
         <div class="warn-box">
           📝 <strong>TTSレポートフォームの記入方法</strong><br>
-          作業中に読み上げの問題を見つけたら、その都度レポートフォームに記録してください。<br>
-          ページ番号・該当テキスト・実際の読み方・正しい読み方・問題の種類を記入します。<br><br>
+          作業中に読み上げの問題を見つけたら、その都度レポートフォームに記録してください。<br><br>
           💡 <strong>アップロードの方法</strong><br>
           ① ファイルをすべて選択（Ctrl+A キー）<br>
-          ② 選択したままGoogleドライブにドラッグ＆ドロップ<br>
-          ③ 「フォルダにアップロード」を選択
+          ② 選択したままGoogleドライブにドラッグ＆ドロップ
         </div>
       </div>
+
+      <!-- Googleドライブフォルダボタン -->
       <div id="folderLinkSection" style="display:none; margin-bottom:14px;">
         <a id="folderLinkBtn" href="#" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" class="folder-btn">
           📁 Googleドライブの作業フォルダを開く
@@ -579,12 +544,15 @@ select {
         <label class="field-label" for="notes">気になったこと・特記事項<span class="opt">（任意）</span></label>
         <textarea id="notes" placeholder="作業中に気になったこと、うまくいかなかったこと、エラーが出た場合は内容などを書いてください。"></textarea>
       </div>
-      <button class="btn-primary" onclick="submitComplete()">
+
+      <button class="btn-primary" id="completeBtnWrapper" onclick="submitComplete()" style="display:none;">
         <span id="completeBtnText">完了報告を送信する →</span>
       </button>
+
     </div>
   </div>
 </div>
+
 
 <!-- ══ STEP 3C：エラー報告 ══ -->
 <div class="section" id="sec3c">
@@ -808,13 +776,13 @@ var state = {
   fetchedAssigned: false,
   errorPath:      '',
   selectedApp:    '',
-  selectedOS:     ''
+  selectedOS:     '',
+  currentTask:    null
 };
 
 // ── 初期化 ────────────────────────────────────────────
 window.addEventListener('load', function() {
   loadEmailFromStorage();
-  loadAvailableBooks();
   setupListeners();
   setupScreenshotPaste();
 });
@@ -832,21 +800,6 @@ function saveEmailToStorage(email) {
 }
 
 // ── 空き書籍リスト読み込み ────────────────────────────
-function loadAvailableBooks() {
-  gasCall({ action_type: 'get_books', token: FORM_TOKEN }, function(res) {
-    var sel = document.getElementById('bookSelect');
-    sel.options[0].textContent = '-- 書籍を選んでください --';
-    if (res.status === 'ok' && res.books && res.books.length > 0) {
-      res.books.forEach(function(b) {
-        var opt = document.createElement('option');
-        opt.value = b.id; opt.textContent = b.label;
-        sel.appendChild(opt);
-      });
-    } else {
-      sel.options[0].textContent = '-- 現在予約可能な書籍がありません --';
-    }
-  });
-}
 
 // ── 担当書籍リスト読み込み ────────────────────────────
 function loadAssignedBooks() {
@@ -893,44 +846,9 @@ function setupListeners() {
     });
   });
   // DAISYアプリ選択でファイルチェックリスト表示
-  document.getElementById('taskDaisy').addEventListener('change', function() {
-    document.getElementById('daisyFileSection').style.display = this.checked ? 'block' : 'none';
-  });
-  // TTS確認選択でTTSファイル案内を表示
-  document.getElementById('taskTTS').addEventListener('change', function() {
-    document.getElementById('ttsFileSection').style.display = this.checked ? 'block' : 'none';
-  });
-  // Word/Translator/校正/TTS選択でアップロードガイド表示
-  ['taskWord', 'taskTranslator', 'taskNihongo', 'taskTTS'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('change', function() {
-      var anyChecked = ['taskWord', 'taskTranslator', 'taskNihongo', 'taskTTS'].some(function(tid) {
-        var t = document.getElementById(tid);
-        return t && t.checked;
-      });
-      document.getElementById('uploadGuideSection').style.display = anyChecked ? 'block' : 'none';
-    });
-  });
-  // 完了報告：書籍選択でフォルダURLを取得
-  document.getElementById('completeBook').addEventListener('change', function() {
-    var bookId = this.value;
-    var section = document.getElementById('folderLinkSection');
-    if (!bookId) { section.style.display = 'none'; return; }
-    section.style.display = 'block';
-    var btn = document.getElementById('folderLinkBtn');
-    btn.textContent = '📁 Googleドライブのフォルダを読み込み中...';
-    btn.href = '#';
-    gasCall({ action_type: 'get_book_folder', book_id: bookId, token: FORM_TOKEN }, function(res) {
-      if (res.status === 'ok' && res.url) {
-        btn.textContent = '📁 Googleドライブの作業フォルダを開く';
-        btn.href = res.url;
-      } else {
-        btn.textContent = '⚠️ フォルダが見つかりません（メールのURLをご確認ください）';
-        btn.href = '#';
-      }
-    });
-  });
+  // ガイドボックスはshowMyTask()でタスクタイプに応じて自動表示（リスナー不要）
+
+
   // スクショファイル入力
   document.getElementById('ssFile').addEventListener('change', function(e) {
     if (e.target.files[0]) readImageFile(e.target.files[0]);
@@ -1077,10 +995,12 @@ function register() {
   if (!types.length){ showErr('typeErr'); valid = false; } else hideErr('typeErr');
   if (!valid) return;
 
+  var primaryType = types.indexOf('A') >= 0 ? 'A' : (types.indexOf('B') >= 0 ? 'B' : 'C');
   setBtnLoading('regBtnText', true);
   gasCall({
     action_type: 'register', email: state.email,
-    name: name, type: 'volunteer', token: FORM_TOKEN
+    name: name, type: 'volunteer',
+    volunteer_type: primaryType, token: FORM_TOKEN
   }, function(res) {
     setBtnLoading('regBtnText', false);
     if (res.status === 'ok') {
@@ -1103,9 +1023,10 @@ function selectAction(action, el) {
     setProgress(3);
     if (action === 'reserve') {
       showSection('sec3a');
+      loadAvailableTasks();
     } else if (action === 'complete') {
       showSection('sec3b');
-      loadAssignedBooks();
+      loadMyTask();
     } else if (action === 'help') {
       showSection('sec3c');
     }
@@ -1114,13 +1035,16 @@ function selectAction(action, el) {
 
 // ── Step 3A：予約送信 ────────────────────────────────
 function submitReserve() {
-  var bookId = document.getElementById('bookSelect').value;
-  if (!bookId) { showErr('bookErr'); return; }
-  hideErr('bookErr');
+  var taskId = document.getElementById('taskSelect').value;
+  if (!taskId) { showErr('taskSelectErr'); return; }
+  hideErr('taskSelectErr');
   setBtnLoading('reserveBtnText', true);
   gasCall({
-    action_type: 'reserve', email: state.email,
-    member_id: state.memberId, book_id: bookId, token: FORM_TOKEN
+    action_type: 'reserve_task',
+    email: state.email,
+    member_id: state.memberId,
+    task_id: taskId,
+    token: FORM_TOKEN
   }, function(res) {
     setBtnLoading('reserveBtnText', false);
     if (res.status === 'ok') {
@@ -1129,6 +1053,150 @@ function submitReserve() {
       alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
     }
   });
+}
+
+
+// ── タスク一覧読み込み（予約フォーム用）────────────────
+function loadAvailableTasks() {
+  var sel = document.getElementById('taskSelect');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- 読み込み中... --</option>';
+  gasCall({ action_type: 'get_available_tasks', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
+    sel.innerHTML = '';
+    if (res.status === 'ok' && res.tasks && res.tasks.length > 0) {
+      var def = document.createElement('option');
+      def.value = ''; def.textContent = '-- 作業を選んでください --';
+      sel.appendChild(def);
+      res.tasks.forEach(function(t) {
+        var opt = document.createElement('option');
+        opt.value = t.id; opt.textContent = t.label;
+        sel.appendChild(opt);
+      });
+    } else {
+      var noOpt = document.createElement('option');
+      noOpt.value = '';
+      noOpt.textContent = '-- 現在予約できる作業はありません（準備ができたらメールでご連絡します） --';
+      sel.appendChild(noOpt);
+    }
+  });
+}
+
+// ── 担当タスク読み込み（完了報告フォーム用）────────────
+function loadMyTask() {
+  var display = document.getElementById('myTaskDisplay');
+  if (display) display.innerHTML = '<p class="hint">読み込み中...</p>';
+  state.currentTask = null;
+
+  // ガイドセクションを全て非表示にリセット
+  ['wordGuideSection','proofGuideSection','daisyFileSection','ttsFileSection','folderLinkSection'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  var btn = document.getElementById('completeBtnWrapper');
+  if (btn) btn.style.display = 'none';
+
+  gasCall({ action_type: 'get_my_task', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
+    if (res.status === 'ok' && res.task_id) {
+      state.currentTask = res;
+      showMyTask(res);
+    } else {
+      showNoTask();
+    }
+  });
+}
+
+// ── 担当タスクを画面に表示 ───────────────────────────────
+function showMyTask(task) {
+  var display = document.getElementById('myTaskDisplay');
+  if (display) {
+    display.innerHTML =
+      '<div class="info-box">' +
+      '<strong>📋 担当中の作業</strong><br><br>' +
+      '📚 <strong>' + task.book_id + '</strong>　' + (task.book_title || '') + '<br>' +
+      '🔧 ' + task.task_label + '<br>' +
+      '⏰ 期限：' + (task.deadline || '未設定') +
+      '</div>';
+  }
+
+  // フォルダボタン設定
+  var folderSection = document.getElementById('folderLinkSection');
+  var folderBtn     = document.getElementById('folderLinkBtn');
+  if (folderSection && folderBtn && task.folder_url) {
+    folderBtn.href = task.folder_url;
+    folderSection.style.display = 'block';
+  }
+
+  // タスクタイプ別ガイドボックス表示
+  var guideMap = {
+    WORD:         'wordGuideSection',
+    PROOFREADING: 'proofGuideSection',
+    DAISY:        'daisyFileSection',
+    TTS:          'ttsFileSection'
+  };
+  var guideId = guideMap[task.task_type];
+  if (guideId) {
+    var guide = document.getElementById(guideId);
+    if (guide) guide.style.display = 'block';
+  }
+
+  var noMsg = document.getElementById('noTaskMsg');
+  if (noMsg) noMsg.style.display = 'none';
+  var btn = document.getElementById('completeBtnWrapper');
+  if (btn) btn.style.display = 'block';
+}
+
+// ── 担当タスクなし表示 ───────────────────────────────────
+function showNoTask() {
+  var display = document.getElementById('myTaskDisplay');
+  if (display) display.innerHTML = '';
+  var noMsg = document.getElementById('noTaskMsg');
+  if (noMsg) noMsg.style.display = 'block';
+  var btn = document.getElementById('completeBtnWrapper');
+  if (btn) btn.style.display = 'none';
+}
+
+// ── 完了後クロージング画面 ───────────────────────────────
+function showCompleteWithClosing(res) {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+
+  document.getElementById('completeIcon').textContent  = '✅';
+  document.getElementById('completeTitle').textContent = '完了報告を送信しました！';
+  document.getElementById('completeTitle').style.color = 'var(--green)';
+  document.getElementById('completeMsg').textContent   = res.message || '完了報告を受け付けました。お疲れ様でした！';
+
+  document.getElementById('nextSteps').innerHTML =
+    '<h3>次はどうしますか？</h3>' +
+    '<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">' +
+    '<button class="btn-primary" onclick="continueReservation()">📖 続けて別の作業を予約する</button>' +
+    '<button class="btn-primary" style="background:var(--gray);" onclick="finishForToday()">✋ 今日は終わりにする</button>' +
+    '</div>';
+
+  var card = document.getElementById('completeCard');
+  card.style.display = 'block';
+  card.classList.add('fade-in');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  state.currentTask = null;
+}
+
+// ── クロージング①：続けて予約する ───────────────────────
+function continueReservation() {
+  document.getElementById('completeCard').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'flex';
+  setProgress(3);
+  state.action = 'reserve';
+  loadAvailableTasks();
+  showSection('sec3a');
+}
+
+// ── クロージング②：今日は終わりにする ──────────────────
+function finishForToday() {
+  document.getElementById('completeIcon').textContent  = '🙏';
+  document.getElementById('completeTitle').textContent = 'お疲れ様でした！';
+  document.getElementById('completeTitle').style.color = 'var(--blue)';
+  document.getElementById('completeMsg').textContent   = '本日の作業ありがとうございました。また次回よろしくお願いします。';
+  document.getElementById('nextSteps').innerHTML = '';
 }
 
 function showReserveComplete(res) {
@@ -1154,64 +1222,53 @@ function showReserveComplete(res) {
 
 // ── Step 3B：完了報告送信 ────────────────────────────
 function submitComplete() {
-  var bookId = document.getElementById('completeBook').value;
-  var tasks  = Array.from(document.querySelectorAll('[name="task"]:checked')).map(function(cb) { return cb.value; });
-  var notes  = document.getElementById('notes').value;
-  var valid  = true;
-
-  if (!bookId) {
-    showErr('completeBookErr');
-    alert('書籍を選択してください。\n担当している書籍をプルダウンから選んでから送信してください。');
-    valid = false;
-  } else {
-    hideErr('completeBookErr');
-  }
-  if (!tasks.length) { showErr('taskErr'); valid = false; } else hideErr('taskErr');
-
-  // DAISYアプリ実行時はファイルチェック必須
-  if (tasks.some(function(t) { return t.indexOf('EFAOurDaisyBilingual') >= 0; })) {
-    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
-      return document.getElementById(id).checked;
-    });
-    if (!allChecked) {
-      alert('「EFAOurDaisyBilingual（DAISY図書アプリ）」を選択した場合は、\nすべてのファイルをGoogleドライブにアップロードしてから\nチェックボックスにチェックを入れてください。');
-      valid = false;
-    }
-  }
-
-  // TTS確認時はレポートフォームの提出チェック
-  if (tasks.some(function(t) { return t.indexOf('TTS') >= 0; })) {
-    var ttsChecked = ['fc-tts1','fc-tts2','fc-tts3'].every(function(id) {
-      return document.getElementById(id).checked;
-    });
-    if (!ttsChecked) {
-      alert('「TTS（音声読み上げ）の確認」を選択した場合は、\nTTSレポートフォームと_proper_nouns.json・_classify.jsonを\nGoogleドライブにアップロードしてからチェックを入れてください。');
-      valid = false;
-    }
-  }
-
-  if (!valid) {
-    var firstErr = document.querySelector('.error-msg.show');
-    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!state.currentTask) {
+    alert('担当中の作業が見つかりません。ページを再読み込みしてください。');
     return;
   }
 
+  var notes   = document.getElementById('notes').value;
+  var taskType = state.currentTask.task_type;
+  var valid   = true;
+
+  // DAISYタスクのファイルチェック
+  if (taskType === 'DAISY') {
+    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
+      var el = document.getElementById(id);
+      return el && el.checked;
+    });
+    if (!allChecked) {
+      alert('すべてのファイルをGoogleドライブにアップロードしてから\nチェックボックスにチェックを入れてください。');
+      valid = false;
+    }
+  }
+
+  // TTSタスクのファイルチェック
+  if (taskType === 'TTS') {
+    var ttsChecked = ['fc-tts1','fc-tts2','fc-tts3'].every(function(id) {
+      var el = document.getElementById(id);
+      return el && el.checked;
+    });
+    if (!ttsChecked) {
+      alert('TTSレポートフォームと必要ファイルをGoogleドライブに\nアップロードしてからチェックを入れてください。');
+      valid = false;
+    }
+  }
+
+  if (!valid) return;
+
   setBtnLoading('completeBtnText', true);
   gasCall({
-    action_type: 'complete', email: state.email,
-    member_id: state.memberId, book_id: bookId,
-    tasks: tasks, notes: notes, token: FORM_TOKEN
+    action_type: 'complete_task',
+    email:       state.email,
+    member_id:   state.memberId,
+    task_id:     state.currentTask.task_id,
+    notes:       notes,
+    token:       FORM_TOKEN
   }, function(res) {
     setBtnLoading('completeBtnText', false);
     if (res.status === 'ok') {
-      showGenericComplete('✅', '完了報告を送信しました！',
-        res.message || '完了報告を受け付けました。',
-        [
-          '確認メールが届きます。ご確認ください。',
-          'ファイルを確認後、次の工程に進みます（最大1時間以内）。',
-          '次の書籍を担当する場合は、再度このフォームから予約してください。'
-        ]
-      );
+      showCompleteWithClosing(res);
     } else {
       alert('エラー：' + (res.message || '送信に失敗しました。'));
     }
