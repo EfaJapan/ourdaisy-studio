@@ -1114,7 +1114,10 @@ function showMyTask(task) {
       '<strong>📋 担当中の作業</strong><br><br>' +
       '📚 <strong>' + task.book_id + '</strong>　' + (task.book_title || '') + '<br>' +
       '🔧 ' + task.task_label + '<br>' +
-      '⏰ 期限：' + (task.deadline || '未設定') +
+      '⏰ 期限：' + (task.deadline ? (function(d) {
+        try { return new Date(d).toLocaleDateString('ja-JP', {year:'numeric',month:'2-digit',day:'2-digit'}); }
+        catch(e) { return d; }
+      })(task.deadline) : '未設定') +
       '</div>';
   }
 
