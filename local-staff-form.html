@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OurDAISY – Local Staff Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Noto+Sans+Lao:wght@400;700&family=Noto+Sans+Khmer:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:   #005EAD;
+  --blue-d: #003A70;
+  --blue-l: #E8F1FB;
+  --blue-m: #C5DEFF;
+  --green:  #2A9D5C;
+  --green-l:#E8F7EF;
+  --red:    #C0392B;
+  --orange: #E67E22;
+  --org-l:  #FFF3E0;
+  --gray:   #6B7280;
+  --gray-l: #F5F8FC;
+  --white:  #FFFFFF;
+  --text:   #1A2A3A;
+  --radius: 14px;
+  --shadow: 0 4px 28px rgba(0,94,173,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'BIZ UDPGothic', 'Noto Sans Lao', 'Noto Sans Khmer', sans-serif;
+  background: linear-gradient(160deg,#EEF5FF 0%,#F5F8FC 60%,#EAF7EF 100%);
+  min-height: 100vh;
+  color: var(--text);
+  padding: 20px 16px 60px;
+}
+
+/* ── 言語切り替え ── */
+.lang-bar {
+  max-width: 640px; margin: 0 auto 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+.lang-bar span { font-size: 0.76rem; color: var(--gray); margin-right: 4px; }
+.lang-btn {
+  padding: 5px 14px; border-radius: 20px;
+  border: 2px solid #D1E3F8; background: var(--white);
+  font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  color: var(--gray); transition: all 0.2s; font-family: inherit;
+}
+.lang-btn.active { border-color: var(--blue); background: var(--blue); color: var(--white); }
+.lang-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+
+/* ── ヘッダー ── */
+.header { max-width: 640px; margin: 0 auto 24px; text-align: center; }
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue); color: var(--white);
+  padding: 6px 18px; border-radius: 40px;
+  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+.header h1 { font-size: 1.6rem; font-weight: 700; color: var(--blue-d); line-height: 1.3; }
+.header-sub { margin-top: 5px; font-size: 0.82rem; color: var(--gray); }
+
+/* ── プログレス ── */
+.progress-wrap {
+  max-width: 640px; margin: 0 auto 20px;
+  display: flex; align-items: center;
+}
+.prog-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.prog-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #D1E3F8; color: var(--gray);
+  font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+}
+.prog-circle.active { background: var(--blue); color: var(--white); }
+.prog-circle.done   { background: var(--green); color: var(--white); }
+.prog-label { font-size: 0.68rem; color: var(--gray); text-align: center; }
+.prog-line { flex: 1; height: 2px; background: #D1E3F8; transition: background 0.3s; }
+.prog-line.done { background: var(--green); }
+
+/* ── カード ── */
+.card {
+  max-width: 640px; margin: 0 auto 16px;
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
+}
+.card-header {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-d) 100%);
+  padding: 16px 22px; display: flex; align-items: center; gap: 12px;
+}
+.card-header .step-no {
+  background: rgba(255,255,255,0.2); color: var(--white);
+  font-size: 0.68rem; font-weight: 700; padding: 2px 10px;
+  border-radius: 20px; letter-spacing: 0.08em; white-space: nowrap;
+}
+.card-header h2 { color: var(--white); font-size: 0.97rem; font-weight: 700; line-height: 1.4; }
+.card-body { padding: 22px; }
+
+/* ── フォーム要素 ── */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label.field-label {
+  display: block; font-size: 0.88rem; font-weight: 700;
+  color: var(--blue-d); margin-bottom: 7px;
+}
+.req { color: var(--red); font-size: 0.72rem; margin-left: 4px; }
+.opt { color: var(--gray); font-size: 0.72rem; margin-left: 4px; font-weight: 400; }
+input[type="email"], input[type="text"], select, textarea {
+  width: 100%; padding: 12px 14px;
+  border: 2px solid #D1E3F8; border-radius: 9px;
+  font-family: inherit; font-size: 0.92rem; color: var(--text);
+  background: #FAFCFF; transition: border-color 0.2s, box-shadow 0.2s; appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,94,173,0.12); background: var(--white);
+}
+textarea { resize: vertical; min-height: 100px; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23005EAD' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px;
+}
+.hint { font-size: 0.77rem; color: var(--gray); margin-top: 5px; line-height: 1.55; }
+.error-msg { font-size: 0.77rem; color: var(--red); margin-top: 4px; display: none; }
+.error-msg.show { display: block; }
+
+/* ── 選択カード ── */
+.choice-list { display: flex; flex-direction: column; gap: 10px; }
+.choice-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border: 2px solid #D1E3F8;
+  border-radius: 11px; cursor: pointer;
+  transition: all 0.2s; background: #FAFCFF;
+}
+.choice-item:hover { border-color: var(--blue); background: var(--blue-l); transform: translateY(-1px); }
+.choice-item.selected { border-color: var(--blue); background: var(--blue-l); box-shadow: 0 2px 10px rgba(0,94,173,0.15); }
+.choice-icon { font-size: 1.5rem; width: 38px; text-align: center; flex-shrink: 0; }
+.choice-title { font-size: 0.92rem; font-weight: 700; color: var(--text); }
+.choice-sub { font-size: 0.75rem; color: var(--gray); margin-top: 2px; line-height: 1.45; }
+
+/* ── ボックス ── */
+.info-box { background: var(--green-l); border: 2px solid var(--green); border-radius: 10px; padding: 13px 16px; font-size: 0.82rem; color: #1A5C38; margin-bottom: 16px; line-height: 1.6; }
+.warn-box  { background: var(--org-l);  border: 2px solid var(--orange); border-radius: 10px; padding: 13px 16px; font-size: 0.82rem; color: #7A4200; margin-bottom: 16px; line-height: 1.6; }
+.tip-box   { background: var(--blue-l); border: 2px solid var(--blue-m);  border-radius: 10px; padding: 13px 16px; font-size: 0.82rem; color: var(--blue-d); margin-bottom: 16px; line-height: 1.65; }
+
+/* ── 書籍情報セクション ── */
+.section-divider {
+  font-size: 0.78rem; font-weight: 700; color: var(--blue);
+  border-bottom: 2px solid var(--blue-l); padding-bottom: 6px;
+  margin: 20px 0 14px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* ── ボタン ── */
+.btn-primary {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 15px;
+  background: var(--blue); color: var(--white);
+  border: none; border-radius: 10px;
+  font-family: inherit; font-size: 0.97rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px;
+}
+.btn-primary:hover:not(:disabled) { background: var(--blue-d); transform: translateY(-1px); }
+.btn-primary:disabled { background: #B0C4D8; cursor: not-allowed; }
+.btn-primary.green-btn { background: var(--green); }
+.btn-primary.green-btn:hover:not(:disabled) { background: #1e7a44; }
+.btn-back {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: none; color: var(--blue);
+  font-family: inherit; font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; padding: 0; margin-bottom: 16px;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-back:hover { color: var(--blue-d); }
+
+/* ── ローディング ── */
+.loading {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: var(--white); border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 完了カード ── */
+.complete-card {
+  max-width: 640px; margin: 0 auto;
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 40px 28px;
+  text-align: center; display: none;
+}
+.complete-icon { font-size: 3.5rem; margin-bottom: 14px; }
+.complete-title { font-size: 1.3rem; font-weight: 700; color: var(--green); margin-bottom: 10px; }
+.complete-msg { font-size: 0.88rem; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+.next-steps { background: var(--blue-l); border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 20px; }
+.next-steps h3 { font-size: 0.84rem; font-weight: 700; color: var(--blue-d); margin-bottom: 10px; }
+.next-step-item { display: flex; gap: 10px; font-size: 0.83rem; color: var(--text); padding: 5px 0; line-height: 1.55; }
+.step-num { background: var(--blue); color: var(--white); font-size: 0.68rem; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+/* ── セクション制御 ── */
+.section { display: none; }
+.section.active { display: block; }
+.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+@media(max-width:480px) {
+  .header h1 { font-size: 1.3rem; }
+  .card-body { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 言語切り替え -->
+<div class="lang-bar">
+  <span>🌐</span>
+  <button class="lang-btn active" onclick="setLang('en')">English</button>
+  <button class="lang-btn" onclick="setLang('lao')">ລາວ</button>
+  <button class="lang-btn" onclick="setLang('khm')">ខ្មែរ</button>
+</div>
+
+<!-- ヘッダー -->
+<div class="header">
+  <div class="header-badge">📚 OurDAISY Studio</div>
+  <h1 id="hdr-title">Local Staff Form</h1>
+  <p class="header-sub" id="hdr-sub">EFA Japan – OurDAISY Project</p>
+</div>
+
+<!-- プログレス -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="prog-step">
+    <div class="prog-circle active" id="pc1">1</div>
+    <div class="prog-label" id="pl-1">Login</div>
+  </div>
+  <div class="prog-line" id="pl1"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc2">2</div>
+    <div class="prog-label" id="pl-2">Select Task</div>
+  </div>
+  <div class="prog-line" id="pl2"></div>
+  <div class="prog-step">
+    <div class="prog-circle" id="pc3">3</div>
+    <div class="prog-label" id="pl-3">Submit</div>
+  </div>
+</div>
+
+<!-- STEP 1: メール確認 -->
+<div class="section active" id="sec1">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-no">STEP 1</span>
+      <h2 id="s1-title">Enter your email address</h2>
+    </div>
+    <div class="card-body">
+      <div class="tip-box" id="s1-tip">
+        💡 If you have used this form before, your information will be loaded automatically.
+      </div>
+      <div class="field">
+        <label class="field-label" for="email"><span id="s1-email-lbl">Email address</span><span class="req">*</span></label>
+        <input type="email" id="email" placeholder="example@email.com">
+        <div class="error-msg" id="emailErr">Please enter a valid email address.</div>
+      </div>
+      <button class="btn-primary" onclick="checkEmail()">
+        <span id="checkBtnText">Continue →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 1b: 初回登録 -->
+<div class="section" id="sec1b">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-no">STEP 1</span>
+      <h2 id="s1b-title">First time? Please register</h2>
+    </div>
+    <div class="card-body">
+      <button class="btn-back" onclick="goBack('sec1')">← Back</button>
+      <div class="info-box" id="s1b-info">
+        ✨ Please enter your name and language. You only need to do this once.
+      </div>
+      <div class="field">
+        <label class="field-label" for="name"><span id="s1b-name-lbl">Your name</span><span class="req">*</span></label>
+        <input type="text" id="name" placeholder="e.g. Souphavanh Vongkhamphanh">
+        <div class="error-msg" id="nameErr">Please enter your name.</div>
+      </div>
+      <div class="field">
+        <label class="field-label"><span id="s1b-lang-lbl">Your language</span><span class="req">*</span></label>
+        <select id="staffLang">
+          <option value="">-- Select --</option>
+          <option value="Lao">Lao（ລາວ）</option>
+          <option value="Khmer">Khmer（ខ្មែរ）</option>
+          <option value="Myanmar">Myanmar（မြန်မာ）</option>
+          <option value="Nepali">Nepali（नेपाली）</option>
+        </select>
+        <div class="error-msg" id="langErr">Please select your language.</div>
+      </div>
+      <button class="btn-primary" onclick="register()">
+        <span id="regBtnText">Register & Continue →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: 作業選択 -->
+<div class="section" id="sec2">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-no">STEP 2</span>
+      <h2 id="s2-title">What would you like to do today?</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:0.85rem;color:var(--gray);margin-bottom:16px;" id="welcomeMsg"></p>
+      <div class="choice-list">
+        <div class="choice-item" onclick="selectAction('reserve', this)">
+          <div class="choice-icon">📖</div>
+          <div>
+            <div class="choice-title" id="s2-reserve-title">Reserve a book</div>
+            <div class="choice-sub" id="s2-reserve-sub">Choose a book to work on. You will receive the folder link by email.</div>
+          </div>
+        </div>
+        <div class="choice-item" onclick="selectAction('complete', this)">
+          <div class="choice-icon">📤</div>
+          <div>
+            <div class="choice-title" id="s2-complete-title">Submit completion report</div>
+            <div class="choice-sub" id="s2-complete-sub">Report that your work is finished and submit book information.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3A: 書籍予約 -->
+<div class="section" id="sec3a">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-no">STEP 3</span>
+      <h2 id="s3a-title">📖 Reserve a book</h2>
+    </div>
+    <div class="card-body">
+      <button class="btn-back" onclick="goBack('sec2')">← Back</button>
+      <div class="field">
+        <label class="field-label" for="bookSelect"><span id="s3a-book-lbl">Select a book</span><span class="req">*</span></label>
+        <select id="bookSelect">
+          <option value="">-- Loading... --</option>
+        </select>
+        <div class="error-msg" id="bookErr">Please select a book.</div>
+        <p class="hint" id="s3a-hint">📌 Only books available for your language are shown.</p>
+      </div>
+      <div class="tip-box" id="s3a-tip">
+        📋 After reserving, you will receive the work folder link by email.<br>
+        Please read the manual before starting work.
+      </div>
+      <button class="btn-primary" onclick="submitReserve()">
+        <span id="reserveBtnText">Reserve this book →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3B: 完了報告 -->
+<div class="section" id="sec3b">
+  <div class="card fade-in">
+    <div class="card-header" style="background: linear-gradient(135deg, #2A9D5C 0%, #1e7a44 100%);">
+      <span class="step-no">STEP 3</span>
+      <h2 id="s3b-title">📤 Submit completion report</h2>
+    </div>
+    <div class="card-body">
+      <button class="btn-back" onclick="goBack('sec2')">← Back</button>
+
+      <!-- 担当書籍 -->
+      <div class="field">
+        <label class="field-label" for="completeBook"><span id="s3b-book-lbl">Select the book you completed</span><span class="req">*</span></label>
+        <select id="completeBook">
+          <option value="">-- Loading your assigned books... --</option>
+        </select>
+        <div class="error-msg" id="completeBookErr">Please select a book.</div>
+        <div class="warn-box" id="noBooksMsg" style="display:none;">
+          ⚠️ You have no assigned books. Please reserve a book first.
+        </div>
+      </div>
+
+      <!-- 書籍情報入力 -->
+      <div id="bookInfoSection">
+        <div class="section-divider" id="s3b-bookinfo-title">📚 Book Information</div>
+        <div class="tip-box" id="s3b-bookinfo-tip">
+          Please fill in the book information in your language. This information will be used in the DAISY book.
+        </div>
+
+        <!-- 必須：著者名 -->
+        <div class="field">
+          <label class="field-label" for="bi-author">
+            <span id="s3b-author-lbl">Author name</span><span class="req">*</span>
+          </label>
+          <input type="text" id="bi-author" placeholder="e.g. ສຸກ ໄຊ / Sarun Khmer">
+          <div class="error-msg" id="biAuthorErr">Please enter the author name.</div>
+        </div>
+
+        <!-- 挿絵作者 -->
+        <div class="field">
+          <label class="field-label" for="bi-illustrator">
+            <span id="s3b-illus-lbl">Illustrator name</span><span class="opt">(optional)</span>
+          </label>
+          <input type="text" id="bi-illustrator" placeholder="">
+        </div>
+
+        <!-- 出版社 -->
+        <div class="field">
+          <label class="field-label" for="bi-publisher">
+            <span id="s3b-pub-lbl">Publisher</span><span class="opt">(optional)</span>
+          </label>
+          <input type="text" id="bi-publisher" placeholder="">
+        </div>
+
+        <!-- 出版年 -->
+        <div class="field">
+          <label class="field-label" for="bi-pubdate">
+            <span id="s3b-pubdate-lbl">Publication date</span><span class="opt">(optional, e.g. 01-01-2020)</span>
+          </label>
+          <input type="text" id="bi-pubdate" placeholder="DD-MM-YYYY">
+        </div>
+
+        <!-- ISBN -->
+        <div class="field">
+          <label class="field-label" for="bi-isbn">
+            ISBN<span class="opt">(optional)</span>
+          </label>
+          <input type="text" id="bi-isbn" placeholder="e.g. 978-0-000-00000-0">
+        </div>
+
+        <!-- 著作者・著作権帰属先 -->
+        <div class="field">
+          <label class="field-label" for="bi-copyright">
+            <span id="s3b-copy-lbl">Copyright holder</span><span class="opt">(optional)</span>
+          </label>
+          <input type="text" id="bi-copyright" placeholder="e.g. Ministry of Education, Lao PDR">
+          <p class="hint" id="s3b-copy-hint">Who owns the copyright? (organization or person)</p>
+        </div>
+
+        <!-- 許諾情報 -->
+        <div class="field">
+          <label class="field-label" for="bi-license">
+            <span id="s3b-lic-lbl">License / Permission</span><span class="opt">(optional)</span>
+          </label>
+          <input type="text" id="bi-license" placeholder="e.g. Permission Granted by Ministry of Education">
+        </div>
+
+        <!-- 対象年齢 -->
+        <div class="field">
+          <label class="field-label" for="bi-age">
+            <span id="s3b-age-lbl">Target age group</span><span class="opt">(optional – leave blank for auto-detection)</span>
+          </label>
+          <select id="bi-age">
+            <option value="">-- Auto-detect --</option>
+            <option value="A1">A1 – 3–5 years (Preschool)</option>
+            <option value="A2">A2 – 6–8 years (Early Elementary)</option>
+            <option value="A3">A3 – 9–11 years (Middle Elementary)</option>
+            <option value="A4">A4 – 12–14 years (Upper Elementary – Junior High)</option>
+            <option value="A5">A5 – 15–18 years (Teens)</option>
+            <option value="A6">A6 – All Ages</option>
+          </select>
+          <p class="hint" id="s3b-age-hint">If you select an age group, it will take priority over the automatic detection.</p>
+        </div>
+
+        <!-- 問題・特記事項 -->
+        <div class="section-divider" id="s3b-notes-title">📝 Notes</div>
+        <div class="field">
+          <label class="field-label" for="bi-notes">
+            <span id="s3b-notes-lbl">Issues or comments</span><span class="opt">(optional)</span>
+          </label>
+          <textarea id="bi-notes" placeholder="Any issues with the text, images, or anything EFA should know about."></textarea>
+        </div>
+        <div class="field">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="hasIssues" style="width:18px;height:18px;accent-color:var(--orange);">
+            <span style="font-size:0.87rem;color:var(--text);" id="s3b-issue-lbl">
+              ⚠️ There is an issue that EFA needs to know about urgently.
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-primary green-btn" onclick="submitComplete()">
+        <span id="completeBtnText">Submit completion report →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 完了カード -->
+<div class="complete-card" id="completeCard">
+  <div class="complete-icon" id="completeIcon">✅</div>
+  <div class="complete-title" id="completeTitle">Done!</div>
+  <div class="complete-msg" id="completeMsg"></div>
+  <div class="next-steps" id="nextSteps"></div>
+</div>
+
+<script>
+// ── 定数 ──────────────────────────────────────────────────────────
+var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec';
+var FORM_TOKEN = 'efa2026daisy';
+var MANUAL_URL = 'https://efajapan.github.io/ourdaisy-bilingual-updates/';
+
+// ── 多言語定義（i18n）────────────────────────────────────────────
+// 言語を追加する場合はここにエントリを追加するだけでOK
+var LANG_DICT = {
+  en: {
+    'hdr-title':         'Local Staff Form',
+    'hdr-sub':           'EFA Japan – OurDAISY Project',
+    'pl-1':              'Login',
+    'pl-2':              'Select Task',
+    'pl-3':              'Submit',
+    's1-title':          'Enter your email address',
+    's1-tip':            '💡 If you have used this form before, your information will be loaded automatically.',
+    's1-email-lbl':      'Email address',
+    'checkBtnText':      'Continue →',
+    's1b-title':         'First time? Please register',
+    's1b-info':          '✨ Please enter your name and language. You only need to do this once.',
+    's1b-name-lbl':      'Your name',
+    's1b-lang-lbl':      'Your language',
+    'regBtnText':        'Register & Continue →',
+    's2-title':          'What would you like to do today?',
+    's2-reserve-title':  'Reserve a book',
+    's2-reserve-sub':    'Choose a book to work on. You will receive the folder link by email.',
+    's2-complete-title': 'Submit completion report',
+    's2-complete-sub':   'Report that your work is finished and submit book information.',
+    's3a-title':         '📖 Reserve a book',
+    's3a-book-lbl':      'Select a book',
+    's3a-hint':          '📌 Only books available for your language are shown.',
+    's3a-tip':           '📋 After reserving, you will receive the work folder link by email.\nPlease read the manual before starting work.',
+    'reserveBtnText':    'Reserve this book →',
+    's3b-title':         '📤 Submit completion report',
+    's3b-book-lbl':      'Select the book you completed',
+    's3b-bookinfo-title':'📚 Book Information',
+    's3b-bookinfo-tip':  'Please fill in the book information in your language. This information will be used in the DAISY book.',
+    's3b-author-lbl':    'Author name',
+    's3b-illus-lbl':     'Illustrator name',
+    's3b-pub-lbl':       'Publisher',
+    's3b-pubdate-lbl':   'Publication date',
+    's3b-copy-lbl':      'Copyright holder',
+    's3b-copy-hint':     'Who owns the copyright? (organization or person)',
+    's3b-lic-lbl':       'License / Permission',
+    's3b-age-lbl':       'Target age group',
+    's3b-age-hint':      'If you select an age group, it will take priority over the automatic detection.',
+    's3b-notes-title':   '📝 Notes',
+    's3b-notes-lbl':     'Issues or comments',
+    's3b-issue-lbl':     '⚠️ There is an issue that EFA needs to know about urgently.',
+    'completeBtnText':   'Submit completion report →',
+  },
+  lao: {
+    'hdr-title':         'ແບບຟອມພະນັກງານທ້ອງຖິ່ນ',
+    'hdr-sub':           'EFA ຍີ່ປຸ່ນ – ໂຄງການ OurDAISY',
+    'pl-1':              'ເຂົ້າສູ່ລະບົບ',
+    'pl-2':              'ເລືອກວຽກ',
+    'pl-3':              'ສົ່ງ',
+    's1-title':          'ໃສ່ທີ່ຢູ່ອີເມວຂອງທ່ານ',
+    's1-tip':            '💡 ຖ້າທ່ານໄດ້ໃຊ້ແບບຟອມນີ້ກ່ອນ, ຂໍ້ມູນຂອງທ່ານຈະຖືກໂຫລດໂດຍອັດຕະໂນມັດ.',
+    's1-email-lbl':      'ທີ່ຢູ່ອີເມວ',
+    'checkBtnText':      'ຕໍ່ໄປ →',
+    's1b-title':         'ຄັ້ງທຳອິດ? ກະລຸນາລົງທະບຽນ',
+    's1b-info':          '✨ ກະລຸນາໃສ່ຊື່ ແລະ ພາສາຂອງທ່ານ. ທ່ານຕ້ອງເຮັດນີ້ພຽງຄັ້ງດຽວ.',
+    's1b-name-lbl':      'ຊື່ຂອງທ່ານ',
+    's1b-lang-lbl':      'ພາສາຂອງທ່ານ',
+    'regBtnText':        'ລົງທະບຽນ & ຕໍ່ໄປ →',
+    's2-title':          'ທ່ານຕ້ອງການເຮັດຫຍັງໃນວັນນີ້?',
+    's2-reserve-title':  'ຈອງໜັງສື',
+    's2-reserve-sub':    'ເລືອກໜັງສືທີ່ຈະເຮັດ. ທ່ານຈະໄດ້ຮັບລິ້ງໂຟລເດີທາງອີເມວ.',
+    's2-complete-title': 'ສົ່ງລາຍງານສຳເລັດ',
+    's2-complete-sub':   'ລາຍງານວ່າວຽກຂອງທ່ານສຳເລັດ ແລະ ສົ່ງຂໍ້ມູນໜັງສື.',
+    's3a-title':         '📖 ຈອງໜັງສື',
+    's3a-book-lbl':      'ເລືອກໜັງສື',
+    's3a-hint':          '📌 ສະແດງສະເພາະໜັງສືທີ່ມີສຳລັບພາສາຂອງທ່ານ.',
+    's3a-tip':           '📋 ຫຼັງຈາກຈອງ, ທ່ານຈະໄດ້ຮັບລິ້ງໂຟລເດີວຽກທາງອີເມວ.\nກະລຸນາອ່ານຄູ່ມືກ່ອນເລີ່ມວຽກ.',
+    'reserveBtnText':    'ຈອງໜັງສືນີ້ →',
+    's3b-title':         '📤 ສົ່ງລາຍງານສຳເລັດ',
+    's3b-book-lbl':      'ເລືອກໜັງສືທີ່ທ່ານສຳເລັດ',
+    's3b-bookinfo-title':'📚 ຂໍ້ມູນໜັງສື',
+    's3b-bookinfo-tip':  'ກະລຸນາຕື່ມຂໍ້ມູນໜັງສືເປັນພາສາຂອງທ່ານ. ຂໍ້ມູນນີ້ຈະຖືກໃຊ້ໃນໜັງສື DAISY.',
+    's3b-author-lbl':    'ຊື່ຜູ້ຂຽນ',
+    's3b-illus-lbl':     'ຊື່ຜູ້ແຕ້ມຮູບ',
+    's3b-pub-lbl':       'ສຳນັກພິມ',
+    's3b-pubdate-lbl':   'ວັນທີ່ພິມ',
+    's3b-copy-lbl':      'ເຈົ້າຂອງລິຂະສິດ',
+    's3b-copy-hint':     'ໃຜເປັນເຈົ້າຂອງລິຂະສິດ? (ອົງກອນ ຫຼື ບຸກຄົນ)',
+    's3b-lic-lbl':       'ໃບອະນຸຍາດ / ການອະນຸຍາດ',
+    's3b-age-lbl':       'ກຸ່ມອາຍຸເປົ້າໝາຍ',
+    's3b-age-hint':      'ຖ້າທ່ານເລືອກກຸ່ມອາຍຸ, ມັນຈະຖືກໃຊ້ແທນການກວດຈັບອັດຕະໂນມັດ.',
+    's3b-notes-title':   '📝 ໝາຍເຫດ',
+    's3b-notes-lbl':     'ບັນຫາ ຫຼື ຄຳເຫັນ',
+    's3b-issue-lbl':     '⚠️ ມີບັນຫາທີ່ EFA ຕ້ອງຮູ້ດ່ວນ.',
+    'completeBtnText':   'ສົ່ງລາຍງານ →',
+  },
+  khm: {
+    'hdr-title':         'ទម្រង់បុគ្គលិកក្នុងស្រុក',
+    'hdr-sub':           'EFA ជប៉ុន – គម្រោង OurDAISY',
+    'pl-1':              'ចូលប្រើ',
+    'pl-2':              'ជ្រើសការងារ',
+    'pl-3':              'ដាក់ជូន',
+    's1-title':          'បញ្ចូលអាសយដ្ឋានអ៊ីមែលរបស់អ្នក',
+    's1-tip':            '💡 ប្រសិនបើអ្នកបានប្រើទម្រង់នេះពីមុន ព័ត៌មានរបស់អ្នកនឹងត្រូវផ្ទុកដោយស្វ័យប្រវត្តិ។',
+    's1-email-lbl':      'អាសយដ្ឋានអ៊ីមែល',
+    'checkBtnText':      'បន្ត →',
+    's1b-title':         'លើកដំបូង? សូមចុះឈ្មោះ',
+    's1b-info':          '✨ សូមបញ្ចូលឈ្មោះ និងភាសារបស់អ្នក។ អ្នកត្រូវធ្វើវាតែម្តងប៉ុណ្ណោះ។',
+    's1b-name-lbl':      'ឈ្មោះរបស់អ្នក',
+    's1b-lang-lbl':      'ភាសារបស់អ្នក',
+    'regBtnText':        'ចុះឈ្មោះ & បន្ត →',
+    's2-title':          'តើអ្នកចង់ធ្វើអ្វីថ្ងៃនេះ?',
+    's2-reserve-title':  'កក់សៀវភៅ',
+    's2-reserve-sub':    'ជ្រើសសៀវភៅដើម្បីធ្វើការ។ អ្នកនឹងទទួលតំណភ្ជាប់ថតតាមអ៊ីមែល។',
+    's2-complete-title': 'ដាក់ជូនរបាយការណ៍បញ្ចប់',
+    's2-complete-sub':   'រាយការណ៍ថាការងាររបស់អ្នកបានបញ្ចប់ ហើយដាក់ជូនព័ត៌មានសៀវភៅ។',
+    's3a-title':         '📖 កក់សៀវភៅ',
+    's3a-book-lbl':      'ជ្រើសសៀវភៅ',
+    's3a-hint':          '📌 បង្ហាញតែសៀវភៅដែលមានសម្រាប់ភាសារបស់អ្នក។',
+    's3a-tip':           '📋 បន្ទាប់ពីកក់ អ្នកនឹងទទួលតំណភ្ជាប់ថតការងារតាមអ៊ីមែល។\nសូមអានសៀវភៅណែនាំមុនពេលចាប់ផ្តើមការងារ។',
+    'reserveBtnText':    'កក់សៀវភៅនេះ →',
+    's3b-title':         '📤 ដាក់ជូនរបាយការណ៍បញ្ចប់',
+    's3b-book-lbl':      'ជ្រើសសៀវភៅដែលអ្នកបានបញ្ចប់',
+    's3b-bookinfo-title':'📚 ព័ត៌មានសៀវភៅ',
+    's3b-bookinfo-tip':  'សូមបំពេញព័ត៌មានសៀវភៅជាភាសារបស់អ្នក។ ព័ត៌មាននេះនឹងត្រូវប្រើក្នុងសៀវភៅ DAISY។',
+    's3b-author-lbl':    'ឈ្មោះអ្នកនិពន្ធ',
+    's3b-illus-lbl':     'ឈ្មោះអ្នករចនា',
+    's3b-pub-lbl':       'ផ្សព្វផ្សាយ',
+    's3b-pubdate-lbl':   'កាលបរិច្ឆេទបោះពុម្ព',
+    's3b-copy-lbl':      'អ្នកកាន់រក្សាសិទ្ធិ',
+    's3b-copy-hint':     'តើអ្នកណាជាម្ចាស់រក្សាសិទ្ធិ? (អង្គការ ឬ បុគ្គល)',
+    's3b-lic-lbl':       'អាជ្ញាប័ណ្ណ / ការអនុញ្ញាត',
+    's3b-age-lbl':       'ក្រុមអាយុគោលដៅ',
+    's3b-age-hint':      'ប្រសិនបើអ្នកជ្រើសក្រុមអាយុ វានឹងត្រូវប្រើជំនួសការរកឃើញដោយស្វ័យប្រវត្តិ។',
+    's3b-notes-title':   '📝 កំណត់ចំណាំ',
+    's3b-notes-lbl':     'បញ្ហា ឬ មតិ',
+    's3b-issue-lbl':     '⚠️ មានបញ្ហាដែល EFA ត្រូវដឹងជាបន្ទាន់។',
+    'completeBtnText':   'ដាក់ជូនរបាយការណ៍ →',
+  }
+};
+
+var currentLang = 'en';
+
+// ── 言語切り替え ──────────────────────────────────────────────────
+function setLang(lang) {
+  currentLang = lang;
+  // ボタンのactive状態を更新
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.textContent.trim() === {
+      en:'English', lao:'ລາວ', khm:'ខ្មែរ'
+    }[lang]);
+  });
+  var dict = LANG_DICT[lang] || LANG_DICT.en;
+  Object.keys(dict).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    // buttonのspanとdivの子要素を更新
+    if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+      el.textContent = dict[id];
+    } else {
+      el.textContent = dict[id];
+    }
+  });
+}
+
+// ── 状態管理 ─────────────────────────────────────────────────────
+var state = {
+  email:          '',
+  memberId:       '',
+  name:           '',
+  language:       '',
+  action:         '',
+  assignedBooks:  [],
+  fetchedAssigned: false
+};
+
+// ── 初期化 ───────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  // 保存されたメールアドレスを復元
+  try {
+    var saved = localStorage.getItem('ourdaisy_staff_email');
+    if (saved) document.getElementById('email').value = saved;
+  } catch(e) {}
+  // 言語ボタンのテキストを正しく設定
+  var langButtons = document.querySelectorAll('.lang-btn');
+  langButtons[0].textContent = 'English';
+  langButtons[1].textContent = 'ລາວ';
+  langButtons[2].textContent = 'ខ្មែរ';
+});
+
+// ── STEP 1：メール確認 ───────────────────────────────────────────
+function checkEmail() {
+  var email = document.getElementById('email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showErr('emailErr'); return;
+  }
+  hideErr('emailErr');
+  state.email = email;
+  try { localStorage.setItem('ourdaisy_staff_email', email); } catch(e) {}
+  setBtnLoading('checkBtnText', true);
+  gasCall({ action_type: 'member_check', email: email, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('checkBtnText', false);
+    if (res.status === 'ok') {
+      if (res.registered) {
+        state.memberId = res.memberId;
+        state.name     = res.name;
+        state.language = res.language || '';
+        showWelcome();
+      } else {
+        setProgress(1);
+        showSection('sec1b');
+      }
+    } else {
+      alert('Error: ' + (res.message || 'Please try again.'));
+    }
+  });
+}
+
+// ── STEP 1b：初回登録 ────────────────────────────────────────────
+function register() {
+  var name = document.getElementById('name').value.trim();
+  var lang = document.getElementById('staffLang').value;
+  var valid = true;
+  if (!name) { showErr('nameErr'); valid = false; } else hideErr('nameErr');
+  if (!lang) { showErr('langErr'); valid = false; } else hideErr('langErr');
+  if (!valid) return;
+  setBtnLoading('regBtnText', true);
+  gasCall({
+    action_type: 'register',
+    email: state.email,
+    name: name,
+    type: 'local_staff',
+    language: lang,
+    token: FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('regBtnText', false);
+    if (res.status === 'ok') {
+      state.memberId = res.memberId;
+      state.name     = name;
+      state.language = lang;
+      showWelcome();
+    } else {
+      alert('Registration failed: ' + (res.message || ''));
+    }
+  });
+}
+
+function showWelcome() {
+  setProgress(2);
+  var msg = state.name + ' – ID: ' + state.memberId;
+  if (state.language) msg += '  (' + state.language + ')';
+  document.getElementById('welcomeMsg').textContent = msg;
+  showSection('sec2');
+}
+
+// ── STEP 2：アクション選択 ───────────────────────────────────────
+function selectAction(action, el) {
+  state.action = action;
+  document.querySelectorAll('#sec2 .choice-item').forEach(function(e) { e.classList.remove('selected'); });
+  el.classList.add('selected');
+  setTimeout(function() {
+    setProgress(3);
+    if (action === 'reserve') {
+      loadAvailableBooks();
+      showSection('sec3a');
+    } else {
+      loadAssignedBooks();
+      showSection('sec3b');
+    }
+  }, 200);
+}
+
+// ── 書籍リスト取得 ───────────────────────────────────────────────
+function loadAvailableBooks() {
+  gasCall({ action_type: 'get_available_tasks', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
+    var sel = document.getElementById('bookSelect');
+    sel.innerHTML = '';
+    var def = document.createElement('option');
+    if (res.status === 'ok' && res.tasks && res.tasks.length > 0) {
+      def.value = ''; def.textContent = '-- Select a book --';
+      sel.appendChild(def);
+      res.tasks.forEach(function(t) {
+        var opt = document.createElement('option');
+        opt.value = t.id; opt.textContent = t.label;
+        sel.appendChild(opt);
+      });
+    } else {
+      def.value = ''; def.textContent = '-- No books available --';
+      sel.appendChild(def);
+    }
+  });
+}
+
+function loadAssignedBooks() {
+  if (state.fetchedAssigned) { renderAssignedBooks(); return; }
+  gasCall({ action_type: 'get_my_task', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
+    state.fetchedAssigned = true;
+    if (res.status === 'ok' && res.task) {
+      state.assignedBooks = [res.task];
+    } else {
+      state.assignedBooks = [];
+    }
+    renderAssignedBooks();
+  });
+}
+
+function renderAssignedBooks() {
+  var sel  = document.getElementById('completeBook');
+  var warn = document.getElementById('noBooksMsg');
+  sel.innerHTML = '';
+  if (state.assignedBooks.length === 0) {
+    warn.style.display = 'block'; sel.style.display = 'none';
+  } else {
+    warn.style.display = 'none'; sel.style.display = 'block';
+    var def = document.createElement('option'); def.value = ''; def.textContent = '-- Select --';
+    sel.appendChild(def);
+    state.assignedBooks.forEach(function(b) {
+      var opt = document.createElement('option');
+      opt.value = b.task_id || b.id;
+      opt.textContent = (b.book_id || '') + ' | ' + (b.task_label || b.label || '');
+      sel.appendChild(opt);
+    });
+  }
+}
+
+// ── STEP 3A：予約送信 ────────────────────────────────────────────
+function submitReserve() {
+  var taskId = document.getElementById('bookSelect').value;
+  if (!taskId) { showErr('bookErr'); return; }
+  hideErr('bookErr');
+  setBtnLoading('reserveBtnText', true);
+  gasCall({
+    action_type: 'reserve_task',
+    email: state.email,
+    member_id: state.memberId,
+    task_id: taskId,
+    token: FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('reserveBtnText', false);
+    if (res.status === 'ok') {
+      showComplete('📖', 'Reserved!', res.message || 'Your reservation is confirmed.',
+        ['You will receive the work folder link by email.',
+         'Please read the manual before starting.',
+         'When done, come back here to submit your completion report.']);
+    } else {
+      alert('Error: ' + (res.message || 'Please try again.'));
+    }
+  });
+}
+
+// ── STEP 3B：完了報告送信 ────────────────────────────────────────
+function submitComplete() {
+  var taskId = document.getElementById('completeBook').value;
+  if (!taskId) { showErr('completeBookErr'); return; }
+  hideErr('completeBookErr');
+
+  var author = document.getElementById('bi-author').value.trim();
+  if (!author) { showErr('biAuthorErr'); document.getElementById('bi-author').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  hideErr('biAuthorErr');
+
+  var bookInfo = {
+    author:      author,
+    illustrator: document.getElementById('bi-illustrator').value.trim(),
+    publisher:   document.getElementById('bi-publisher').value.trim(),
+    pub_date:    document.getElementById('bi-pubdate').value.trim(),
+    isbn:        document.getElementById('bi-isbn').value.trim(),
+    copyright:   document.getElementById('bi-copyright').value.trim(),
+    license:     document.getElementById('bi-license').value.trim(),
+    age_group:   document.getElementById('bi-age').value
+  };
+  var hasIssues  = document.getElementById('hasIssues').checked;
+  var issueNotes = document.getElementById('bi-notes').value.trim();
+
+  setBtnLoading('completeBtnText', true);
+  gasCall({
+    action_type:  'staff_complete',
+    email:        state.email,
+    member_id:    state.memberId,
+    book_id:      getBookIdFromTaskId(taskId),
+    task_id:      taskId,
+    book_info:    bookInfo,
+    has_issues:   hasIssues,
+    issue_notes:  issueNotes,
+    token:        FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('completeBtnText', false);
+    if (res.status === 'ok') {
+      showComplete('✅', 'Submitted!', res.message || 'Your completion report has been received.',
+        ['Your work folder has been moved to the next stage.',
+         'A Japanese volunteer will be assigned for proofreading.',
+         'Thank you for your contribution!']);
+    } else {
+      alert('Error: ' + (res.message || 'Please try again.'));
+    }
+  });
+}
+
+// タスクIDから書籍IDを取得（T-LAO-001-L → LAO-001）
+function getBookIdFromTaskId(taskId) {
+  var m = taskId.match(/^T-(.+)-[A-Z]$/);
+  return m ? m[1] : taskId;
+}
+
+// ── 完了画面 ─────────────────────────────────────────────────────
+function showComplete(icon, title, msg, steps) {
+  document.getElementById('progressWrap').style.display = 'none';
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('completeIcon').textContent  = icon;
+  document.getElementById('completeTitle').textContent = title;
+  document.getElementById('completeTitle').style.color = 'var(--green)';
+  document.getElementById('completeMsg').textContent   = msg;
+  var html = '<h3>📬 Next steps</h3>';
+  steps.forEach(function(s, i) {
+    html += '<div class="next-step-item"><span class="step-num">' + (i+1) + '</span>' + s + '</div>';
+  });
+  document.getElementById('nextSteps').innerHTML = html;
+  var card = document.getElementById('completeCard');
+  card.style.display = 'block';
+  card.classList.add('fade-in');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── プログレス更新 ────────────────────────────────────────────────
+function setProgress(step) {
+  for (var i = 1; i <= 3; i++) {
+    var c = document.getElementById('pc' + i);
+    var l = document.getElementById('pl' + i);
+    if (c) {
+      c.className = 'prog-circle' + (i < step ? ' done' : '') + (i === step ? ' active' : '');
+      c.textContent = i < step ? '✓' : String(i);
+    }
+    if (l) l.className = 'prog-line' + (i < step ? ' done' : '');
+  }
+}
+
+// ── セクション切り替え ────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+function goBack(target) {
+  if (target === 'sec2') {
+    setProgress(2);
+    state.fetchedAssigned = false;
+    document.querySelectorAll('#sec2 .choice-item').forEach(function(e) { e.classList.remove('selected'); });
+  } else if (target === 'sec1') {
+    setProgress(1);
+  }
+  showSection(target);
+}
+
+// ── GAS通信 ──────────────────────────────────────────────────────
+function gasCall(data, callback) {
+  var url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(res) { callback(res); })
+    .catch(function(err) {
+      console.error('Network error:', err);
+      document.querySelectorAll('.btn-primary').forEach(function(b) { b.disabled = false; });
+      callback({ status: 'error', message: 'Network error. Please check your connection and try again.' });
+    });
+}
+
+// ── ボタンローディング ────────────────────────────────────────────
+var btnOrigText = {};
+function setBtnLoading(id, loading) {
+  var el = document.getElementById(id); if (!el) return;
+  var btn = el.closest('button');
+  if (loading) {
+    if (!btnOrigText[id]) btnOrigText[id] = el.innerHTML;
+    el.innerHTML = '<span class="loading"></span> Sending...';
+    if (btn) btn.disabled = true;
+  } else {
+    if (btnOrigText[id]) el.innerHTML = btnOrigText[id];
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ── バリデーション ────────────────────────────────────────────────
+function showErr(id) { var el=document.getElementById(id); if(el) el.classList.add('show'); }
+function hideErr(id) { var el=document.getElementById(id); if(el) el.classList.remove('show'); }
+</script>
+</body>
+</html>
