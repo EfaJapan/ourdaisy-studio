@@ -722,12 +722,13 @@ function register() {
   if (!valid) return;
   setBtnLoading('regBtnText', true);
   gasCall({
-    action_type: 'register',
-    email: state.email,
-    name: name,
-    type: 'local_staff',
-    language: lang,
-    token: FORM_TOKEN
+    action_type:    'register',
+    email:          state.email,
+    name:           name,
+    type:           'local_staff',
+    language:       lang,
+    volunteer_type: 'L',
+    token:          FORM_TOKEN
   }, function(res) {
     setBtnLoading('regBtnText', false);
     if (res.status === 'ok') {
