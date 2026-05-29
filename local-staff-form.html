@@ -792,8 +792,14 @@ function loadAssignedBooks() {
   if (state.fetchedAssigned) { renderAssignedBooks(); return; }
   gasCall({ action_type: 'get_my_task', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
     state.fetchedAssigned = true;
-    if (res.status === 'ok' && res.task) {
-      state.assignedBooks = [res.task];
+    // getMyTask_はtask_idを直接返す形式（task:{}のネストなし）
+    if (res.status === 'ok' && res.task_id) {
+      state.assignedBooks = [{
+        task_id:    res.task_id,
+        book_id:    res.book_id,
+        task_label: res.task_label || res.task_type || '',
+        label:      res.task_label || res.task_type || ''
+      }];
     } else {
       state.assignedBooks = [];
     }
