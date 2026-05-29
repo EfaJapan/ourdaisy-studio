@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OurDAISY – EFA管理画面</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:   #005EAD;
+  --blue-d: #003A70;
+  --blue-l: #E8F1FB;
+  --blue-m: #C5DEFF;
+  --green:  #2A9D5C;
+  --green-l:#E8F7EF;
+  --red:    #C0392B;
+  --red-l:  #FDECEA;
+  --orange: #E67E22;
+  --org-l:  #FFF3E0;
+  --gray:   #6B7280;
+  --gray-l: #F5F8FC;
+  --white:  #FFFFFF;
+  --text:   #1A2A3A;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,94,173,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'BIZ UDPGothic', sans-serif;
+  background: var(--gray-l);
+  min-height: 100vh;
+  color: var(--text);
+}
+
+/* ── ヘッダー ── */
+.app-header {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-d) 100%);
+  padding: 14px 24px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 2px 12px rgba(0,94,173,0.2);
+}
+.app-header .logo { font-size: 1.4rem; }
+.app-header h1 { color: var(--white); font-size: 1.1rem; font-weight: 700; }
+.app-header .ver { margin-left: auto; color: rgba(255,255,255,0.6); font-size: 0.75rem; }
+
+/* ── タブナビ ── */
+.tab-nav {
+  background: var(--white);
+  border-bottom: 2px solid var(--blue-m);
+  display: flex; padding: 0 24px;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 14px 20px;
+  background: none; border: none; border-bottom: 3px solid transparent;
+  font-family: inherit; font-size: 0.9rem; font-weight: 700;
+  color: var(--gray); cursor: pointer; white-space: nowrap;
+  transition: all 0.2s; margin-bottom: -2px;
+}
+.tab-btn:hover { color: var(--blue); }
+.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+/* ── コンテンツエリア ── */
+.tab-content { display: none; padding: 24px; max-width: 1100px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+/* ── カード ── */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 20px; background: var(--blue-l);
+  border-bottom: 1px solid var(--blue-m);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-header h2 { font-size: 0.95rem; font-weight: 700; color: var(--blue-d); }
+.card-body { padding: 20px; }
+
+/* ── フォーム要素 ── */
+.form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.form-row:last-child { margin-bottom: 0; }
+.form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 160px; }
+.form-group label { font-size: 0.82rem; font-weight: 700; color: var(--blue-d); }
+.req { color: var(--red); font-size: 0.72rem; margin-left: 3px; }
+.opt { color: var(--gray); font-size: 0.72rem; margin-left: 3px; font-weight: 400; }
+input[type="text"], select, textarea {
+  padding: 9px 12px; border: 2px solid #D1E3F8; border-radius: 8px;
+  font-family: inherit; font-size: 0.88rem; color: var(--text);
+  background: #FAFCFF; transition: border-color 0.2s;
+}
+input[type="text"]:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,94,173,0.10);
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23005EAD' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  padding-right: 36px; appearance: none;
+}
+.hint { font-size: 0.75rem; color: var(--gray); margin-top: 3px; }
+.error-msg { font-size: 0.75rem; color: var(--red); margin-top: 3px; display: none; }
+.error-msg.show { display: block; }
+
+/* ── ボタン ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 8px; border: none;
+  font-family: inherit; font-size: 0.88rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-primary { background: var(--blue); color: var(--white); }
+.btn-primary:hover:not(:disabled) { background: var(--blue-d); }
+.btn-success { background: var(--green); color: var(--white); }
+.btn-success:hover:not(:disabled) { background: #1e7a44; }
+.btn-danger  { background: var(--red); color: var(--white); }
+.btn-danger:hover:not(:disabled) { background: #a93226; }
+.btn-outline { background: var(--white); color: var(--blue); border: 2px solid var(--blue); }
+.btn-outline:hover { background: var(--blue-l); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── ローディング ── */
+.loading { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner-wrap { text-align:center; padding: 40px; color: var(--gray); font-size: 0.88rem; }
+
+/* ── アラート ── */
+.alert { padding: 11px 14px; border-radius: 8px; font-size: 0.83rem; margin-bottom: 14px; line-height: 1.55; }
+.alert-success { background: var(--green-l); border: 1.5px solid var(--green); color: #1A5C38; }
+.alert-error   { background: var(--red-l);   border: 1.5px solid var(--red);   color: #7A1010; }
+.alert-info    { background: var(--blue-l);  border: 1.5px solid var(--blue-m); color: var(--blue-d); }
+.alert-warn    { background: var(--org-l);   border: 1.5px solid var(--orange); color: #7A4200; }
+
+/* ── 進捗ダッシュボード ── */
+.search-bar { display:flex; gap:10px; margin-bottom:18px; }
+.search-bar input { flex:1; }
+.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.book-card {
+  background: var(--white); border: 1.5px solid var(--blue-m);
+  border-radius: var(--radius); padding: 16px;
+  transition: box-shadow 0.2s;
+}
+.book-card:hover { box-shadow: var(--shadow); }
+.book-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+.book-id { font-size: 0.78rem; font-weight: 700; color: var(--blue); background: var(--blue-l); padding: 2px 8px; border-radius: 20px; }
+.book-title { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.progress-bar-wrap { background: #E5EFF8; border-radius: 20px; height: 6px; margin-bottom: 10px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 20px; background: var(--green); transition: width 0.3s; }
+.progress-label { font-size: 0.72rem; color: var(--gray); margin-bottom: 8px; }
+.task-chips { display:flex; flex-wrap:wrap; gap:5px; }
+.task-chip {
+  font-size: 0.68rem; font-weight: 700; padding: 2px 8px;
+  border-radius: 20px; white-space: nowrap;
+}
+.chip-done    { background: var(--green-l); color: #1A5C38; }
+.chip-prog    { background: #FFF3CD; color: #856404; }
+.chip-waiting { background: var(--blue-l); color: var(--blue-d); }
+.chip-locked  { background: #F0F0F0; color: var(--gray); }
+
+/* ── メンバーテーブル ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+th { background: var(--blue); color: var(--white); padding: 10px 12px; text-align: left; white-space: nowrap; }
+td { padding: 9px 12px; border-bottom: 1px solid #E5EFF8; }
+tr:hover td { background: var(--blue-l); }
+.badge { display:inline-block; padding:1px 8px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+.badge-a { background:#E3F2FD; color:#1565C0; }
+.badge-b { background:#E8F5E9; color:#2E7D32; }
+.badge-c { background:#FFF8E1; color:#F57F17; }
+.badge-l { background:#F3E5F5; color:#6A1B9A; }
+.badge-staff { background:#FCE4EC; color:#880E4F; }
+
+/* ── 公開処理 ── */
+.publish-list { display: flex; flex-direction: column; gap: 12px; }
+.publish-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border: 1.5px solid var(--blue-m);
+  border-radius: 10px; background: #FAFCFF;
+}
+.publish-item-info { flex: 1; }
+.publish-book-id { font-size: 0.82rem; font-weight: 700; color: var(--blue); }
+.publish-book-title { font-size: 0.88rem; color: var(--text); margin-top: 2px; }
+.publish-status { font-size: 0.72rem; color: var(--gray); margin-top: 3px; }
+
+/* ── レスポンシブ ── */
+@media(max-width: 600px) {
+  .tab-content { padding: 14px; }
+  .book-grid { grid-template-columns: 1fr; }
+  .form-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="app-header">
+  <span class="logo">📚</span>
+  <h1>OurDAISY 管理画面</h1>
+  <span class="ver">EFA Japan</span>
+</div>
+
+<!-- タブナビ -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('register', this)">📥 書籍登録</button>
+  <button class="tab-btn" onclick="switchTab('dashboard', this)">📊 進捗ダッシュボード</button>
+  <button class="tab-btn" onclick="switchTab('members', this)">👥 メンバー管理</button>
+  <button class="tab-btn" onclick="switchTab('publish', this)">✅ ライブラリ公開</button>
+</div>
+
+<!-- ══ タブ1：書籍登録 ══ -->
+<div class="tab-content active" id="tab-register">
+  <div class="card">
+    <div class="card-header"><h2>📥 新規書籍を登録する</h2></div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        登録すると「図書管理シート」に追加され、WORDタスクを含む5タスクが自動生成されます。
+      </div>
+      <div id="reg-alert"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="reg-id">書籍ID <span class="req">*</span></label>
+          <input type="text" id="reg-id" placeholder="例: LAO-002" maxlength="20">
+          <span class="hint">形式: 言語コード3文字-連番3桁（例：LAO-002、KHM-001）</span>
+          <span class="error-msg" id="reg-id-err">書籍IDを入力してください（例: LAO-002）</span>
+        </div>
+        <div class="form-group">
+          <label for="reg-lang">言語 <span class="req">*</span></label>
+          <select id="reg-lang">
+            <option value="">-- 選択 --</option>
+            <option value="Lao">ラオス語（Lao）</option>
+            <option value="Khmer">クメール語（Khmer）</option>
+            <option value="Myanmar">ミャンマー語（Myanmar）</option>
+            <option value="Nepali">ネパール語（Nepali）</option>
+          </select>
+          <span class="error-msg" id="reg-lang-err">言語を選択してください</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
+          <label for="reg-title">タイトル（現地語） <span class="req">*</span></label>
+          <input type="text" id="reg-title" placeholder="例: ນິທານໝີ ຂາວ">
+          <span class="error-msg" id="reg-title-err">タイトルを入力してください</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
+          <label for="reg-folder">作業フォルダURL <span class="opt">（任意）</span></label>
+          <input type="text" id="reg-folder" placeholder="https://drive.google.com/drive/folders/...">
+          <span class="hint">Driveの01_受入フォルダ内に作成した書籍フォルダのURL</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
+          <label for="reg-notes">備考 <span class="opt">（任意）</span></label>
+          <input type="text" id="reg-notes" placeholder="参考URL、出典、注記など">
+        </div>
+      </div>
+      <div style="margin-top:4px;">
+        <button class="btn btn-primary" onclick="submitRegister()">
+          <span id="reg-btn-text">書籍を登録して5タスクを生成する →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ タブ2：進捗ダッシュボード ══ -->
+<div class="tab-content" id="tab-dashboard">
+  <div class="card">
+    <div class="card-header">
+      <h2>📊 書籍別進捗ダッシュボード</h2>
+      <button class="btn btn-outline" style="margin-left:auto;padding:5px 12px;font-size:0.78rem;" onclick="loadDashboard()">🔄 更新</button>
+    </div>
+    <div class="card-body">
+      <div class="search-bar">
+        <input type="text" id="dash-search" placeholder="書籍IDまたはタイトルで検索..." oninput="filterBooks()">
+        <select id="dash-filter" onchange="filterBooks()" style="min-width:120px;">
+          <option value="">すべて</option>
+          <option value="active">進行中</option>
+          <option value="complete">完了</option>
+        </select>
+      </div>
+      <div id="dashboard-container">
+        <div class="spinner-wrap">📊 データを読み込み中...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ タブ3：メンバー管理 ══ -->
+<div class="tab-content" id="tab-members">
+  <div class="card">
+    <div class="card-header">
+      <h2>👥 メンバー一覧</h2>
+      <button class="btn btn-outline" style="margin-left:auto;padding:5px 12px;font-size:0.78rem;" onclick="loadMembers()">🔄 更新</button>
+    </div>
+    <div class="card-body">
+      <div class="search-bar">
+        <input type="text" id="member-search" placeholder="名前・メール・IDで検索..." oninput="filterMembers()">
+        <select id="member-type-filter" onchange="filterMembers()" style="min-width:130px;">
+          <option value="">すべてのタイプ</option>
+          <option value="volunteer">ボランティア</option>
+          <option value="local_staff">現地スタッフ</option>
+        </select>
+      </div>
+      <div id="members-container">
+        <div class="spinner-wrap">👥 データを読み込み中...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ タブ4：ライブラリ公開 ══ -->
+<div class="tab-content" id="tab-publish">
+  <div class="card">
+    <div class="card-header"><h2>✅ DAISYライブラリへの公開処理</h2></div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        06_完成フォルダにある書籍を選択して「公開する」ボタンを押すと、<br>
+        EPUBのファイルID・ダウンロードURL・表紙画像URLを自動取得し、DAISYライブラリのBooksシートに転記します。
+      </div>
+      <div class="alert alert-warn">
+        ⚠️ 公開前に以下を確認してください：<br>
+        ① 06_完成フォルダに EPUB が4種類（母語版・標準・やさしい・ひらがな）入っているか<br>
+        ② _books_import.tsv が存在するか<br>
+        ③ 表紙画像（JPG または PNG）が1枚入っているか
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1; max-width:300px;">
+          <label for="pub-book-id">書籍ID <span class="req">*</span></label>
+          <input type="text" id="pub-book-id" placeholder="例: LAO-001" maxlength="20">
+          <span class="error-msg" id="pub-id-err">書籍IDを入力してください</span>
+        </div>
+        <div class="form-group" style="flex:0; align-self:flex-end;">
+          <button class="btn btn-success" onclick="submitPublish()">
+            <span id="pub-btn-text">✅ この書籍を公開する</span>
+          </button>
+        </div>
+      </div>
+      <div id="pub-alert"></div>
+    </div>
+  </div>
+
+  <!-- 公開済み書籍一覧（将来の拡張用プレースホルダー） -->
+  <div class="card">
+    <div class="card-header"><h2>📖 最近公開された書籍</h2></div>
+    <div class="card-body">
+      <div id="published-list">
+        <div class="alert alert-info">
+          公開処理を実行すると、DAISYライブラリの
+          <a href="https://docs.google.com/spreadsheets/d/1q9ShKbvVi6_E6Lk8WSUv71efDG96MPFUNYlqvCb-1Zc" target="_blank" style="color:var(--blue);">Booksシート</a>
+          に転記されます。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 定数 ────────────────────────────────────────────────────────
+var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec';
+var FORM_TOKEN = 'efa2026daisy';
+
+// ── 状態管理 ─────────────────────────────────────────────────────
+var allBooks   = [];
+var allMembers = [];
+var dashLoaded   = false;
+var membersLoaded = false;
+
+// ── タブ切替 ─────────────────────────────────────────────────────
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('tab-' + tabId).classList.add('active');
+  // 遅延ロード
+  if (tabId === 'dashboard' && !dashLoaded)  { loadDashboard(); }
+  if (tabId === 'members'   && !membersLoaded) { loadMembers(); }
+}
+
+// ════════════════════════════════════════════════════════
+// タブ1：書籍登録
+// ════════════════════════════════════════════════════════
+function submitRegister() {
+  var bookId   = document.getElementById('reg-id').value.trim().toUpperCase();
+  var lang     = document.getElementById('reg-lang').value;
+  var title    = document.getElementById('reg-title').value.trim();
+  var folder   = document.getElementById('reg-folder').value.trim();
+  var notes    = document.getElementById('reg-notes').value.trim();
+  var valid = true;
+  // バリデーション
+  if (!bookId || !/^[A-Z]{2,5}-\d{3}$/.test(bookId)) {
+    showErr('reg-id-err'); valid = false;
+  } else hideErr('reg-id-err');
+  if (!lang) { showErr('reg-lang-err'); valid = false; } else hideErr('reg-lang-err');
+  if (!title) { showErr('reg-title-err'); valid = false; } else hideErr('reg-title-err');
+  if (!valid) return;
+
+  setAlert('reg-alert', '', '');
+  setBtnLoading('reg-btn-text', true, '登録中...');
+  gasCall({
+    action_type: 'init_book',
+    book_id:     bookId,
+    title:       title,
+    language:    lang,
+    folder_url:  folder,
+    notes:       notes,
+    token:       FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('reg-btn-text', false, '書籍を登録して5タスクを生成する →');
+    if (res.status === 'ok') {
+      setAlert('reg-alert', 'success', '✅ ' + res.message);
+      // フォームをリセット
+      document.getElementById('reg-id').value    = '';
+      document.getElementById('reg-title').value = '';
+      document.getElementById('reg-folder').value = '';
+      document.getElementById('reg-notes').value  = '';
+      // ダッシュボードキャッシュをクリア（次回再読み込み）
+      dashLoaded = false;
+    } else {
+      setAlert('reg-alert', 'error', '❌ ' + (res.message || '登録に失敗しました'));
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// タブ2：進捗ダッシュボード
+// ════════════════════════════════════════════════════════
+function loadDashboard() {
+  dashLoaded = false;
+  document.getElementById('dashboard-container').innerHTML =
+    '<div class="spinner-wrap"><span class="loading" style="border-top-color:var(--blue);border-color:var(--blue-m)"></span> データを読み込み中...</div>';
+  gasCall({ action_type: 'get_dashboard', token: FORM_TOKEN }, function(res) {
+    dashLoaded = true;
+    if (res.status === 'ok' && res.books) {
+      allBooks = res.books;
+      renderDashboard(allBooks);
+    } else {
+      document.getElementById('dashboard-container').innerHTML =
+        '<div class="alert alert-error">データの取得に失敗しました: ' + (res.message || '') + '</div>';
+    }
+  });
+}
+
+function renderDashboard(books) {
+  if (books.length === 0) {
+    document.getElementById('dashboard-container').innerHTML =
+      '<div class="alert alert-info">📭 登録されている書籍がありません。「書籍登録」タブから登録してください。</div>';
+    return;
+  }
+  var STATUS_LABEL = { DONE:'完了', IN_PROGRESS:'作業中', WAITING:'待機中', LOCKED:'未解放' };
+  var html = '<div class="book-grid">';
+  books.forEach(function(b) {
+    var pct = b.progress || 0;
+    html += '<div class="book-card">';
+    html += '<div class="book-card-header">';
+    html += '<span class="book-id">' + esc(b.book_id) + '</span>';
+    html += '<span style="font-size:0.75rem;color:var(--gray);">' + pct + '%</span>';
+    html += '</div>';
+    html += '<div class="book-title">' + esc(b.title) + '</div>';
+    html += '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div>';
+    html += '<div class="progress-label">進捗 ' + pct + '% （' + b.tasks.filter(function(t){return t.status==='DONE';}).length + '/' + b.tasks.length + ' タスク完了）</div>';
+    html += '<div class="task-chips">';
+    b.tasks.forEach(function(t) {
+      var cls = t.status === 'DONE' ? 'chip-done' : t.status === 'IN_PROGRESS' ? 'chip-prog' : t.status === 'WAITING' ? 'chip-waiting' : 'chip-locked';
+      var label = STATUS_LABEL[t.status] || t.status;
+      html += '<span class="task-chip ' + cls + '">' + esc(t.task_name) + '：' + label + '</span>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  document.getElementById('dashboard-container').innerHTML = html;
+}
+
+function filterBooks() {
+  var q      = document.getElementById('dash-search').value.toLowerCase();
+  var filter = document.getElementById('dash-filter').value;
+  var filtered = allBooks.filter(function(b) {
+    var matchQ = !q || b.book_id.toLowerCase().includes(q) || b.title.toLowerCase().includes(q);
+    var matchF = !filter ||
+      (filter === 'active'   && b.progress < 100 && b.progress > 0) ||
+      (filter === 'complete' && b.progress === 100);
+    return matchQ && matchF;
+  });
+  renderDashboard(filtered);
+}
+
+// ════════════════════════════════════════════════════════
+// タブ3：メンバー管理
+// ════════════════════════════════════════════════════════
+function loadMembers() {
+  membersLoaded = false;
+  document.getElementById('members-container').innerHTML =
+    '<div class="spinner-wrap"><span class="loading" style="border-top-color:var(--blue);border-color:var(--blue-m)"></span> データを読み込み中...</div>';
+  gasCall({ action_type: 'get_members', token: FORM_TOKEN }, function(res) {
+    membersLoaded = true;
+    if (res.status === 'ok' && res.members) {
+      allMembers = res.members;
+      renderMembers(allMembers);
+    } else {
+      document.getElementById('members-container').innerHTML =
+        '<div class="alert alert-error">データの取得に失敗しました: ' + (res.message || '') + '</div>';
+    }
+  });
+}
+
+function renderMembers(members) {
+  if (members.length === 0) {
+    document.getElementById('members-container').innerHTML =
+      '<div class="alert alert-info">👤 メンバーが登録されていません。</div>';
+    return;
+  }
+  var html =
+    '<div class="table-wrap"><table>' +
+    '<thead><tr>' +
+    '<th>ID</th><th>名前</th><th>メール</th>' +
+    '<th>タイプ</th><th>ボランティア種別</th><th>言語</th><th>登録日</th>' +
+    '</tr></thead><tbody>';
+  members.forEach(function(m) {
+    var badgeCls = m.type === 'local_staff' ? 'badge-staff' :
+      m.volunteer_type === 'A' ? 'badge-a' :
+      m.volunteer_type === 'B' ? 'badge-b' :
+      m.volunteer_type === 'C' ? 'badge-c' :
+      m.volunteer_type === 'L' ? 'badge-l' : '';
+    var typeLabel = m.type === 'local_staff' ? '現地スタッフ' : 'ボランティア';
+    var vtLabel   = m.volunteer_type ?
+      ({ A:'タイプA（フルコース）', B:'タイプB（日本語校正）', C:'タイプC（音声確認）', L:'タイプL（現地確認）' }[m.volunteer_type] || m.volunteer_type)
+      : '—';
+    html += '<tr>' +
+      '<td><code style="font-size:0.78rem;">' + esc(m.id) + '</code></td>' +
+      '<td>' + esc(m.name) + '</td>' +
+      '<td style="font-size:0.78rem;">' + esc(m.email) + '</td>' +
+      '<td><span class="badge ' + badgeCls + '">' + typeLabel + '</span></td>' +
+      '<td style="font-size:0.78rem;">' + vtLabel + '</td>' +
+      '<td>' + esc(m.language || '—') + '</td>' +
+      '<td style="font-size:0.78rem;">' + esc(m.join_date || '—') + '</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div>';
+  html += '<p style="font-size:0.75rem;color:var(--gray);margin-top:10px;">合計 ' + members.length + ' 名</p>';
+  document.getElementById('members-container').innerHTML = html;
+}
+
+function filterMembers() {
+  var q    = document.getElementById('member-search').value.toLowerCase();
+  var type = document.getElementById('member-type-filter').value;
+  var filtered = allMembers.filter(function(m) {
+    var matchQ    = !q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q) || m.id.toLowerCase().includes(q);
+    var matchType = !type || m.type === type;
+    return matchQ && matchType;
+  });
+  renderMembers(filtered);
+}
+
+// ════════════════════════════════════════════════════════
+// タブ4：公開処理
+// ════════════════════════════════════════════════════════
+function submitPublish() {
+  var bookId = document.getElementById('pub-book-id').value.trim().toUpperCase();
+  if (!bookId) { showErr('pub-id-err'); return; }
+  hideErr('pub-id-err');
+
+  if (!confirm('「' + bookId + '」をDAISYライブラリに公開してよいですか？\n\n' +
+               '・06_完成フォルダのTSV・EPUB・表紙画像を読み込みます\n' +
+               '・Booksシートに既存データがある場合は上書きされます')) return;
+
+  setAlert('pub-alert', '', '');
+  setBtnLoading('pub-btn-text', true, '公開処理中...');
+  gasCall({
+    action_type: 'publish_book',
+    book_id:     bookId,
+    token:       FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('pub-btn-text', false, '✅ この書籍を公開する');
+    if (res.status === 'ok') {
+      setAlert('pub-alert', 'success',
+        '✅ ' + res.message + '\n' +
+        'FileID: ' + res.file_id + '\n' +
+        (res.cover_url ? '表紙画像: 取得済み' : '表紙画像: なし') + '\n' +
+        (res.overwrite ? '（既存データを上書きしました）' : '（新規追加しました）')
+      );
+      document.getElementById('pub-book-id').value = '';
+    } else {
+      setAlert('pub-alert', 'error', '❌ ' + (res.message || '公開処理に失敗しました'));
+    }
+  });
+}
+
+// ── 共通ユーティリティ ────────────────────────────────────────────
+function gasCall(data, callback) {
+  var url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(res) { callback(res); })
+    .catch(function(err) {
+      console.error('Network error:', err);
+      callback({ status: 'error', message: 'ネットワークエラーが発生しました。接続を確認して再試行してください。' });
+    });
+}
+
+var btnOrigText = {};
+function setBtnLoading(id, loading, loadingText) {
+  var el = document.getElementById(id); if (!el) return;
+  var btn = el.closest('button');
+  if (loading) {
+    if (!btnOrigText[id]) btnOrigText[id] = el.innerHTML;
+    el.innerHTML = '<span class="loading"></span> ' + (loadingText || '処理中...');
+    if (btn) btn.disabled = true;
+  } else {
+    if (btnOrigText[id]) el.innerHTML = btnOrigText[id];
+    if (btn) btn.disabled = false;
+  }
+}
+
+function setAlert(containerId, type, msg) {
+  var el = document.getElementById(containerId); if (!el) return;
+  if (!type || !msg) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="alert alert-' + type + '">' + esc(msg).replace(/\n/g,'<br>') + '</div>';
+}
+
+function showErr(id) { var el=document.getElementById(id); if(el) el.classList.add('show'); }
+function hideErr(id) { var el=document.getElementById(id); if(el) el.classList.remove('show'); }
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
