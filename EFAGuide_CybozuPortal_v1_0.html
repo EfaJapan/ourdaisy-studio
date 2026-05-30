@@ -1,0 +1,295 @@
+<!--
+================================================================
+  OurDAISY 運用リンク集 — サイボウズ会社ポータル用
+  ver.1.2  /  2026-05  /  EFA Japan
+================================================================
+
+  【URL変更時の手順】
+  下記「URLリスト」を確認し、対応する href="..." を
+  Ctrl+H（一括置換）で書き換えてください。
+
+  ■ 共通ブロック
+  [A] スタッフフォーム
+      https://efajapan.github.io/ourdaisy-studio/staff-form.html
+
+  [B] ボランティアフォーム
+      https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec
+
+  [C] 管理スプレッドシート（OurDAISY共通）
+      https://docs.google.com/spreadsheets/d/1q9ShKbvVi6_E6Lk8WSUv71efDG96MPFUNYlqvCb-1Zc/edit
+
+  [D] Google Drive（efa.platform@gmail.com）
+      https://drive.google.com/drive/folders/1iBvjTJTiosQx4g-h_EoL7loFDwpYlIWj
+
+  [E] アプリ＆マニュアルDLサイト
+      https://efajapan.github.io/ourdaisy-bilingual-updates/
+
+  [F] ライブラリー（会員向け公開）
+      https://efajapan.github.io/ourdaisy/
+
+  ■ Laoブロック
+  [G1] Lao 作業フォルダ（laosmultimediadaisy@gmail.com）
+       https://drive.google.com/drive/folders/1SvcRBTGK-Ep3u2lvZWrXmzNPrz-dWZiw
+
+  [G2] Lao Library DB（Spreadsheet）
+       https://docs.google.com/spreadsheets/d/1sWP2wer8Vz6z36qJWfuOAZ9ifbkZD4GQV3fkl2qWt2k
+
+  [G3] Lao EPUB Folder（Drive）
+       https://drive.google.com/drive/folders/1J31ZT91Ge_wchf82OWwXv7EYhDXrqi32
+
+  [G4] Lao Landing Page
+       https://efajapan.github.io/lao-daisy-library/lao_library_landing.html
+
+  [G5] Lao Library Catalog
+       https://efajapan.github.io/lao-daisy-library/library_lo.html
+
+  ■ Khmerブロック
+  [H1] Khmer 作業フォルダ（cambodiamultimediadaisy@gmail.com）
+       https://drive.google.com/drive/folders/1SjIuzA2ILpC0uNSiFa-hq57rqVmCuqux
+
+  [H2] Khmer Library DB（Spreadsheet）
+       https://docs.google.com/spreadsheets/d/1vL4TlnOWP3FznKHkCEXmo3nGAyzrIMD9swv8wI3NrKk/edit
+
+  [H3] Khmer EPUB Folder（Drive）
+       https://drive.google.com/drive/folders/1Z2xvWTDRNye7rZz-3mQg3Xpd2jpiUkBa
+
+  [H4] Khmer Library Catalog
+       https://efajapan.github.io/khmer-daisy-library/library_km.html
+
+  【設置手順：サイボウズOffice クラウド版】
+  1. 管理者でログイン → 右上⚙️ → システム管理
+  2. 左メニュー「ポータル」→「会社ポータルの設定」
+  3. ポートレットを追加 →「フリースペース（HTML）」を選択
+  4. <style>〜末尾</div> 全体を貼り付け → 保存
+  5. 「会社ポータルを全ユーザーに使用させる」にチェック
+
+================================================================
+-->
+
+<style>
+/* ── OurDAISY ポータルリンク集（プレフィックス .od-） ── */
+.od-wrap {
+  font-family: 'BIZ UDPGothic', 'Meiryo', 'Hiragino Kaku Gothic ProN', sans-serif;
+  padding: 6px 0 2px;
+  max-width: 900px;
+}
+.od-block {
+  background: #ffffff;
+  border: 1px solid #C5DEFF;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,94,173,0.09);
+}
+.od-head {
+  padding: 10px 18px;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.od-head.common { background: linear-gradient(90deg, #005EAD 0%, #003A70 100%); }
+.od-head.lao    { background: linear-gradient(90deg, #BF4E10 0%, #7A2E00 100%); }
+.od-head.khmer  { background: linear-gradient(90deg, #1C6B3A 0%, #0C3D21 100%); }
+
+.od-body {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+.od-row-label {
+  width: 100%;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #9AAABB;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 8px 0 2px;
+}
+.od-row-label:first-child { margin-top: 0; }
+.od-divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #EEF5FF;
+  margin: 4px 0;
+}
+.od-note {
+  padding: 2px 14px 10px;
+  font-size: 0.69rem;
+  color: #9AAABB;
+}
+
+/* ── ボタン共通 ── */
+.od-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 7px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px solid transparent;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+}
+.od-btn:hover { transform: translateY(-1px); }
+
+/* 共通：プライマリ */
+.od-btn.p   { background: #005EAD; color: #fff; border-color: #005EAD; }
+.od-btn.p:hover { background: #003A70; }
+/* 共通：セカンダリ */
+.od-btn.s   { background: #EEF5FF; color: #003A70; border-color: #C5DEFF; }
+.od-btn.s:hover { background: #C5DEFF; }
+
+/* Lao：プライマリ */
+.od-btn.lp  { background: #BF4E10; color: #fff; border-color: #BF4E10; }
+.od-btn.lp:hover { background: #7A2E00; }
+/* Lao：セカンダリ */
+.od-btn.ls  { background: #FFF0E8; color: #7A2E00; border-color: #F4B48A; }
+.od-btn.ls:hover { background: #F4D0B8; }
+
+/* Khmer：プライマリ */
+.od-btn.kp  { background: #1C6B3A; color: #fff; border-color: #1C6B3A; }
+.od-btn.kp:hover { background: #0C3D21; }
+/* Khmer：セカンダリ */
+.od-btn.ks  { background: #EAFBF1; color: #0C3D21; border-color: #7DCFA0; }
+.od-btn.ks:hover { background: #BAEFD2; }
+</style>
+
+<div class="od-wrap">
+
+  <!-- ▼ 共通ブロック ──────────────────────────────────── -->
+  <div class="od-block">
+    <div class="od-head common">🛠 OurDAISY 運用管理（共通）</div>
+    <div class="od-body">
+
+      <div class="od-row-label">フォーム</div>
+      <a class="od-btn p"
+         href="https://efajapan.github.io/ourdaisy-studio/staff-form.html"
+         target="_blank" rel="noopener noreferrer">👩‍💼 スタッフフォーム</a>
+      <a class="od-btn p"
+         href="https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec"
+         target="_blank" rel="noopener noreferrer">👥 ボランティアフォーム</a>
+
+      <div class="od-divider"></div>
+      <div class="od-row-label">管理・データ</div>
+      <a class="od-btn s"
+         href="https://docs.google.com/spreadsheets/d/1q9ShKbvVi6_E6Lk8WSUv71efDG96MPFUNYlqvCb-1Zc/edit"
+         target="_blank" rel="noopener noreferrer">📊 管理スプレッドシート</a>
+      <a class="od-btn s"
+         href="https://drive.google.com/drive/folders/1iBvjTJTiosQx4g-h_EoL7loFDwpYlIWj"
+         target="_blank" rel="noopener noreferrer">📁 Google Drive（efa.platform）</a>
+
+      <div class="od-divider"></div>
+      <div class="od-row-label">公開サイト・配布</div>
+      <a class="od-btn s"
+         href="https://efajapan.github.io/ourdaisy-bilingual-updates/"
+         target="_blank" rel="noopener noreferrer">⬇️ アプリ &amp; マニュアル DL</a>
+      <a class="od-btn s"
+         href="https://efajapan.github.io/ourdaisy/"
+         target="_blank" rel="noopener noreferrer">📚 ライブラリー（会員向け公開）</a>
+
+    </div>
+  </div>
+
+  <!-- ▼ Laoブロック ───────────────────────────────────── -->
+  <div class="od-block">
+    <div class="od-head lao">🇱🇦 ラオス語版（Lao）</div>
+    <div class="od-body">
+
+      <div class="od-row-label">フォーム</div>
+      <a class="od-btn lp"
+         href="https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec"
+         target="_blank" rel="noopener noreferrer">👥 ボランティアフォーム</a>
+
+      <div class="od-divider"></div>
+      <div class="od-row-label">管理・データ</div>
+      <a class="od-btn ls"
+         href="https://drive.google.com/drive/folders/1SvcRBTGK-Ep3u2lvZWrXmzNPrz-dWZiw"
+         target="_blank" rel="noopener noreferrer">📁 Lao 作業フォルダ</a>
+      <a class="od-btn ls"
+         href="https://docs.google.com/spreadsheets/d/1sWP2wer8Vz6z36qJWfuOAZ9ifbkZD4GQV3fkl2qWt2k"
+         target="_blank" rel="noopener noreferrer">📊 Lao Library DB</a>
+      <a class="od-btn ls"
+         href="https://drive.google.com/drive/folders/1J31ZT91Ge_wchf82OWwXv7EYhDXrqi32"
+         target="_blank" rel="noopener noreferrer">📁 Lao EPUB フォルダ</a>
+
+      <div class="od-divider"></div>
+      <div class="od-row-label">公開サイト・配布</div>
+      <a class="od-btn ls"
+         href="https://efajapan.github.io/lao-daisy-library/lao_library_landing.html"
+         target="_blank" rel="noopener noreferrer">🏠 Lao Landing Page</a>
+      <a class="od-btn ls"
+         href="https://efajapan.github.io/lao-daisy-library/library_lo.html"
+         target="_blank" rel="noopener noreferrer">📚 Lao Library Catalog</a>
+      <a class="od-btn ls"
+         href="https://efajapan.github.io/ourdaisy-bilingual-updates/"
+         target="_blank" rel="noopener noreferrer">⬇️ アプリ &amp; マニュアル DL</a>
+
+    </div>
+    <div class="od-note">書籍ID：LAO-001〜　アカウント：laosmultimediadaisy@gmail.com</div>
+  </div>
+
+  <!-- ▼ Khmerブロック ─────────────────────────────────── -->
+  <div class="od-block">
+    <div class="od-head khmer">🇰🇭 クメール語版（Khmer）</div>
+    <div class="od-body">
+
+      <div class="od-row-label">フォーム</div>
+      <a class="od-btn kp"
+         href="https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec"
+         target="_blank" rel="noopener noreferrer">👥 ボランティアフォーム</a>
+
+      <div class="od-divider"></div>
+      <div class="od-row-label">管理・データ</div>
+      <a class="od-btn ks"
+         href="https://drive.google.com/drive/folders/1SjIuzA2ILpC0uNSiFa-hq57rqVmCuqux"
+         target="_blank" rel="noopener noreferrer">📁 Khmer 作業フォルダ</a>
+      <a class="od-btn ks"
+         href="https://docs.google.com/spreadsheets/d/1vL4TlnOWP3FznKHkCEXmo3nGAyzrIMD9swv8wI3NrKk/edit"
+         target="_blank" rel="noopener noreferrer">📊 Khmer Library DB</a>
+      <a class="od-btn ks"
+         href="https://drive.google.com/drive/folders/1Z2xvWTDRNye7rZz-3mQg3Xpd2jpiUkBa"
+         target="_blank" rel="noopener noreferrer">📁 Khmer EPUB フォルダ</a>
+
+      <div class="od-divider"></div>
+      <div class="od-row-label">公開サイト・配布</div>
+      <a class="od-btn ks"
+         href="https://efajapan.github.io/khmer-daisy-library/library_km.html"
+         target="_blank" rel="noopener noreferrer">📚 Khmer Library Catalog</a>
+      <a class="od-btn ks"
+         href="https://efajapan.github.io/ourdaisy-bilingual-updates/"
+         target="_blank" rel="noopener noreferrer">⬇️ アプリ &amp; マニュアル DL</a>
+
+    </div>
+    <div class="od-note">書籍ID：KHM-001〜　アカウント：cambodiamultimediadaisy@gmail.com</div>
+  </div>
+
+  <!--
+    ▼ ブロック追加テンプレート（Nepali・Myanmar 等）
+    <div class="od-block">
+      <div class="od-head" style="background:linear-gradient(90deg,#6B3FA0,#3B1A6B);">🇳🇵 ネパール語版（Nepali）</div>
+      <div class="od-body">
+        <div class="od-row-label">フォーム</div>
+        <a class="od-btn p" href="[ボランティアフォームURL]" target="_blank" rel="noopener noreferrer">👥 ボランティアフォーム</a>
+        <div class="od-divider"></div>
+        <div class="od-row-label">管理・データ</div>
+        <a class="od-btn s" href="[作業フォルダURL]" target="_blank" rel="noopener noreferrer">📁 Nepali 作業フォルダ</a>
+        <a class="od-btn s" href="[SpreadsheetURL]" target="_blank" rel="noopener noreferrer">📊 Nepali Library DB</a>
+        <a class="od-btn s" href="[EPUBフォルダURL]" target="_blank" rel="noopener noreferrer">📁 Nepali EPUB フォルダ</a>
+        <div class="od-divider"></div>
+        <div class="od-row-label">公開サイト・配布</div>
+        <a class="od-btn s" href="[CatalogURL]" target="_blank" rel="noopener noreferrer">📚 Nepali Library Catalog</a>
+        <a class="od-btn s" href="https://efajapan.github.io/ourdaisy-bilingual-updates/" target="_blank" rel="noopener noreferrer">⬇️ アプリ &amp; マニュアル DL</a>
+      </div>
+      <div class="od-note">書籍ID：NEP-001〜　アカウント：[Nepaliアカウント]</div>
+    </div>
+  -->
+
+</div>
