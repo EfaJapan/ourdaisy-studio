@@ -345,6 +345,16 @@ select {
         <div class="error-msg" id="nameErr">お名前を入力してください</div>
       </div>
       <div class="field">
+        <label class="field-label" for="phone">電話番号<span class="req">（必須）</span></label>
+        <input type="tel" id="phone" placeholder="例：090-1234-5678" inputmode="tel">
+        <div class="error-msg" id="phoneErr">正しい電話番号を入力してください</div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="address">住所<span class="req">（必須）</span></label>
+        <input type="text" id="address" placeholder="例：東京都新宿区〇〇1-2-3">
+        <div class="error-msg" id="addressErr">住所を入力してください</div>
+      </div>
+      <div class="field">
         <label class="field-label">参加タイプを選んでください<span class="req">（必須・複数可）</span></label>
         <p class="hint" style="margin-bottom:10px;">わからない場合はタイプAを選んでください</p>
         <div class="check-list">
@@ -986,12 +996,16 @@ function showWelcome() {
 
 // ── Step 1b：新規登録 ────────────────────────────────
 function register() {
-  var name  = document.getElementById('name').value.trim();
+  var name    = document.getElementById('name').value.trim();
+  var phone   = document.getElementById('phone').value.trim();
+  var address = document.getElementById('address').value.trim();
   var types = ['A','B','C'].filter(function(t) {
     return document.getElementById('type' + t).checked;
   });
   var valid = true;
-  if (!name)        { showErr('nameErr'); valid = false; } else hideErr('nameErr');
+  if (!name)    { showErr('nameErr');    valid = false; } else hideErr('nameErr');
+  if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) { showErr('phoneErr'); valid = false; } else hideErr('phoneErr');
+  if (!address) { showErr('addressErr'); valid = false; } else hideErr('addressErr');
   if (!types.length){ showErr('typeErr'); valid = false; } else hideErr('typeErr');
   if (!valid) return;
 
@@ -999,7 +1013,8 @@ function register() {
   setBtnLoading('regBtnText', true);
   gasCall({
     action_type: 'register', email: state.email,
-    name: name, type: 'volunteer',
+    name: name, phone: phone, address: address,
+    type: 'volunteer',
     volunteer_type: primaryType, token: FORM_TOKEN
   }, function(res) {
     setBtnLoading('regBtnText', false);
@@ -1013,7 +1028,6 @@ function register() {
     }
   });
 }
-
 // ── Step 2：アクション選択 ───────────────────────────
 function selectAction(action, el) {
   state.action = action;
