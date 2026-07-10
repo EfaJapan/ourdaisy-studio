@@ -780,10 +780,6 @@ var state = {
   type:           '',
   action:         '',
   problem:        '',
-  screenshotUrl:  '',
-  screenshotB64:  '',
-  assignedBooks:  [],
-  fetchedAssigned: false,
   errorPath:      '',
   selectedApp:    '',
   selectedOS:     '',
@@ -794,7 +790,6 @@ var state = {
 window.addEventListener('load', function() {
   loadEmailFromStorage();
   setupListeners();
-  setupScreenshotPaste();
 });
 
 // ── メールをlocalStorageから復元 ─────────────────────
@@ -807,43 +802,6 @@ function loadEmailFromStorage() {
 
 function saveEmailToStorage(email) {
   try { localStorage.setItem('ourdaisy_email', email); } catch(e) {}
-}
-
-// ── 空き書籍リスト読み込み ────────────────────────────
-
-// ── 担当書籍リスト読み込み ────────────────────────────
-function loadAssignedBooks() {
-  if (state.fetchedAssigned) { renderAssignedBooks(); return; }
-  gasCall({ action_type: 'get_assigned_books', email: state.email, token: FORM_TOKEN }, function(res) {
-    state.fetchedAssigned = true;
-    if (res.status === 'ok' && res.books) {
-      state.assignedBooks = res.books;
-    } else {
-      state.assignedBooks = [];
-    }
-    renderAssignedBooks();
-  });
-}
-
-function renderAssignedBooks() {
-  var sel = document.getElementById('completeBook');
-  sel.innerHTML = '';
-  var def = document.createElement('option');
-  def.value = ''; def.textContent = '-- 書籍を選んでください --';
-  sel.appendChild(def);
-
-  if (state.assignedBooks.length === 0) {
-    document.getElementById('noBooksMsg').style.display = 'block';
-    sel.style.display = 'none';
-  } else {
-    document.getElementById('noBooksMsg').style.display = 'none';
-    sel.style.display = 'block';
-    state.assignedBooks.forEach(function(b) {
-      var opt = document.createElement('option');
-      opt.value = b.id; opt.textContent = b.label;
-      sel.appendChild(opt);
-    });
-  }
 }
 
 // ── イベント設定 ──────────────────────────────────────
@@ -859,64 +817,6 @@ function setupListeners() {
   // ガイドボックスはshowMyTask()でタスクタイプに応じて自動表示（リスナー不要）
 
 
-  // スクショファイル入力
-  document.getElementById('ssFile').addEventListener('change', function(e) {
-    if (e.target.files[0]) readImageFile(e.target.files[0]);
-  });
-}
-
-// ── スクショ貼り付け設定 ──────────────────────────────
-function setupScreenshotPaste() {
-  document.addEventListener('paste', function(e) {
-    var items = (e.clipboardData || e.originalEvent.clipboardData).items;
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') === 0) {
-        readImageFile(items[i].getAsFile());
-        break;
-      }
-    }
-  });
-}
-
-function readImageFile(file) {
-  if (!file) return;
-  try {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        var img = new Image();
-        img.onload = function() {
-          var canvas = document.createElement('canvas');
-          var maxW   = 300; // 800→300に変更（URLパラメータ上限対策）
-          var scale  = Math.min(1, maxW / img.width);
-          canvas.width  = img.width * scale;
-          canvas.height = img.height * scale;
-          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-          var b64 = canvas.toDataURL('image/jpeg', 0.4); // 0.7→0.4に変更
-          // サイズチェック（50000文字超はスキップ）
-          if (b64.length > 50000) {
-            alert('スクリーンショットのサイズが大きすぎます。\n解像度を下げてから再度貼り付けてください。\n（または省略して送信できます）');
-            return;
-          }
-          state.screenshotB64 = b64;
-          showScreenshotPreview(b64);
-          console.log('[OurDAISY] スクショ取得完了: ' + Math.round(b64.length/1024) + 'KB (' + b64.length + '文字)');
-          document.getElementById('ssZone').title = '✅ 画像取得済み: ' + Math.round(b64.length/1024) + 'KB';
-        };
-        img.src = e.target.result;
-      } catch(err) { console.error('画像処理エラー:', err); }
-    };
-    reader.readAsDataURL(file);
-  } catch(err) { console.error('ファイル読み込みエラー:', err); }
-}
-
-function showScreenshotPreview(dataUrl) {
-  var zone    = document.getElementById('ssZone');
-  var preview = document.getElementById('ssPreview');
-  preview.src     = dataUrl;
-  preview.style.display = 'block';
-  zone.classList.add('has-image');
-  zone.querySelector('.ss-zone-text').textContent = '✅ 画像が設定されました（クリックで変更）';
 }
 
 // ── プログレス更新 ────────────────────────────────────
@@ -1234,7 +1134,6 @@ function showReserveComplete(res) {
   card.style.display = 'block';
   card.classList.add('fade-in');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  state.fetchedAssigned = false;
 }
 
 // ── Step 3B：完了報告送信 ────────────────────────────
