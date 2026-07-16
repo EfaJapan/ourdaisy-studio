@@ -232,6 +232,10 @@ tr:hover td { background: var(--blue-l); }
             <option value="Khmer">クメール語（Khmer）</option>
             <option value="Myanmar">ミャンマー語（Myanmar）</option>
             <option value="Nepali">ネパール語（Nepali）</option>
+            <option value="Vietnamese">ベトナム語（Vietnamese）</option>
+            <option value="Tagalog">タガログ語（Tagalog）</option>
+            <option value="Portuguese (Brazil)">ポルトガル語（Portuguese, Brazil）</option>
+            <option value="Indonesian">インドネシア語（Indonesian）</option>
           </select>
           <span class="error-msg" id="reg-lang-err">言語を選択してください</span>
         </div>
@@ -245,9 +249,18 @@ tr:hover td { background: var(--blue-l); }
       </div>
       <div class="form-row">
         <div class="form-group" style="flex:2;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:var(--blue-d);">
+            <input type="checkbox" id="reg-skip-review" onchange="toggleSkipReview()" style="width:auto;">
+            現地で完成済みの原稿を登録する（Word原稿作成・現地確認をスキップし、日本語校正から開始）
+          </label>
+          <span class="hint">現地スタッフから既に確認・翻訳済みの原稿一式を譲り受けた場合にチェックしてください。WORD・現地確認（LOCAL_REVIEW）タスクは完了済み扱いになります。</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
           <label for="reg-folder">作業フォルダURL <span class="opt">（任意）</span></label>
           <input type="text" id="reg-folder" placeholder="https://drive.google.com/drive/folders/...">
-          <span class="hint">Driveの01_受入フォルダ内に作成した書籍フォルダのURL</span>
+          <span class="hint" id="reg-folder-hint">Driveの01_受入フォルダ内に作成した書籍フォルダのURL</span>
         </div>
       </div>
       <div class="form-row">
@@ -382,12 +395,22 @@ function switchTab(tabId, btn) {
 // ════════════════════════════════════════════════════════
 // タブ1：書籍登録
 // ════════════════════════════════════════════════════════
+// 「現地で完成済みの原稿を登録する」チェックボックスの状態に応じて
+// 作業フォルダURL欄のヒント文言を切り替える
+function toggleSkipReview() {
+  var checked = document.getElementById('reg-skip-review').checked;
+  document.getElementById('reg-folder-hint').textContent = checked
+    ? 'Driveの03_確認済フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）'
+    : 'Driveの01_受入フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）';
+}
+
 function submitRegister() {
-  var bookId   = document.getElementById('reg-id').value.trim().toUpperCase();
-  var lang     = document.getElementById('reg-lang').value;
-  var title    = document.getElementById('reg-title').value.trim();
-  var folder   = document.getElementById('reg-folder').value.trim();
-  var notes    = document.getElementById('reg-notes').value.trim();
+  var bookId     = document.getElementById('reg-id').value.trim().toUpperCase();
+  var lang       = document.getElementById('reg-lang').value;
+  var title      = document.getElementById('reg-title').value.trim();
+  var folder     = document.getElementById('reg-folder').value.trim();
+  var notes      = document.getElementById('reg-notes').value.trim();
+  var skipReview = document.getElementById('reg-skip-review').checked;
   var valid = true;
   // バリデーション
   if (!bookId || !/^[A-Z]{2,5}-\d{3}$/.test(bookId)) {
@@ -406,6 +429,7 @@ function submitRegister() {
     language:    lang,
     folder_url:  folder,
     notes:       notes,
+    start_stage: skipReview ? '03' : '01',
     token:       FORM_TOKEN
   }, function(res) {
     setBtnLoading('reg-btn-text', false, '書籍を登録して5タスクを生成する →');
@@ -416,6 +440,8 @@ function submitRegister() {
       document.getElementById('reg-title').value = '';
       document.getElementById('reg-folder').value = '';
       document.getElementById('reg-notes').value  = '';
+      document.getElementById('reg-skip-review').checked = false;
+      toggleSkipReview();
       // ダッシュボードキャッシュをクリア（次回再読み込み）
       dashLoaded = false;
     } else {
