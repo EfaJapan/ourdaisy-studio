@@ -291,6 +291,10 @@ select {
           <option value="Khmer">Khmer（ខ្មែរ）</option>
           <option value="Myanmar">Myanmar（မြန်မာ）</option>
           <option value="Nepali">Nepali（नेपाली）</option>
+          <option value="Vietnamese">Vietnamese（Tiếng Việt）</option>
+          <option value="Tagalog">Tagalog</option>
+          <option value="Portuguese (Brazil)">Portuguese, Brazil（Português）</option>
+          <option value="Indonesian">Indonesian（Bahasa Indonesia）</option>
         </select>
         <div class="error-msg" id="langErr">Please select your language.</div>
       </div>
@@ -890,7 +894,7 @@ function submitComplete() {
     if (res.status === 'ok') {
       showComplete('✅', 'Submitted!', res.message || 'Your completion report has been received.',
         ['Your work folder has been moved to the next stage.',
-         'A Japanese volunteer will be assigned for proofreading.',
+         'A volunteer will be assigned to run the translation app (EFATranslator).',
          'Thank you for your contribution!']);
     } else {
       alert('Error: ' + (res.message || 'Please try again.'));
@@ -898,9 +902,12 @@ function submitComplete() {
   });
 }
 
-// タスクIDから書籍IDを取得（T-LAO-001-L → LAO-001）
+// タスクIDから書籍IDを取得（例：T-LAO-001-LR → LAO-001）
+// Bug fix: 旧実装は接尾辞が1文字専用の正規表現（[A-Z]$）だったため、
+// v9でタスクIDの接尾辞が2文字（DR/LR/TR/PR/DS/TT）に変更されたことで
+// マッチ自体に失敗し、book_idが正しく抽出できなくなっていた（LOCAL_REVIEW=LR等）。
 function getBookIdFromTaskId(taskId) {
-  var m = taskId.match(/^T-(.+)-[A-Z]$/);
+  var m = taskId.match(/^T-(.+)-[A-Z]{1,2}$/);
   return m ? m[1] : taskId;
 }
 
