@@ -478,13 +478,35 @@ select {
         まず「書籍の作業を予約する」から作業を予約してください。
       </div>
 
-      <!-- Word・EFATranslatorガイド（WORDタスク時） -->
-      <div id="wordGuideSection" style="display:none;">
+      <!-- Word原稿作成ガイド（DRAFTタスク時） -->
+      <div id="draftGuideSection" style="display:none;">
         <div class="tip-box">
           💡 <strong>アップロードの方法</strong><br>
           ① 作業フォルダを開く<br>
-          ② 作成したWordファイルと出力ファイルをすべてアップロード<br>
+          ② 作成したWordファイル（母語のみ）をアップロード<br>
           ③ ファイルをすべて選択（Ctrl+A）→ Googleドライブにドラッグ＆ドロップ
+        </div>
+      </div>
+
+      <!-- EFATranslator実行ガイド（TRANSLATEタスク時） -->
+      <div id="translateFileSection" style="display:none;">
+        <div class="file-checklist">
+          <div class="file-checklist-title">
+            ✅ アップロード必須ファイルの確認<br>
+            <span style="font-weight:400;font-size:0.76rem;">
+              以下のファイルをすべてGoogleドライブにアップロードしてから、チェックを入れてください
+            </span>
+          </div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tr1"><span>Wordファイル × 3種類（母語・やさしい日本語・標準）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tr2"><span>_classify.json（分類情報ファイル ※絶対に削除しないでください）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tr3"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）</span></div>
+        </div>
+        <div class="warn-box">
+          💡 <strong>アップロードの方法</strong><br>
+          ① ファイルをすべて選択（Ctrl+A キー）<br>
+          ② 選択したままGoogleドライブにドラッグ＆ドロップ<br>
+          ③ 「フォルダにアップロード」を選択<br><br>
+          ⚠️ JSONファイルを削除・移動しないでください。次の作業に必要です。
         </div>
       </div>
 
@@ -506,7 +528,7 @@ select {
               以下のファイルをすべてGoogleドライブにアップロードしてから、チェックを入れてください
             </span>
           </div>
-          <div class="file-check-row"><input type="checkbox" id="fc1"><span>EPUBファイル × 4種類（やさしい日本語・標準・ひらがな・母語）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc1"><span>EPUBファイル × 3種類（やさしい日本語・標準・母語）</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc2"><span>_books_import.tsv（ライブラリー登録用ファイル）</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc3"><span>_classify.json（分類情報ファイル ※絶対に削除しないでください）</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc4"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）</span></div>
@@ -1043,9 +1065,10 @@ function showMyTask(task) {
     folderSection.style.display = 'block';
   }
 
-  // タスクタイプ別ガイドボックス表示
+  // タスクタイプ別ガイドボックス表示（v9：DRAFT/TRANSLATE分離対応）
   var guideMap = {
-    WORD:         'wordGuideSection',
+    DRAFT:        'draftGuideSection',
+    TRANSLATE:    'translateFileSection',
     PROOFREADING: 'proofGuideSection',
     DAISY:        'daisyFileSection',
     TTS:          'ttsFileSection'
@@ -1146,6 +1169,18 @@ function submitComplete() {
   var notes   = document.getElementById('notes').value;
   var taskType = state.currentTask.task_type;
   var valid   = true;
+
+  // TRANSLATEタスクのファイルチェック（v9新設）
+  if (taskType === 'TRANSLATE') {
+    var trChecked = ['fc-tr1','fc-tr2','fc-tr3'].every(function(id) {
+      var el = document.getElementById(id);
+      return el && el.checked;
+    });
+    if (!trChecked) {
+      alert('3種類のWordファイルとJSONファイルをGoogleドライブに\nアップロードしてからチェックを入れてください。');
+      valid = false;
+    }
+  }
 
   // DAISYタスクのファイルチェック
   if (taskType === 'DAISY') {
