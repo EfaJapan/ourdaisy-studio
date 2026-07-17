@@ -214,7 +214,7 @@ tr:hover td { background: var(--blue-l); }
     <div class="card-header"><h2>📥 新規書籍を登録する</h2></div>
     <div class="card-body">
       <div class="alert alert-info">
-        登録すると「図書管理シート」に追加され、WORDタスクを含む5タスクが自動生成されます。
+        登録すると「図書管理シート」に追加され、DRAFTタスクを含む6タスクが自動生成されます。
       </div>
       <div id="reg-alert"></div>
       <div class="form-row">
@@ -249,18 +249,29 @@ tr:hover td { background: var(--blue-l); }
       </div>
       <div class="form-row">
         <div class="form-group" style="flex:2;">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:var(--blue-d);">
-            <input type="checkbox" id="reg-skip-review" onchange="toggleSkipReview()" style="width:auto;">
-            現地で完成済みの原稿を登録する（Word原稿作成・現地確認をスキップし、日本語校正から開始）
-          </label>
-          <span class="hint">現地スタッフから既に確認・翻訳済みの原稿一式を譲り受けた場合にチェックしてください。WORD・現地確認（LOCAL_REVIEW）タスクは完了済み扱いになります。</span>
+          <label>原稿の状態（開始地点） <span class="req">*</span></label>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+            <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-weight:400;">
+              <input type="radio" name="reg-start-stage" value="01" checked onchange="updateStartStageHint()" style="width:auto;margin-top:3px;">
+              <span><b>通常</b>（絵本の現物・PDFがあるだけ）→ Word原稿作成（DRAFT）から開始</span>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-weight:400;">
+              <input type="radio" name="reg-start-stage" value="02" onchange="updateStartStageHint()" style="width:auto;margin-top:3px;">
+              <span><b>母語原稿は完成済み・現地確認はまだ</b> → 現地確認（LOCAL_REVIEW）から開始</span>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-weight:400;">
+              <input type="radio" name="reg-start-stage" value="03" onchange="updateStartStageHint()" style="width:auto;margin-top:3px;">
+              <span><b>現地で完成済みの原稿を登録する</b>（現地確認も完了済み）→ EFATranslator実行（TRANSLATE）から開始</span>
+            </label>
+          </div>
+          <span class="hint" id="reg-start-stage-hint">Word原稿作成タスクがタイプAボランティアへ通知されます。</span>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group" style="flex:2;">
           <label for="reg-folder">作業フォルダURL <span class="opt">（任意）</span></label>
           <input type="text" id="reg-folder" placeholder="https://drive.google.com/drive/folders/...">
-          <span class="hint" id="reg-folder-hint">Driveの01_受入フォルダ内に作成した書籍フォルダのURL</span>
+          <span class="hint" id="reg-folder-hint">Driveの01_受入フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）</span>
         </div>
       </div>
       <div class="form-row">
@@ -271,7 +282,7 @@ tr:hover td { background: var(--blue-l); }
       </div>
       <div style="margin-top:4px;">
         <button class="btn btn-primary" onclick="submitRegister()">
-          <span id="reg-btn-text">書籍を登録して5タスクを生成する →</span>
+          <span id="reg-btn-text">書籍を登録して6タスクを生成する →</span>
         </button>
       </div>
     </div>
@@ -395,13 +406,26 @@ function switchTab(tabId, btn) {
 // ════════════════════════════════════════════════════════
 // タブ1：書籍登録
 // ════════════════════════════════════════════════════════
-// 「現地で完成済みの原稿を登録する」チェックボックスの状態に応じて
-// 作業フォルダURL欄のヒント文言を切り替える
-function toggleSkipReview() {
-  var checked = document.getElementById('reg-skip-review').checked;
-  document.getElementById('reg-folder-hint').textContent = checked
-    ? 'Driveの03_確認済フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）'
-    : 'Driveの01_受入フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）';
+// 「原稿の状態（開始地点）」の選択に応じて、フォルダURL欄・補足ヒントの文言を切り替える
+function getSelectedStartStage() {
+  var checked = document.querySelector('input[name="reg-start-stage"]:checked');
+  return checked ? checked.value : '01';
+}
+
+function updateStartStageHint() {
+  var stage = getSelectedStartStage();
+  var folderHints = {
+    '01': 'Driveの01_受入フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）',
+    '02': 'Driveの02_現地確認中フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）',
+    '03': 'Driveの03_確認済フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）'
+  };
+  var stageHints = {
+    '01': 'Word原稿作成（DRAFT）タスクがタイプAボランティアへ通知されます。',
+    '02': '現地確認（LOCAL_REVIEW）タスクが現地スタッフ（タイプL）へ通知されます。',
+    '03': 'EFATranslator実行（TRANSLATE）タスクがタイプAボランティアへ通知されます。'
+  };
+  document.getElementById('reg-folder-hint').textContent = folderHints[stage];
+  document.getElementById('reg-start-stage-hint').textContent = stageHints[stage];
 }
 
 function submitRegister() {
@@ -410,7 +434,7 @@ function submitRegister() {
   var title      = document.getElementById('reg-title').value.trim();
   var folder     = document.getElementById('reg-folder').value.trim();
   var notes      = document.getElementById('reg-notes').value.trim();
-  var skipReview = document.getElementById('reg-skip-review').checked;
+  var startStage = getSelectedStartStage();
   var valid = true;
   // バリデーション
   if (!bookId || !/^[A-Z]{2,5}-\d{3}$/.test(bookId)) {
@@ -429,19 +453,31 @@ function submitRegister() {
     language:    lang,
     folder_url:  folder,
     notes:       notes,
-    start_stage: skipReview ? '03' : '01',
+    start_stage: startStage,
     token:       FORM_TOKEN
   }, function(res) {
-    setBtnLoading('reg-btn-text', false, '書籍を登録して5タスクを生成する →');
+    setBtnLoading('reg-btn-text', false, '書籍を登録して6タスクを生成する →');
     if (res.status === 'ok') {
       setAlert('reg-alert', 'success', '✅ ' + res.message);
+      if (res.folder_url) {
+        var alertEl = document.getElementById('reg-alert');
+        if (alertEl && alertEl.firstChild) {
+          var linkDiv = document.createElement('div');
+          linkDiv.style.marginTop = '8px';
+          linkDiv.innerHTML = '📁 作業フォルダ：<br><a href="' + res.folder_url +
+            '" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-weight:700;word-break:break-all;">' +
+            res.folder_url + '</a><br><span style="font-size:0.78rem;color:var(--gray);">ここにPDF・Wordファイルを格納してください。</span>';
+          alertEl.firstChild.appendChild(linkDiv);
+        }
+      }
       // フォームをリセット
       document.getElementById('reg-id').value    = '';
       document.getElementById('reg-title').value = '';
       document.getElementById('reg-folder').value = '';
       document.getElementById('reg-notes').value  = '';
-      document.getElementById('reg-skip-review').checked = false;
-      toggleSkipReview();
+      var defaultRadio = document.querySelector('input[name="reg-start-stage"][value="01"]');
+      if (defaultRadio) defaultRadio.checked = true;
+      updateStartStageHint();
       // ダッシュボードキャッシュをクリア（次回再読み込み）
       dashLoaded = false;
     } else {
