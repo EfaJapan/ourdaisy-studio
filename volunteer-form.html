@@ -498,7 +498,7 @@ select {
             </span>
           </div>
           <div class="file-check-row"><input type="checkbox" id="fc-tr1"><span>Wordファイル × 3種類（母語・やさしい日本語・標準）</span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc-tr2"><span>_classify.json（分類情報ファイル ※絶対に削除しないでください）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tr2"><span>_classify.json（分類情報ファイル）<br><span style="font-size:0.74rem;color:#888;">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
           <div class="file-check-row"><input type="checkbox" id="fc-tr3"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）</span></div>
         </div>
         <div class="warn-box">
@@ -530,7 +530,7 @@ select {
           </div>
           <div class="file-check-row"><input type="checkbox" id="fc1"><span>EPUBファイル × 3種類（やさしい日本語・標準・母語）</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc2"><span>_books_import.tsv（ライブラリー登録用ファイル）</span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc3"><span>_classify.json（分類情報ファイル ※絶対に削除しないでください）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc3"><span>_classify.json（分類情報ファイル）<br><span style="font-size:0.74rem;color:#888;">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
           <div class="file-check-row"><input type="checkbox" id="fc4"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）</span></div>
         </div>
         <div class="warn-box">
@@ -553,7 +553,7 @@ select {
           </div>
           <div class="file-check-row"><input type="checkbox" id="fc-tts1"><span>TTS（音声読み上げ）確認レポートフォーム.docx（作業中に記録したもの）</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc-tts2"><span>_proper_nouns.json（固有名詞ファイル）</span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc-tts3"><span>_classify.json（分類情報ファイル）</span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tts3"><span>_classify.json（分類情報ファイル）<br><span style="font-size:0.74rem;color:#888;">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
         </div>
         <div class="warn-box">
           📝 <strong>TTSレポートフォームの記入方法</strong><br>
@@ -1171,37 +1171,41 @@ function submitComplete() {
   var valid   = true;
 
   // TRANSLATEタスクのファイルチェック（v9新設）
+  // v17変更：_classify.jsonは、母語本文が短い作品では仕様上生成されないことがあるため、
+  // 必須チェックから除外（Wordファイル3種類・proper_nouns.jsonのみ必須とする）。
   if (taskType === 'TRANSLATE') {
-    var trChecked = ['fc-tr1','fc-tr2','fc-tr3'].every(function(id) {
+    var trChecked = ['fc-tr1','fc-tr3'].every(function(id) {
       var el = document.getElementById(id);
       return el && el.checked;
     });
     if (!trChecked) {
-      alert('3種類のWordファイルとJSONファイルをGoogleドライブに\nアップロードしてからチェックを入れてください。');
+      alert('3種類のWordファイルとproper_nouns.jsonをGoogleドライブに\nアップロードしてからチェックを入れてください。');
       valid = false;
     }
   }
 
   // DAISYタスクのファイルチェック
+  // v17変更：_classify.jsonは母語本文が短い作品では生成されないことがあるため必須から除外
   if (taskType === 'DAISY') {
-    var allChecked = ['fc1','fc2','fc3','fc4'].every(function(id) {
+    var allChecked = ['fc1','fc2','fc4'].every(function(id) {
       var el = document.getElementById(id);
       return el && el.checked;
     });
     if (!allChecked) {
-      alert('すべてのファイルをGoogleドライブにアップロードしてから\nチェックボックスにチェックを入れてください。');
+      alert('EPUBファイル・TSV・proper_nouns.jsonをGoogleドライブに\nアップロードしてからチェックボックスにチェックを入れてください。');
       valid = false;
     }
   }
 
   // TTSタスクのファイルチェック
+  // v17変更：_classify.jsonは母語本文が短い作品では生成されないことがあるため必須から除外
   if (taskType === 'TTS') {
-    var ttsChecked = ['fc-tts1','fc-tts2','fc-tts3'].every(function(id) {
+    var ttsChecked = ['fc-tts1','fc-tts2'].every(function(id) {
       var el = document.getElementById(id);
       return el && el.checked;
     });
     if (!ttsChecked) {
-      alert('TTSレポートフォームと必要ファイルをGoogleドライブに\nアップロードしてからチェックを入れてください。');
+      alert('TTSレポートフォームとproper_nouns.jsonをGoogleドライブに\nアップロードしてからチェックを入れてください。');
       valid = false;
     }
   }
