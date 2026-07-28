@@ -280,6 +280,29 @@ tr:hover td { background: var(--blue-l); }
           <input type="text" id="reg-notes" placeholder="参考URL、出典、注記など">
         </div>
       </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);">
+        <div style="font-weight:700;color:var(--blue-d);margin-bottom:6px;">
+          書誌情報 <span class="opt">（任意・分かる範囲でよい。後日判明した場合は再登録不要で追記できます）</span>
+        </div>
+        <span class="hint" style="display:block;margin-bottom:8px;">
+          ここに入力すると、DAISY変換アプリ（EFAOurDaisyBilingual）の書籍情報画面に自動で反映されます（book_info.json経由）。
+        </span>
+        <div class="form-row">
+          <div class="form-group"><label for="reg-author">著者名</label><input type="text" id="reg-author"></div>
+          <div class="form-group"><label for="reg-illustrator">挿絵作者名</label><input type="text" id="reg-illustrator"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="reg-publisher">出版社</label><input type="text" id="reg-publisher"></div>
+          <div class="form-group"><label for="reg-pubdate">出版日 <span class="opt">（例：20-01-2026）</span></label><input type="text" id="reg-pubdate" placeholder="20-01-2026"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="reg-isbn">ISBN</label><input type="text" id="reg-isbn"></div>
+          <div class="form-group"><label for="reg-license">許諾情報</label><input type="text" id="reg-license" placeholder="Permission Granted"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2;"><label for="reg-copyright">著作権情報（著作権の帰属先）</label><input type="text" id="reg-copyright"></div>
+        </div>
+      </div>
       <div style="margin-top:4px;">
         <button class="btn btn-primary" onclick="submitRegister()">
           <span id="reg-btn-text">書籍を登録して6タスクを生成する →</span>
@@ -435,6 +458,14 @@ function submitRegister() {
   var folder     = document.getElementById('reg-folder').value.trim();
   var notes      = document.getElementById('reg-notes').value.trim();
   var startStage = getSelectedStartStage();
+  // v17新設：書誌情報（すべて任意）
+  var author      = document.getElementById('reg-author').value.trim();
+  var illustrator = document.getElementById('reg-illustrator').value.trim();
+  var publisher   = document.getElementById('reg-publisher').value.trim();
+  var pubDate     = document.getElementById('reg-pubdate').value.trim();
+  var isbn        = document.getElementById('reg-isbn').value.trim();
+  var copyrightInfo = document.getElementById('reg-copyright').value.trim();
+  var license     = document.getElementById('reg-license').value.trim();
   var valid = true;
   // バリデーション
   if (!bookId || !/^[A-Z]{2,5}-\d{3}$/.test(bookId)) {
@@ -454,6 +485,13 @@ function submitRegister() {
     folder_url:  folder,
     notes:       notes,
     start_stage: startStage,
+    author:      author,
+    illustrator: illustrator,
+    publisher:   publisher,
+    pub_date:    pubDate,
+    isbn:        isbn,
+    copyright:   copyrightInfo,
+    license:     license,
     token:       FORM_TOKEN
   }, function(res) {
     setBtnLoading('reg-btn-text', false, '書籍を登録して6タスクを生成する →');
@@ -475,6 +513,13 @@ function submitRegister() {
       document.getElementById('reg-title').value = '';
       document.getElementById('reg-folder').value = '';
       document.getElementById('reg-notes').value  = '';
+      document.getElementById('reg-author').value = '';
+      document.getElementById('reg-illustrator').value = '';
+      document.getElementById('reg-publisher').value = '';
+      document.getElementById('reg-pubdate').value = '';
+      document.getElementById('reg-isbn').value = '';
+      document.getElementById('reg-copyright').value = '';
+      document.getElementById('reg-license').value = '';
       var defaultRadio = document.querySelector('input[name="reg-start-stage"][value="01"]');
       if (defaultRadio) defaultRadio.checked = true;
       updateStartStageHint();
