@@ -536,7 +536,7 @@ var LANG_DICT = {
     's3b-title':         '📤 Submit completion report',
     's3b-book-lbl':      'Select the book you completed',
     's3b-bookinfo-title':'📚 Book Information',
-    's3b-bookinfo-tip':  'Please fill in the book information in your language. This information will be used in the DAISY book.',
+    's3b-bookinfo-tip':  'Below is the information entered when this book was registered. Please check it and correct anything that is wrong or missing, in your language. This information will be used in the DAISY book.',
     's3b-author-lbl':    'Author name',
     's3b-illus-lbl':     'Illustrator name',
     's3b-pub-lbl':       'Publisher',
@@ -579,7 +579,7 @@ var LANG_DICT = {
     's3b-title':         '📤 ສົ່ງລາຍງານສຳເລັດ',
     's3b-book-lbl':      'ເລືອກໜັງສືທີ່ທ່ານສຳເລັດ',
     's3b-bookinfo-title':'📚 ຂໍ້ມູນໜັງສື',
-    's3b-bookinfo-tip':  'ກະລຸນາຕື່ມຂໍ້ມູນໜັງສືເປັນພາສາຂອງທ່ານ. ຂໍ້ມູນນີ້ຈະຖືກໃຊ້ໃນໜັງສື DAISY.',
+    's3b-bookinfo-tip':  'ຂໍ້ມູນຂ້າງລຸ່ມນີ້ແມ່ນຂໍ້ມູນທີ່ໄດ້ບັນທຶກໄວ້ຕອນລົງທະບຽນປຶ້ມຫົວນີ້. ກະລຸນາກວດສອບ ແລະ ແກ້ໄຂສ່ວນທີ່ບໍ່ຖືກຕ້ອງ ຫຼື ຂາດຫາຍ ເປັນພາສາຂອງທ່ານ. ຂໍ້ມູນນີ້ຈະຖືກໃຊ້ໃນໜັງສື DAISY. （要ネイティブ確認／Needs native review）',
     's3b-author-lbl':    'ຊື່ຜູ້ຂຽນ',
     's3b-illus-lbl':     'ຊື່ຜູ້ແຕ້ມຮູບ',
     's3b-pub-lbl':       'ສຳນັກພິມ',
@@ -622,7 +622,7 @@ var LANG_DICT = {
     's3b-title':         '📤 ដាក់ជូនរបាយការណ៍បញ្ចប់',
     's3b-book-lbl':      'ជ្រើសសៀវភៅដែលអ្នកបានបញ្ចប់',
     's3b-bookinfo-title':'📚 ព័ត៌មានសៀវភៅ',
-    's3b-bookinfo-tip':  'សូមបំពេញព័ត៌មានសៀវភៅជាភាសារបស់អ្នក។ ព័ត៌មាននេះនឹងត្រូវប្រើក្នុងសៀវភៅ DAISY។',
+    's3b-bookinfo-tip':  'ព័ត៌មានខាងក្រោមគឺជាព័ត៌មានដែលបានបញ្ចូលនៅពេលចុះឈ្មោះសៀវភៅនេះ។ សូមពិនិត្យ និងកែតម្រូវផ្នែកណាដែលមិនត្រឹមត្រូវ ឬខ្វះ ជាភាសារបស់អ្នក។ ព័ត៌មាននេះនឹងត្រូវប្រើក្នុងសៀវភៅ DAISY។ （要ネイティブ確認／Needs native review）',
     's3b-author-lbl':    'ឈ្មោះអ្នកនិពន្ធ',
     's3b-illus-lbl':     'ឈ្មោះអ្នករចនា',
     's3b-pub-lbl':       'ផ្សព្វផ្សាយ',
@@ -802,7 +802,8 @@ function loadAssignedBooks() {
         task_id:    res.task_id,
         book_id:    res.book_id,
         task_label: res.task_label || res.task_type || '',
-        label:      res.task_label || res.task_type || ''
+        label:      res.task_label || res.task_type || '',
+        biblio:     res.biblio || {}
       }];
     } else {
       state.assignedBooks = [];
@@ -827,7 +828,32 @@ function renderAssignedBooks() {
       opt.textContent = (b.book_id || '') + ' | ' + (b.task_label || b.label || '');
       sel.appendChild(opt);
     });
+    // v20：1件だけの場合は自動選択し、既存の書誌情報を事前入力する
+    if (state.assignedBooks.length === 1) {
+      sel.value = state.assignedBooks[0].task_id || state.assignedBooks[0].id;
+      prefillBiblio(state.assignedBooks[0].biblio);
+    }
   }
+}
+
+// v20新設：既存の書誌情報を入力欄に事前入力する。
+// 現地スタッフは空欄への新規入力ではなく、登録時の値を確認・修正する形になる。
+function prefillBiblio(biblio) {
+  if (!biblio) return;
+  var map = {
+    'bi-author':      biblio.author,
+    'bi-illustrator': biblio.illustrator,
+    'bi-publisher':   biblio.publisher,
+    'bi-pubdate':     biblio.pub_date,
+    'bi-isbn':        biblio.isbn,
+    'bi-copyright':   biblio.copyright,
+    'bi-license':     biblio.license
+  };
+  Object.keys(map).forEach(function(id) {
+    var el = document.getElementById(id);
+    // 既に何か入力されている場合は上書きしない（フォーム再表示時の誤上書き防止）
+    if (el && !el.value && map[id]) el.value = map[id];
+  });
 }
 
 // ── STEP 3A：予約送信 ────────────────────────────────────────────
