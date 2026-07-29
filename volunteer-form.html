@@ -759,6 +759,17 @@ var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSY
 var FORM_TOKEN = 'efa2026daisy';
 var MANUAL_URL = 'https://efajapan.github.io/ourdaisy-bilingual-updates/';
 
+// タスク種別 → 完了報告画面で表示するガイドセクションID
+// ここが唯一の定義。表示（showMyTask）とリセット（loadMyTask）の双方がこれを参照する。
+// 新しいタスク種別を追加するときは、この1箇所に追記すれば両方に反映される。
+var TASK_GUIDE_MAP = {
+  DRAFT:        'draftGuideSection',
+  TRANSLATE:    'translateFileSection',
+  PROOFREADING: 'proofGuideSection',
+  DAISY:        'daisyFileSection',
+  TTS:          'ttsFileSection'
+};
+
 // 新ウィンドウで開く（作業画面に戻りやすくするため）
 function openInNewWindow(url) {
   if (!url || url === '#') return;
@@ -1024,7 +1035,13 @@ function loadMyTask() {
   state.currentTask = null;
 
   // ガイドセクションを全て非表示にリセット
-  ['wordGuideSection','proofGuideSection','daisyFileSection','ttsFileSection','folderLinkSection'].forEach(function(id) {
+  // v17修正：リセット対象をTASK_GUIDE_MAPから自動導出する。
+  //   旧実装は 'wordGuideSection'（v9のDRAFT/TRANSLATE分離で消滅したID）を参照し、
+  //   実在する draftGuideSection / translateFileSection がリセット対象から漏れていた。
+  //   その結果、続けて別タスクの完了報告を開くと前のガイドが残る不具合があった。
+  //   以後はマップに追記するだけで表示・リセット双方に反映される。
+  Object.keys(TASK_GUIDE_MAP).map(function(k) { return TASK_GUIDE_MAP[k]; })
+    .concat(['folderLinkSection']).forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -1066,14 +1083,7 @@ function showMyTask(task) {
   }
 
   // タスクタイプ別ガイドボックス表示（v9：DRAFT/TRANSLATE分離対応）
-  var guideMap = {
-    DRAFT:        'draftGuideSection',
-    TRANSLATE:    'translateFileSection',
-    PROOFREADING: 'proofGuideSection',
-    DAISY:        'daisyFileSection',
-    TTS:          'ttsFileSection'
-  };
-  var guideId = guideMap[task.task_type];
+  var guideId = TASK_GUIDE_MAP[task.task_type];
   if (guideId) {
     var guide = document.getElementById(guideId);
     if (guide) guide.style.display = 'block';
