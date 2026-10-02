@@ -191,6 +191,8 @@ section{padding:60px 20px;max-width:840px;margin:0 auto}
 .acc-type.a{background:var(--blue-l);color:var(--blue)}
 .acc-type.b{background:var(--green-l);color:var(--green)}
 .acc-type.c{background:var(--gold-l);color:var(--gold-d)}
+.acc-rare{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:12px;background:var(--bg);border:1px solid var(--line);color:var(--gray);vertical-align:middle}
+.acc-rare-note{background:var(--bg);border-left:4px solid var(--line);border-radius:8px;padding:10px 14px;margin:6px 0 12px;font-size:.86rem;color:var(--ink)}
 
 /* ── 機材（必須/便利）── */
 .gear{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -358,7 +360,7 @@ footer .org{color:#fff;font-weight:700;font-size:.92rem;margin-bottom:6px}
   <p class="sec-desc">スマホやタブレットで無料で読める、多言語の電子図書館です。読むことが苦手な子も、耳と目で物語に入れる「マルチメディアDAISY図書」を、子どもたちの母語で制作しています。</p>
   <div class="feat-grid">
     <div class="feat reveal"><div class="feat-ic">🔊</div><div><b>文字を追いながら、音声で読み上げ</b><span>TTS（合成音声の読み上げ）で、文字と音がぴったり連動します。</span></div></div>
-    <div class="feat reveal"><div class="feat-ic">📑</div><div><b>4つの読み方を1冊に</b><span>母語／やさしい日本語／標準的な日本語／ひらがな。子どもの今の力に合わせて選べます。</span></div></div>
+    <div class="feat reveal"><div class="feat-ic">📑</div><div><b>3つの版から選べる</b><span>母語／母語＋やさしい日本語／母語＋標準日本語。子どもの今の力に合わせて選べます。</span></div></div>
     <div class="feat reveal"><div class="feat-ic">🆓</div><div><b>無料で、いつでも、どこでも</b><span>特別な技術がなくても低コストで運用できる仕組みづくりを進めています。</span></div></div>
     <div class="feat reveal"><div class="feat-ic">🌐</div><div><b>それぞれの母語で制作</b><span>ラオス語・クメール語（カンボジア）、ネパール語・ミャンマー語…これからも対象言語を広げていきます。</span></div></div>
   </div>
@@ -422,11 +424,12 @@ footer .org{color:#fff;font-weight:700;font-size:.92rem;margin-bottom:6px}
 <section id="detail">
   <span class="sec-tag">🔍 くわしく知りたい方へ</span>
   <h2 class="sec-title">お願いする作業の内容</h2>
-  <p class="sec-desc">気になる作業をタップすると、くわしい内容が開きます。詳しい手順書を用意しているので、たいていはそれを読めば解決できます。</p>
+  <p class="sec-desc">気になる作業をタップすると、くわしい内容が開きます。詳しい手順書を用意しているので、たいていはそれを読めば解決できます。<br>作業は上から順に進みます。ただし、ほとんどの絵本は「翻訳アプリの操作」から始まります。</p>
 
   <details class="accordion reveal">
-    <summary><span class="wn">🖨</span>原稿づくり（絵本のスキャン → 文字の取り込み）<span class="acc-type a">ボランティア タイプA</span><span class="chev">▶</span></summary>
+    <summary><span class="wn">🖨</span>原稿づくり（絵本のスキャン → 文字の取り込み）<span class="acc-type a">ボランティア タイプA</span><span class="acc-rare">ときどき</span><span class="chev">▶</span></summary>
     <div class="acc-body">
+      <div class="acc-rare-note">💡 <b>この作業は、ときどき発生します。</b>ほとんどの絵本は、現地の言語ですでにWord原稿になった状態で届くため、作業は「翻訳アプリの操作」から始まります。紙の絵本しかないときだけ、この作業をお願いしています。</div>
       紙の絵本から、専用OCRツール（EFAOurDaisyOCR＝文字を自動で読み取るアプリ）を使って、文字をWordファイルに取り込む作業です。完全オフラインで動く無料ツールで、詳しい手順書を用意しています。
       <div class="ocr-note">
         <b>📕 絵本の取り扱いについて</b>
@@ -445,18 +448,18 @@ footer .org{color:#fff;font-weight:700;font-size:.92rem;margin-bottom:6px}
   </details>
 
   <details class="accordion reveal">
-    <summary><span class="wn">✍️</span>やさしい日本語の確認・微修正<span class="acc-type b">ボランティア タイプB</span><span class="chev">▶</span></summary>
+    <summary><span class="wn">🤖</span>翻訳アプリの操作（3種類の版を生成）<span class="acc-type a">ボランティア タイプA</span><span class="chev">▶</span></summary>
     <div class="acc-body">
-      翻訳アプリが自動でつくった「やさしい日本語」版を読んで、小学1〜3年生に伝わるかを確認します。ぎこちない表現は、手順書のルールに沿って直します。このプロジェクトで最もやりがいのある作業のひとつです。
-      <div class="tags"><span class="tag">💻 Windows PC</span><span class="tag">📝 Wordの基本</span><span class="tag">🇯🇵 日本語が得意な方</span></div>
+      専用の翻訳アプリにWordファイルを読み込ませ、ボタンを押すだけで3種類の版（母語・母語＋やさしい日本語・母語＋標準日本語）のWordファイルが自動生成されます。操作はシンプルで、手順書で確認できます。
+      <div class="tags"><span class="tag">💻 Windows PC</span><span class="tag">🌐 インターネット</span><span class="tag">📂 ファイル操作の基本</span></div>
     </div>
   </details>
 
   <details class="accordion reveal">
-    <summary><span class="wn">🤖</span>翻訳アプリの操作（4種類の日本語を生成）<span class="acc-type a">ボランティア タイプA</span><span class="chev">▶</span></summary>
+    <summary><span class="wn">✍️</span>やさしい日本語の確認・微修正<span class="acc-type b">ボランティア タイプB</span><span class="acc-type a">ボランティア タイプA</span><span class="chev">▶</span></summary>
     <div class="acc-body">
-      専用の翻訳アプリにWordファイルを読み込ませ、ボタンを押すだけで4種類の日本語バージョン（やさしい日本語・標準・全文ひらがな・母語のみ）が自動生成されます。操作はシンプルで、手順書で確認できます。
-      <div class="tags"><span class="tag">💻 Windows PC</span><span class="tag">🌐 インターネット</span><span class="tag">📂 ファイル操作の基本</span></div>
+      翻訳アプリが自動でつくった「やさしい日本語」版を読んで、小学1〜3年生に伝わるかを確認します。ぎこちない表現は、手順書のルールに沿って直します。このプロジェクトで最もやりがいのある作業のひとつです。
+      <div class="tags"><span class="tag">💻 Windows PC</span><span class="tag">📝 Wordの基本</span><span class="tag">🇯🇵 日本語が得意な方</span></div>
     </div>
   </details>
 
