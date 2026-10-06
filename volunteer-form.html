@@ -382,6 +382,24 @@ select {
         </div>
         <div class="error-msg" id="typeErr">参加タイプを1つ以上選んでください</div>
       </div>
+      <div class="field">
+        <label class="field-label">メールマガジンのご案内<span class="req" style="color:var(--gray)">（任意）</span></label>
+        <div class="check-list">
+          <label class="check-item" id="newsletter-wrap">
+            <input type="checkbox" id="newsletter">
+            <div>
+              <div class="check-text">📮 メールマガジン『エファ通信』の購読を希望する</div>
+              <div class="check-sub">月に2回、エファジャパンの活動やニュースをお届けしています。ボランティアの登録とは別のお申込みです</div>
+            </div>
+          </label>
+        </div>
+        <div id="newsletter-link-box" style="display:none;margin-top:10px;padding:12px 14px;background:var(--blue-l);border-radius:8px;font-size:0.8rem;line-height:1.6;">
+          下のボタンから、申込ページを<b>別のウィンドウ</b>で開いてお申込みください。この画面はそのまま残るので、お申込みのあとに戻って登録を続けられます。
+          <a href="https://www.efa-japan.org/newsletter/" target="_blank" rel="noopener noreferrer" id="newsletter-link"
+             style="display:block;margin-top:8px;padding:10px 12px;background:var(--blue);color:#fff;border-radius:8px;text-align:center;font-weight:700;text-decoration:none;">📮 『エファ通信』の申込ページを開く（別ウィンドウ）</a>
+          <span class="hint" style="display:block;">ページが開かない場合も、登録完了メールに同じ申込ページのURLを記載します。</span>
+        </div>
+      </div>
       <button class="btn-primary" onclick="register()">
         <span id="regBtnText">登録して次へ →</span>
       </button>
@@ -927,6 +945,15 @@ function showWelcome() {
   showSection('sec2');
 }
 
+// 2026-10-06：メルマガ購読にチェックしたときだけ、申込ページへのリンクを表示する
+document.addEventListener('DOMContentLoaded', function() {
+  var cb = document.getElementById('newsletter');
+  var box = document.getElementById('newsletter-link-box');
+  if (!cb || !box) return;
+  var sync = function() { box.style.display = cb.checked ? 'block' : 'none'; };
+  cb.addEventListener('change', sync); sync();
+});
+
 // ── Step 1b：新規登録 ────────────────────────────────
 function register() {
   var name    = document.getElementById('name').value.trim();
@@ -948,7 +975,9 @@ function register() {
     action_type: 'register', email: state.email,
     name: name, phone: phone, address: address,
     type: 'volunteer',
-    volunteer_type: primaryType, token: FORM_TOKEN
+    volunteer_type: primaryType,
+    newsletter: document.getElementById('newsletter').checked,
+    token: FORM_TOKEN
   }, function(res) {
     setBtnLoading('regBtnText', false);
     if (res.status === 'ok') {
