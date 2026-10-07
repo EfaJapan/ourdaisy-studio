@@ -275,7 +275,7 @@ tr:hover td { background: var(--blue-l); }
         <div class="form-group" style="flex:2;">
           <label for="reg-folder">作業フォルダURL <span class="opt">（任意）</span></label>
           <input type="text" id="reg-folder" placeholder="https://drive.google.com/drive/folders/...">
-          <span class="hint" id="reg-folder-hint">Driveの01_受入フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）</span>
+          <span class="hint" id="reg-folder-hint">通常は空欄のままにしてください。01_受入フォルダに書籍フォルダが自動で作成されます。先に書籍フォルダを作ってある場合は、そのURLを入れると01_受入フォルダへ自動で移動します（同じ書籍IDのフォルダが2つ以上あると登録できません）</span>
         </div>
       </div>
       <div class="form-row">
@@ -442,9 +442,9 @@ function getSelectedStartStage() {
 function updateStartStageHint() {
   var stage = getSelectedStartStage();
   var folderHints = {
-    '01': 'Driveの01_受入フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）',
-    '02': 'Driveの02_現地確認中フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）',
-    '03': 'Driveの03_確認済フォルダ内に作成した書籍フォルダのURL（空欄なら自動作成されます）'
+    '01': '通常は空欄のままにしてください。01_受入フォルダに書籍フォルダが自動で作成されます。先に書籍フォルダを作ってある場合は、そのURLを入れると01_受入フォルダへ自動で移動します（同じ書籍IDのフォルダが2つ以上あると登録できません）',
+    '02': '通常は空欄のままにしてください。02_現地確認中フォルダに書籍フォルダが自動で作成されます。先に書籍フォルダを作ってある場合は、そのURLを入れると02_現地確認中フォルダへ自動で移動します（同じ書籍IDのフォルダが2つ以上あると登録できません）',
+    '03': '通常は空欄のままにしてください。03_確認済_翻訳待ちフォルダに書籍フォルダが自動で作成されます。先に書籍フォルダを作ってある場合は、そのURLを入れると03_確認済_翻訳待ちフォルダへ自動で移動します（同じ書籍IDのフォルダが2つ以上あると登録できません）'
   };
   var stageHints = {
     '01': 'Word原稿作成（DRAFT）タスクがタイプAボランティアへ通知されます。',
