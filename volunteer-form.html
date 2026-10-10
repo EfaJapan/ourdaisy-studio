@@ -144,7 +144,7 @@ select {
 }
 .check-item:hover { border-color: var(--blue); background: var(--blue-l); }
 .check-item.checked { border-color: var(--blue); background: var(--blue-l); }
-.check-item input[type="checkbox"] {
+.check-item input[type="checkbox"], .check-item input[type="radio"] {
   width: 18px; height: 18px; min-width: 18px; margin-top: 2px;
   accent-color: var(--blue); cursor: pointer;
 }
@@ -383,6 +383,26 @@ select {
         <div class="error-msg" id="typeErr">参加タイプを1つ以上選んでください</div>
       </div>
       <div class="field">
+        <label class="field-label">新しい作業のお知らせ<span class="req">（必須）</span></label>
+        <p class="hint" style="margin-bottom:10px;">あとから、いつでも変えられます</p>
+        <div class="check-list">
+          <label class="check-item checked">
+            <input type="radio" name="notifyReg" value="weekly" checked>
+            <div>
+              <div class="check-text">📅 週1回まとめて受け取る（おすすめ）</div>
+              <div class="check-sub">毎週月曜日の朝に、予約できる作業を1通にまとめてお送りします。新しい作業がない週は送りません</div>
+            </div>
+          </label>
+          <label class="check-item">
+            <input type="radio" name="notifyReg" value="instant">
+            <div>
+              <div class="check-text">⚡ すぐに受け取る</div>
+              <div class="check-sub">新しい作業が予約できるようになるたびに、その場でお送りします（多い日は何通か届きます）</div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="field">
         <label class="field-label">メールマガジンのご案内<span class="req" style="color:var(--gray)">（任意）</span></label>
         <div class="check-list">
           <label class="check-item" id="newsletter-wrap">
@@ -436,6 +456,13 @@ select {
           <div>
             <div class="choice-title">エラー・困っていることを報告する</div>
             <div class="choice-sub">アプリのエラーや操作でわからないことを報告します。</div>
+          </div>
+        </div>
+        <div class="choice-item" onclick="selectAction('notify', this)">
+          <div class="choice-icon">🔔</div>
+          <div>
+            <div class="choice-title">お知らせの受け取り方を変える</div>
+            <div class="choice-sub">新しい作業のお知らせを「週1回まとめて」か「すぐに」受け取るかを選べます。</div>
           </div>
         </div>
       </div>
@@ -763,6 +790,42 @@ select {
 </div>
 
 
+<!-- ══ STEP 3D：お知らせの受け取り方 ══ -->
+<div class="section" id="sec3d">
+  <div class="card fade-in">
+    <div class="card-header">
+      <span class="step-no">STEP 3</span>
+      <h2>🔔 お知らせの受け取り方を変える</h2>
+    </div>
+    <div class="card-body">
+      <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
+      <div class="field">
+        <label class="field-label">新しい作業のお知らせ</label>
+        <div class="check-list">
+          <label class="check-item">
+            <input type="radio" name="notifyPref" value="weekly">
+            <div>
+              <div class="check-text">📅 週1回まとめて受け取る（おすすめ）</div>
+              <div class="check-sub">毎週月曜日の朝に、予約できる作業を1通にまとめてお送りします。新しい作業がない週は送りません</div>
+            </div>
+          </label>
+          <label class="check-item">
+            <input type="radio" name="notifyPref" value="instant">
+            <div>
+              <div class="check-text">⚡ すぐに受け取る</div>
+              <div class="check-sub">新しい作業が予約できるようになるたびに、その場でお送りします（多い日は何通か届きます）</div>
+            </div>
+          </label>
+        </div>
+        <p class="hint">どちらを選んでも、作業の一覧は「作業を予約する」からいつでも見られます。</p>
+      </div>
+      <button class="btn-primary" onclick="saveNotifyPref()">
+        <span id="notifyBtnText">この設定で保存する</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ 完了カード ══ -->
 <div class="complete-card" id="completeCard">
   <div class="complete-icon" id="completeIcon">✅</div>
@@ -834,6 +897,7 @@ var state = {
   errorPath:      '',
   selectedApp:    '',
   selectedOS:     '',
+  notify:         'weekly',
   currentTask:    null
 };
 
@@ -863,6 +927,10 @@ function setupListeners() {
       var item = this.closest('.check-item');
       if (item) item.classList.toggle('checked', this.checked);
     });
+  });
+  // ラジオボタン（お知らせの受け取り方）のビジュアル更新
+  document.querySelectorAll('.check-item input[type="radio"]').forEach(function(rb) {
+    rb.addEventListener('change', function() { syncRadioCards(this.name); });
   });
   // DAISYアプリ選択でファイルチェックリスト表示
   // ガイドボックスはshowMyTask()でタスクタイプに応じて自動表示（リスナー不要）
@@ -927,6 +995,7 @@ function checkEmail() {
         state.memberId = res.memberId;
         state.name     = res.name;
         state.type     = res.type;
+        state.notify   = res.notify === 'instant' ? 'instant' : 'weekly';
         showWelcome();
       } else {
         setProgress(1);
@@ -977,6 +1046,7 @@ function register() {
     type: 'volunteer',
     volunteer_type: primaryType,
     newsletter: document.getElementById('newsletter').checked,
+    notify: getRadioValue('notifyReg') || 'weekly',
     token: FORM_TOKEN
   }, function(res) {
     setBtnLoading('regBtnText', false);
@@ -984,6 +1054,7 @@ function register() {
       state.memberId = res.memberId;
       state.name     = name;
       state.type     = 'volunteer';
+      state.notify   = getRadioValue('notifyReg') || 'weekly';
       showWelcome();
     } else {
       alert('登録に失敗しました。\n' + (res.message || ''));
@@ -1005,8 +1076,44 @@ function selectAction(action, el) {
       loadMyTask();
     } else if (action === 'help') {
       showSection('sec3c');
+    } else if (action === 'notify') {
+      setRadioValue('notifyPref', state.notify || 'weekly');
+      showSection('sec3d');
     }
   }, 200);
+}
+
+// ── お知らせの受け取り方 ─────────────────────────────
+function getRadioValue(name) {
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+function setRadioValue(name, value) {
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(rb) {
+    rb.checked = (rb.value === value);
+  });
+  syncRadioCards(name);
+}
+function syncRadioCards(name) {
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(rb) {
+    var item = rb.closest('.check-item');
+    if (item) item.classList.toggle('checked', rb.checked);
+  });
+}
+function saveNotifyPref() {
+  var pref = getRadioValue('notifyPref');
+  if (!pref) { alert('受け取り方を選んでください。'); return; }
+  setBtnLoading('notifyBtnText', true);
+  gasCall({ action_type: 'set_notify_pref', email: state.email, notify: pref, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('notifyBtnText', false);
+    if (res.status === 'ok') {
+      state.notify = pref;
+      alert('保存しました。\n' + (res.message || ''));
+      goBack('sec2');
+    } else {
+      alert('保存できませんでした。\n' + (res.message || 'しばらく後に再試行してください。'));
+    }
+  });
 }
 
 // ── Step 3A：予約送信 ────────────────────────────────
