@@ -816,8 +816,15 @@ select {
               <div class="check-sub">新しい作業が予約できるようになるたびに、その場でお送りします（多い日は何通か届きます）</div>
             </div>
           </label>
+          <label class="check-item">
+            <input type="radio" name="notifyPref" value="pause">
+            <div>
+              <div class="check-text">😴 しばらくお休みする</div>
+              <div class="check-sub">作業のお知らせを止めます。お休み中も登録はそのまま残り、戻りたいときはここで選び直すだけで戻れます</div>
+            </div>
+          </label>
         </div>
-        <p class="hint">どちらを選んでも、作業の一覧は「作業を予約する」からいつでも見られます。</p>
+        <p class="hint">どれを選んでも、作業の一覧は「作業を予約する」からいつでも見られます。</p>
       </div>
       <button class="btn-primary" onclick="saveNotifyPref()">
         <span id="notifyBtnText">この設定で保存する</span>
@@ -995,7 +1002,7 @@ function checkEmail() {
         state.memberId = res.memberId;
         state.name     = res.name;
         state.type     = res.type;
-        state.notify   = res.notify === 'instant' ? 'instant' : 'weekly';
+        state.notify   = (res.notify === 'instant' || res.notify === 'pause') ? res.notify : 'weekly';
         showWelcome();
       } else {
         setProgress(1);
@@ -1010,7 +1017,10 @@ function checkEmail() {
 function showWelcome() {
   setProgress(2);
   document.getElementById('welcomeMsg').textContent =
-    state.name + ' さん、ようこそ！（担当者ID：' + state.memberId + '）';
+    state.name + ' さん、ようこそ！（担当者ID：' + state.memberId + '）' +
+    (state.notify === 'pause'
+      ? '　いまはお休み中です。戻るときは「お知らせの受け取り方を変える」から選び直してください。'
+      : '');
   showSection('sec2');
 }
 
@@ -1109,6 +1119,7 @@ function saveNotifyPref() {
     if (res.status === 'ok') {
       state.notify = pref;
       alert('保存しました。\n' + (res.message || ''));
+      showWelcome();
       goBack('sec2');
     } else {
       alert('保存できませんでした。\n' + (res.message || 'しばらく後に再試行してください。'));
