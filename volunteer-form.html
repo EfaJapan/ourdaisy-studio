@@ -315,7 +315,7 @@ select {
       </div>
       <div class="field">
         <label class="field-label" for="email">メールアドレス<span class="req">（必須）</span></label>
-        <input type="email" id="email" placeholder="例：yamada@email.com">
+        <input type="email" id="email" placeholder="例：yamada@email.com" autocapitalize="off" autocorrect="off" autocomplete="email" spellcheck="false">
         <div class="error-msg" id="emailErr">正しいメールアドレスを入力してください</div>
         <p class="hint">📌 エファジャパン以外には公開しません。作業の連絡に使用します。</p>
       </div>
@@ -986,7 +986,9 @@ function goBack(targetSection) {
 
 // ── Step 1：メール照合 ───────────────────────────────
 function checkEmail() {
-  var email = document.getElementById('email').value.trim();
+  // 2026-10-12：スマホの自動大文字化（Seki.…）でも照合できるよう、小文字にそろえる
+  var email = document.getElementById('email').value.trim().toLowerCase();
+  document.getElementById('email').value = email;
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     showErr('emailErr'); return;
   }
