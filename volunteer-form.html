@@ -869,18 +869,19 @@ var FAQ_CONTENT = {
   'アプリが起動しない（開かない）':
     '① パソコンを再起動して、もう一度アプリを開いてみてください。<br>' +
     '② 画面下のタスクバーにアプリが隠れていないか確認してください。<br>' +
-    '③ アプリのアイコンを右クリック→「管理者として実行」を試してください。',
+    '③ アプリのフォルダには同じ名前のファイルが2つあります。種類が「Windows バッチ ファイル」の方をダブルクリックしてください（「Python File」の方ではありません）。<br>' +
+    '④ DAISYアプリだけが開かない場合は、Microsoftの「Visual C++ 再頒布可能パッケージ（x64）」をインストールしてください（制作マニュアル Ch.2-5）。',
 
   'エラーメッセージが出た':
     '以下を確認してください：<br>' +
-    '① ファイル名に日本語・スペースが入っていませんか？（例：「作業ファイル.docx」→NG）<br>' +
-    '　 ファイル名は半角英数字のみにしてください。<br>' +
-    '② Wordファイルが別のウィンドウで開いたままになっていませんか？<br>' +
+    '① Wordファイルが別のウィンドウで開いたままになっていませんか？<br>' +
     '　 Wordをすべて閉じてから再実行してください。<br>' +
-    '③ _classify.jsonや_proper_nouns.jsonを削除・移動していませんか？<br>' +
-    '　 出力フォルダのファイルはすべてそのままにしてください。',
+    '② _classify.jsonや_proper_nouns.jsonを削除・移動していませんか？<br>' +
+    '　 出力フォルダのファイルはすべてそのままにしてください。<br>' +
+    '※ ファイルの名前は変えないでください（原書の題名のままで問題ありません）。',
 
   'ファイルが見つからない・消えた':
+    '⓪ 作業フォルダのWord原稿の名前は、書籍IDではなく原書の題名のことがあります。ファイル名は入力せず、画面の一覧からクリックして選んでください。<br>' +
     '① アプリの「出力先フォルダ」の設定を確認してください。<br>' +
     '② デスクトップや「ドキュメント」フォルダを確認してください。<br>' +
     '③ Windowsの検索（Windowsキー+S）でファイル名を入力して探してください。<br>' +
@@ -1298,6 +1299,15 @@ function finishForToday() {
   document.getElementById('nextSteps').innerHTML = '';
 }
 
+// v19：予約完了画面に「この作業で使うアプリ」を表示する（OCRアプリとの取り違え防止）。
+var TASK_APP_GUIDE = {
+  DRAFT:        'EFAOurDaisyOCR（OCRアプリ）とWord（制作マニュアル Ch.4）',
+  TRANSLATE:    'EFATranslator（翻訳アプリ）だけです（制作マニュアル Ch.5）。DAISYアプリ・OCRアプリは使いません',
+  PROOFREADING: 'Wordだけです。アプリの準備は不要です（制作マニュアル Ch.6）',
+  DAISY:        'EFAOurDaisyBilingual（DAISYアプリ）です（制作マニュアル Ch.7）',
+  TTS:          'リーダーアプリです。EFAのアプリは不要です（制作マニュアル Ch.8）'
+};
+
 function showReserveComplete(res) {
   document.getElementById('progressWrap').style.display = 'none';
   document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
@@ -1307,6 +1317,8 @@ function showReserveComplete(res) {
   document.getElementById('completeMsg').textContent   = res.message || '書籍の予約が完了しました。';
   document.getElementById('nextSteps').innerHTML =
     '<h3>📬 これから行うこと</h3>' +
+    (TASK_APP_GUIDE[res.task_type] ? '<div class="next-step-item"><span class="step-num">🛠</span><div><strong>この作業で使うアプリ</strong><br>' + TASK_APP_GUIDE[res.task_type] + '</div></div>' : '') +
+    (res.folderUrl ? '<div class="next-step-item"><span class="step-num">💡</span><div>作業フォルダは、Googleにログインした状態で開いてください。ファイルは右クリック→「ダウンロード」で1つずつ保存し、名前は変えずに使ってください。</div></div>' : '') +
     (res.folderUrl ? '<div class="next-step-item"><span class="step-num">📁</span><div style="width:100%;"><strong>Googleドライブで書籍を確認・ダウンロードする</strong><br><a href="' + res.folderUrl + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" style="display:inline-block;margin-top:6px;padding:8px 16px;background:var(--blue);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;">📁 Googleドライブを開く</a></div></div>' : '') +
     '<div class="next-step-item"><span class="step-num">1</span>登録したメールアドレスに確認メールが届きます。</div>' +
     '<div class="next-step-item"><span class="step-num">2</span>マニュアルをダウンロードして作業方法を確認してください。<br><a href="' + MANUAL_URL + '" onclick="openInNewWindow(this.href); return false;" style="color:var(--blue);font-size:0.8rem;">' + MANUAL_URL + '</a></div>' +
@@ -1457,9 +1469,10 @@ function selectErrorPath(path, el) {
         '(1) パソコンを再起動してから、もう一度アプリを起動する<br>' +
         '(2) Wordファイルが別のウィンドウで開いたままになっていないか確認する<br>' +
         '&nbsp;&nbsp;&nbsp;&nbsp;→ Wordをすべて閉じてから再実行する<br>' +
-        '(3) ファイル名に日本語・スペースが含まれていないか確認する<br>' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;→ ファイル名は半角英数字のみにする（例：lao001.docx）<br>' +
-        '(4) アプリのアイコンを右クリック →「管理者として実行」で起動する';
+        '(3) アプリは、種類が「Windows バッチ ファイル」の方をダブルクリックして開く<br>' +
+        '&nbsp;&nbsp;&nbsp;&nbsp;→ DAISYアプリだけが開かない場合は「Visual C++ 再頒布可能パッケージ（x64）」を入れる（制作マニュアル Ch.2-5）<br>' +
+        '(4) 作業に合ったアプリを開いているか確認する（翻訳アプリ実行＝EFATranslator、EPUB作成＝EFAOurDaisyBilingual）<br>' +
+        '※ ファイルの名前は変えないでください（原書の題名のままで問題ありません）';
     } else {
       faq.innerHTML =
         'まず以下を自分で試してください：<br><br>' +
