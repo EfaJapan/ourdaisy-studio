@@ -368,28 +368,39 @@ tr:hover td { background: var(--blue-l); }
     <div class="card-header"><h2>✅ DAISYライブラリへの公開処理</h2></div>
     <div class="card-body">
       <div class="alert alert-info">
-        06_完成フォルダにある書籍を選択して「公開する」ボタンを押すと、<br>
-        EPUBのファイルID・ダウンロードURL・表紙画像URLを自動取得し、DAISYライブラリのBooksシートに転記します。
+        「06_完成_公開待ち」にある本を、会員向けライブラリ（OurDAISY）に公開します。<br>
+        ① 書籍IDを入れて「確認する」を押すと、公開できるかを点検し、登録する内容を表示します（この時点では何も書き込みません）。<br>
+        ② 内容に問題がなければ「公開する」を押します。<br>
+        公開すると、EPUB（電子図書のファイル）3つと表紙を「OurDAISYライブラリ公開中蔵書」のフォルダにコピーし、
+        図書リスト（Booksシート）に登録して、作業フォルダを「07_公開済み」に移します。
+        ライブラリ番号（BOOK-xxx）は自動で付きます。新刊案内メールは、これまでどおり図書リストのメニュー「② 新刊通知メールを送信」から送ってください。
       </div>
       <div class="alert alert-warn">
-        ⚠️ 公開前に以下を確認してください：<br>
-        ① 06_完成フォルダに EPUB が4種類（母語版・標準・やさしい・ひらがな）入っているか<br>
-        ② _books_import.tsv が存在するか<br>
-        ③ 表紙画像（JPG または PNG）が1枚入っているか
+        ⚠️ 点検する内容（1つでも欠けていると公開できません）：<br>
+        ・EPUBが3種類（母語／母語＋やさしい日本語／母語＋標準日本語）そろっている<br>
+        ・_books_import.tsv（書籍情報のファイル）がある<br>
+        ・表紙画像（PNG または JPG）がある<br>
+        ・書籍情報とEPUBの言語が、書籍IDの言語と同じ（900番台のテスト用の本は公開しません）
       </div>
       <div class="form-row">
         <div class="form-group" style="flex:1; max-width:300px;">
           <label for="pub-book-id">書籍ID <span class="req">*</span></label>
-          <input type="text" id="pub-book-id" placeholder="例: LAO-001" maxlength="20">
+          <input type="text" id="pub-book-id" placeholder="例: IND-004" maxlength="20" oninput="resetPublishCheck()">
           <span class="error-msg" id="pub-id-err">書籍IDを入力してください</span>
         </div>
         <div class="form-group" style="flex:0; align-self:flex-end;">
-          <button class="btn btn-success" onclick="submitPublish()">
-            <span id="pub-btn-text">✅ この書籍を公開する</span>
+          <button class="btn btn-outline" onclick="checkPublish()">
+            <span id="pub-check-text">🔍 確認する（書き込みません）</span>
+          </button>
+        </div>
+        <div class="form-group" style="flex:0; align-self:flex-end;">
+          <button class="btn btn-success" id="pub-btn" onclick="submitPublish()" disabled>
+            <span id="pub-btn-text">✅ 公開する</span>
           </button>
         </div>
       </div>
       <div id="pub-alert"></div>
+      <div id="pub-result"></div>
     </div>
   </div>
 
@@ -667,33 +678,88 @@ function filterMembers() {
 // ════════════════════════════════════════════════════════
 // タブ4：公開処理
 // ════════════════════════════════════════════════════════
-function submitPublish() {
+var pubCheckedId = '';   // 確認に合格した書籍ID（この本だけ「公開する」を押せる）
+
+function resetPublishCheck() {
+  pubCheckedId = '';
+  var b = document.getElementById('pub-btn'); if (b) b.disabled = true;
+}
+
+function renderPublishResult(res) {
+  var h = '';
+  if (res.errors && res.errors.length) {
+    h += '<div class="alert alert-error"><b>公開できない理由</b><br>' +
+         res.errors.map(function(e) { return '・' + esc(e); }).join('<br>') + '</div>';
+  }
+  if (res.warnings && res.warnings.length) {
+    h += '<div class="alert alert-warn"><b>確認してほしいこと</b><br>' +
+         res.warnings.map(function(e) { return '・' + esc(e); }).join('<br>') + '</div>';
+  }
+  if (res.library_id) {
+    var ep = res.epubs || {};
+    var epLine = function(k, label) {
+      var e = ep[k]; return '<tr><td>' + label + '</td><td>' + (e ? esc(e.name) + (e.lang ? '（言語：' + esc(e.lang) + '）' : '') : '—') + '</td></tr>';
+    };
+    h += '<div class="table-wrap"><table>' +
+      '<tr><th style="width:30%">項目</th><th>内容</th></tr>' +
+      '<tr><td>ライブラリ番号</td><td><b>' + esc(res.library_id) + '</b>（' + (res.mode === 'new' ? '新しい本' : '公開し直し：同じ番号の内容を上書き') + '）</td></tr>' +
+      '<tr><td>題名</td><td>' + esc(res.title) + (res.title_jp ? '　' + esc(res.title_jp) : '') + '</td></tr>' +
+      '<tr><td>公開用フォルダ</td><td>' + esc(res.library_folder) +
+        (res.library_folder_url ? '　<a href="' + esc(res.library_folder_url) + '" target="_blank">開く</a>' : '') + '</td></tr>' +
+      epLine('MT', 'EPUB（母語）') + epLine('EJ', 'EPUB（やさしい日本語）') + epLine('SJ', 'EPUB（標準日本語）') +
+      '<tr><td>表紙</td><td>' + (res.cover ? esc(res.cover.name) : '—') + '</td></tr>' +
+      '</table></div>';
+    if (res.rows && res.rows.length) {
+      h += '<div class="table-wrap" style="margin-top:10px"><table>' +
+        '<tr><th>ID</th><th>版</th><th>言語</th><th>対象年齢</th><th>読書レベル</th><th>日本語レベル</th></tr>' +
+        res.rows.map(function(r) {
+          return '<tr><td>' + esc(r.id) + '</td><td>' + esc(r.version) + '</td><td>' + esc(r.language) + '</td><td>' +
+                 esc(r.age) + '</td><td>' + esc(r.level) + '</td><td>' + esc(r.jp) + '</td></tr>';
+        }).join('') + '</table></div>';
+    }
+  }
+  document.getElementById('pub-result').innerHTML = h;
+}
+
+function checkPublish() {
   var bookId = document.getElementById('pub-book-id').value.trim().toUpperCase();
   if (!bookId) { showErr('pub-id-err'); return; }
   hideErr('pub-id-err');
+  resetPublishCheck();
+  setAlert('pub-alert', '', '');
+  document.getElementById('pub-result').innerHTML = '';
+  setBtnLoading('pub-check-text', true, '確認中...');
+  gasCall({ action_type: 'publish_book', book_id: bookId, dry_run: true, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('pub-check-text', false);
+    if (res.status !== 'ok') { setAlert('pub-alert', 'error', '❌ ' + (res.message || '確認に失敗しました')); return; }
+    setAlert('pub-alert', res.checked ? 'success' : 'error', (res.checked ? '✅ ' : '❌ ') + res.message);
+    renderPublishResult(res);
+    if (res.checked) {
+      pubCheckedId = bookId;
+      document.getElementById('pub-btn').disabled = false;
+    }
+  });
+}
 
-  if (!confirm('「' + bookId + '」をDAISYライブラリに公開してよいですか？\n\n' +
-               '・06_完成フォルダのTSV・EPUB・表紙画像を読み込みます\n' +
-               '・Booksシートに既存データがある場合は上書きされます')) return;
-
+function submitPublish() {
+  var bookId = document.getElementById('pub-book-id').value.trim().toUpperCase();
+  if (!bookId) { showErr('pub-id-err'); return; }
+  if (bookId !== pubCheckedId) { setAlert('pub-alert', 'warn', '先に「確認する」を押して、点検に合格してから公開してください。'); return; }
+  if (!confirm('「' + bookId + '」をライブラリに公開してよいですか？\n\n' +
+               '・EPUB 3つと表紙を公開用フォルダにコピーし、図書リストに登録します\n' +
+               '・作業フォルダを「07_公開済み」に移します')) return;
   setAlert('pub-alert', '', '');
   setBtnLoading('pub-btn-text', true, '公開処理中...');
-  gasCall({
-    action_type: 'publish_book',
-    book_id:     bookId,
-    token:       FORM_TOKEN
-  }, function(res) {
-    setBtnLoading('pub-btn-text', false, '✅ この書籍を公開する');
-    if (res.status === 'ok') {
-      setAlert('pub-alert', 'success',
-        '✅ ' + res.message + '\n' +
-        'FileID: ' + res.file_id + '\n' +
-        (res.cover_url ? '表紙画像: 取得済み' : '表紙画像: なし') + '\n' +
-        (res.overwrite ? '（既存データを上書きしました）' : '（新規追加しました）')
-      );
+  gasCall({ action_type: 'publish_book', book_id: bookId, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('pub-btn-text', false);
+    resetPublishCheck();
+    if (res.status === 'ok' && res.published) {
+      setAlert('pub-alert', 'success', '✅ ' + res.message);
+      renderPublishResult(res);
       document.getElementById('pub-book-id').value = '';
     } else {
       setAlert('pub-alert', 'error', '❌ ' + (res.message || '公開処理に失敗しました'));
+      if (res.errors) renderPublishResult(res);
     }
   });
 }
