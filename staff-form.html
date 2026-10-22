@@ -699,11 +699,37 @@ function submitPublish() {
 }
 
 // ── 共通ユーティリティ ────────────────────────────────────────────
+// 管理者キー：初回だけ入力し、このブラウザに保存する（公開ページには書かない）
+var ADMIN_KEY_STORE = 'efa_admin_key';
+function getAdminKey() {
+  var key = '';
+  try { key = localStorage.getItem(ADMIN_KEY_STORE) || ''; } catch (e) {}
+  if (!key) {
+    key = (window.prompt('管理者キーを入力してください（初回のみ）') || '').trim();
+    if (key) { try { localStorage.setItem(ADMIN_KEY_STORE, key); } catch (e) {} }
+  }
+  return key;
+}
+function clearAdminKey() {
+  try { localStorage.removeItem(ADMIN_KEY_STORE); } catch (e) {}
+}
+
 function gasCall(data, callback) {
+  data.admin_key = getAdminKey();
+  if (!data.admin_key) {
+    callback({ status: 'error', message: '管理者キーが入力されていません。ページを再読み込みして入力してください。' });
+    return;
+  }
   var url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
   fetch(url)
     .then(function(r) { return r.json(); })
-    .then(function(res) { callback(res); })
+    .then(function(res) {
+      if (res && res.message === 'unauthorized') {
+        clearAdminKey();
+        res.message = '管理者キーが正しくありません。ページを再読み込みして、もう一度入力してください。';
+      }
+      callback(res);
+    })
     .catch(function(err) {
       console.error('Network error:', err);
       callback({ status: 'error', message: 'ネットワークエラーが発生しました。接続を確認して再試行してください。' });
