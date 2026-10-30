@@ -3,6 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// ページを開いたときは、URLに「#flow」などが付いていても最上部から表示する
+// （ページ内のメニューを押したときの移動は、これまでどおり）
+(function(){
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+  if (location.hash) {
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  }
+  var touched = false;   // 読み込み中に利用者が操作したら、その操作を優先する
+  ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function(ev){
+    window.addEventListener(ev, function(){ touched = true; }, { passive: true, once: true });
+  });
+  function toTop(){ if (!touched) window.scrollTo(0, 0); }
+  window.addEventListener('DOMContentLoaded', toTop);
+  window.addEventListener('load', function(){ setTimeout(toTop, 0); });
+})();
+</script>
 <title>母語の絵本を、外国ルーツの子どもたちへ｜OurDAISY ボランティア募集</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
