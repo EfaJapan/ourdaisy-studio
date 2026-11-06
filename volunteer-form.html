@@ -1191,8 +1191,8 @@ function dueBadge(d) {
   if (n === null) return '';
   if (n > 3)  return '<span class="due">⏰ あと' + n + '日</span>';
   if (n > 0)  return '<span class="due soon">⏰ あと' + n + '日</span>';
-  if (n === 0) return '<span class="due soon">⏰ 今日まで</span>';
-  return '<span class="due over">⏰ 期限を' + (-n) + '日すぎています</span>';
+  if (n === 0) return '<span class="due soon">⏰ 今日の終わりまで</span>';
+  return '<span class="due over">⏰ 期限をすぎています</span>';
 }
 
 // 本ができるまでの道のり（current＝いまの工程）
@@ -1403,7 +1403,7 @@ function loadHome() {
         '<div class="mytask-head"><span class="pill sun">いま担当中</span>' + dueBadge(res.deadline) + '</div>' +
         '<div class="mytask-title">' + meta.icon + ' ' + esc(meta.name) + '</div>' +
         '<div class="mytask-meta">📚 ' + esc(res.book_id) + (lg.name ? '（' + esc(lg.name) + '）' : '') + '　' + esc(res.book_title || '') +
-        '<br>期限：' + esc(fmtDate(res.deadline)) + '</div>' +
+        '<br>期限：' + esc(fmtDate(res.deadline)) + 'の終わりまで</div>' +
         journeyHtml(res.task_type) +
         '<div class="btn-row" style="margin-top:12px;">' +
         '<button type="button" class="btn-primary" onclick="selectAction(\'complete\')">📤 完了を報告</button>' +
@@ -1683,7 +1683,7 @@ function showCompleteCard() {
 
 function showReserveComplete(res, picked) {
   showCompleteCard();
-  res.folderUrl = res.folderUrl || res.folder_url || '';
+  var folderUrl = res.folder_url || '';   // GASの応答は get_my_task と同じ folder_url に統一
   var type = res.task_type || (picked && picked.task_type) || '';
   var meta = TASK_META[type] || { icon: '📖', name: '' };
   var bookId = res.book_id || (picked && picked.book_id) || '';
@@ -1705,14 +1705,14 @@ function showReserveComplete(res, picked) {
   var h = '<h3>🗂 マイ作業カード</h3>' +
     '<div class="next-step-item"><span class="step-num">' + meta.icon + '</span><div><strong>' + esc(meta.name || '') + '</strong><br>' +
       esc(bookId) + (title ? '「' + esc(title) + '」' : '') + '</div></div>' +
-    (res.deadline ? '<div class="next-step-item"><span class="step-num">⏰</span><div>期限：<strong>' + esc(fmtDate(res.deadline)) + '</strong> ' + dueBadge(res.deadline) + '</div></div>' : '') +
+    (res.deadline ? '<div class="next-step-item"><span class="step-num">⏰</span><div>期限：<strong>' + esc(fmtDate(res.deadline)) + 'の終わりまで</strong> ' + dueBadge(res.deadline) + '<br><span class="hint">期限の日のうちに完了報告をすれば大丈夫です。間に合わないときは、期限の前に「期限の相談」から知らせてください。</span></div></div>' : '') +
     journeyHtml(type) +
     (TASK_APP_GUIDE[type] ? '<div class="next-step-item" style="margin-top:8px;"><span class="step-num">🛠</span><div><strong>この作業で使うアプリ</strong><br>' + TASK_APP_GUIDE[type] + '</div></div>' : '') +
     (steps.length ? '<div style="margin-top:10px;font-weight:700;font-size:0.84rem;color:var(--blue-d);">✅ 進め方（チェックしながら進められます）</div><div class="steps-check">' + stepsHtml + '</div>' : '') +
-    (res.folderUrl ? '<div class="next-step-item"><span class="step-num">💡</span><div>作業フォルダは、Googleにログインした状態で開いてください。ファイルは右クリック→「ダウンロード」で1つずつ保存し、名前は変えずに使ってください。</div></div>' +
-      '<a class="btn-primary" style="margin:6px 0 4px;" href="' + esc(res.folderUrl) + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer">📁 Googleドライブの作業フォルダを開く</a>' : '') +
+    (folderUrl ? '<div class="next-step-item"><span class="step-num">💡</span><div>作業フォルダは、Googleにログインした状態で開いてください。ファイルは右クリック→「ダウンロード」で1つずつ保存し、名前は変えずに使ってください。</div></div>' +
+      '<a class="btn-primary" style="margin:6px 0 4px;" href="' + esc(folderUrl) + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer">📁 Googleドライブの作業フォルダを開く</a>' : '') +
     '<a class="folder-btn" style="margin-top:8px;" href="' + MANUAL_URL + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer">📘 マニュアルのダウンロードページを開く</a>' +
-    (res.deadline ? calendarHtml(type, bookId, title, res.deadline, res.folderUrl) : '') +
+    (res.deadline ? calendarHtml(type, bookId, title, res.deadline, folderUrl) : '') +
     '<p class="hint" style="margin-top:10px;">終わったら、このフォームの「作業完了を報告する」から知らせてください。予定どおりに進まないときは、そこから期限の相談もできます。</p>' +
     '<button type="button" class="btn-primary gray-btn" style="margin-top:12px;" onclick="goHome()">ホームに戻る</button>';
   $('nextSteps').innerHTML = h;
@@ -1784,7 +1784,8 @@ function showMyTask(task) {
       '<div class="mytask-head"><span class="pill sun">担当中の作業</span>' + dueBadge(task.deadline) + '</div>' +
       '<div class="mytask-title">' + meta.icon + ' ' + esc(meta.name) + '</div>' +
       '<div class="mytask-meta">📚 <strong>' + esc(task.book_id) + '</strong>' + (lg.name ? '（' + esc(lg.name) + '）' : '') + '　' + esc(task.book_title || '') +
-        '<br>期限：' + esc(fmtDate(task.deadline)) + '</div>' +
+        '<br>期限：' + esc(fmtDate(task.deadline)) + 'の終わりまで</div>' +
+      '<p class="hint" style="margin:-4px 0 8px;">期限の日のうちに完了報告をすれば大丈夫です。期限の日をすぎると予約は自動で外れ、ほかの方が予約できる状態に戻ります。</p>' +
       journeyHtml(task.task_type) +
       '<p style="text-align:right;margin-top:8px;"><button type="button" class="btn-link" onclick="toggleExt(true)">🗓 期限の相談・続けるのが難しいとき</button></p>' +
     '</div>';
