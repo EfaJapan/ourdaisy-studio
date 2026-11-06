@@ -5,7 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OurDAISY ボランティアフォーム</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Noto+Sans+Lao:wght@400;700&family=Noto+Sans+Khmer:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Noto+Sans+Lao:wght@400;700&family=Noto+Sans+Khmer:wght@400;700&family=Noto+Sans+Myanmar:wght@400;700&family=Noto+Sans+Sinhala:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+<!--
+  OurDAISY ボランティアフォーム v20（2026-11-06）
+  ・ヘッダーにイラスト、再訪時の自動認識、はじめての方への案内
+  ・作業をカードで選ぶ（言語の絞り込み・タイプ向けの印・本ができるまでの道のり）
+  ・予約後の「マイ作業カード」（手順チェック・カレンダー登録）、期限の相談
+  ・アップロード済みファイルの自動確認（新しいGASのときだけ。古いGASでは従来のチェック欄）
+  ・「あなたの足あと」「みんなの進み具合」「現場の声」（新しいGASのときだけ表示）
+  ・完了画面で次の行き先を表示、節目のお礼、画面内メッセージ（ポップアップ廃止）、文字サイズ切替
+-->
 <style>
 :root {
   --blue:   #005EAD;
@@ -17,58 +26,69 @@
   --red:    #C0392B;
   --red-l:  #FDECEA;
   --orange: #E67E22;
+  --sun:    #F39800;
   --org-l:  #FFF3E0;
-  --gray:   #6B7280;
+  --gray:   #5F6B7A;
   --gray-l: #F5F8FC;
+  --line:   #D1E3F8;
   --white:  #FFFFFF;
   --text:   #1A2A3A;
   --radius: 14px;
   --shadow: 0 4px 28px rgba(0,94,173,0.12);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 100%; }
+html.lg { font-size: 115%; }
 body {
-  font-family: 'BIZ UDPGothic', sans-serif;
-  background: linear-gradient(160deg,#EEF5FF 0%,#F5F8FC 60%,#EAF7EF 100%);
+  font-family: 'BIZ UDPGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', 'Noto Sans Lao', 'Noto Sans Khmer', 'Noto Sans Myanmar', 'Noto Sans Sinhala', 'Noto Sans Devanagari', 'Noto Sans Thai', sans-serif;
+  background: linear-gradient(160deg,#EEF5FF 0%,#F7F9FC 55%,#FFF7EC 100%);
   min-height: 100vh;
   color: var(--text);
-  padding: 20px 16px 60px;
+  padding: 0 16px 60px;
 }
+a { color: var(--blue); }
+.wrap { max-width: 640px; margin: 0 auto; }
 
-/* ── ヘッダー ── */
-.header { max-width: 640px; margin: 0 auto 24px; text-align: center; }
-.header-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--blue); color: var(--white);
-  padding: 6px 18px; border-radius: 40px;
-  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em;
-  margin-bottom: 14px;
+/* ── ヘッダー（イラスト） ── */
+.hero {
+  position: relative; max-width: 640px; margin: 16px auto 18px;
+  border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); background: #FDF6EC;
 }
-.header h1 {
-  font-size: 1.7rem; font-weight: 700;
-  color: var(--blue-d); line-height: 1.3;
+.hero img { display: block; width: 100%; height: 220px; object-fit: cover; object-position: center 40%; }
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,58,112,0) 35%, rgba(0,40,80,0.78) 100%);
+  pointer-events: none;
 }
-.header h1 .accent { color: var(--blue); }
-.header-sub { margin-top: 5px; font-size: 0.82rem; color: var(--gray); }
+.hero-text { position: absolute; left: 18px; right: 18px; bottom: 14px; z-index: 1; color: #fff; }
+.hero-badge {
+  display: inline-block; background: var(--sun); color: #fff;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  padding: 3px 12px; border-radius: 30px; margin-bottom: 6px;
+}
+.hero h1 { font-size: 1.32rem; line-height: 1.45; text-shadow: 0 2px 8px rgba(0,0,0,0.35); }
+.hero-sub { font-size: 0.74rem; opacity: 0.92; margin-top: 4px; }
+.font-toggle {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  background: rgba(255,255,255,0.94); color: var(--blue-d);
+  border: none; border-radius: 30px; padding: 6px 12px;
+  font-family: inherit; font-size: 0.76rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
 
 /* ── プログレス ── */
-.progress-wrap {
-  max-width: 640px; margin: 0 auto 20px;
-  display: flex; align-items: center; gap: 0;
-}
-.prog-step {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-}
+.progress-wrap { max-width: 640px; margin: 0 auto 18px; display: flex; align-items: center; }
+.prog-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .prog-circle {
   width: 28px; height: 28px; border-radius: 50%;
-  background: #D1E3F8; color: var(--gray);
+  background: var(--line); color: var(--gray);
   font-size: 0.75rem; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center; transition: all 0.3s;
 }
 .prog-circle.active { background: var(--blue); color: var(--white); }
 .prog-circle.done   { background: var(--green); color: var(--white); }
 .prog-label { font-size: 0.68rem; color: var(--gray); }
-.prog-line { flex: 1; height: 2px; background: #D1E3F8; transition: background 0.3s; }
+.prog-line { flex: 1; height: 2px; background: var(--line); transition: background 0.3s; }
 .prog-line.done { background: var(--green); }
 
 /* ── カード ── */
@@ -81,6 +101,7 @@ body {
   background: linear-gradient(135deg, var(--blue) 0%, var(--blue-d) 100%);
   padding: 16px 22px; display: flex; align-items: center; gap: 12px;
 }
+.card-header.soft { background: linear-gradient(135deg, #2F7FC1 0%, #1F5E99 100%); }
 .card-header .step-no {
   background: rgba(255,255,255,0.2); color: var(--white);
   font-size: 0.68rem; font-weight: 700; padding: 2px 10px;
@@ -88,240 +109,388 @@ body {
 }
 .card-header h2 { color: var(--white); font-size: 0.97rem; font-weight: 700; line-height: 1.4; }
 .card-body { padding: 22px; }
+.card-title { font-size: 0.95rem; font-weight: 700; color: var(--blue-d); margin-bottom: 12px; }
 
 /* ── フォーム要素 ── */
 .field { margin-bottom: 20px; }
 .field:last-child { margin-bottom: 0; }
-label.field-label {
-  display: block; font-size: 0.88rem; font-weight: 700;
-  color: var(--blue-d); margin-bottom: 7px;
-}
+label.field-label { display: block; font-size: 0.88rem; font-weight: 700; color: var(--blue-d); margin-bottom: 7px; }
 .req { color: var(--red); font-size: 0.72rem; margin-left: 4px; }
 .opt { color: var(--gray); font-size: 0.72rem; margin-left: 4px; font-weight: 400; }
-
-input[type="email"], input[type="text"], select, textarea {
+input[type="email"], input[type="text"], input[type="tel"], select, textarea {
   width: 100%; padding: 12px 14px;
-  border: 2px solid #D1E3F8; border-radius: 9px;
-  font-family: inherit; font-size: 0.92rem; color: var(--text);
-  background: #FAFCFF; transition: border-color 0.2s, box-shadow 0.2s;
-  appearance: none;
+  border: 2px solid var(--line); border-radius: 9px;
+  font-family: inherit; font-size: 0.95rem; color: var(--text);
+  background: #FAFCFF; transition: border-color 0.2s, box-shadow 0.2s; appearance: none;
 }
 input:focus, select:focus, textarea:focus {
   outline: none; border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(0,94,173,0.12); background: var(--white);
 }
 textarea { resize: vertical; min-height: 110px; }
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23005EAD' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 14px center;
-  padding-right: 38px;
-}
-.hint { font-size: 0.77rem; color: var(--gray); margin-top: 5px; line-height: 1.55; }
+.hint { font-size: 0.77rem; color: var(--gray); margin-top: 5px; line-height: 1.6; }
 .error-msg { font-size: 0.77rem; color: var(--red); margin-top: 4px; display: none; }
 .error-msg.show { display: block; }
 
-/* ── 選択カード（アクション・タイプ） ── */
+/* ── 選択カード ── */
 .choice-list { display: flex; flex-direction: column; gap: 10px; }
 .choice-item {
   display: flex; align-items: center; gap: 14px;
-  padding: 14px 16px; border: 2px solid #D1E3F8;
-  border-radius: 11px; cursor: pointer;
-  transition: all 0.2s; background: #FAFCFF;
+  padding: 14px 16px; border: 2px solid var(--line);
+  border-radius: 11px; cursor: pointer; transition: all 0.2s; background: #FAFCFF;
+  text-align: left; font-family: inherit; color: inherit; width: 100%;
 }
-.choice-item:hover { border-color: var(--blue); background: var(--blue-l); transform: translateY(-1px); }
+.choice-item:hover, .choice-item:focus-visible { border-color: var(--blue); background: var(--blue-l); transform: translateY(-1px); outline: none; }
 .choice-item.selected { border-color: var(--blue); background: var(--blue-l); box-shadow: 0 2px 10px rgba(0,94,173,0.15); }
 .choice-icon { font-size: 1.5rem; width: 38px; text-align: center; flex-shrink: 0; }
-.choice-title { font-size: 0.92rem; font-weight: 700; color: var(--text); }
-.choice-sub { font-size: 0.75rem; color: var(--gray); margin-top: 2px; line-height: 1.45; }
+.choice-title { font-size: 0.93rem; font-weight: 700; color: var(--text); }
+.choice-sub { font-size: 0.76rem; color: var(--gray); margin-top: 2px; line-height: 1.5; }
 
-/* チェックボックスカード */
 .check-list { display: flex; flex-direction: column; gap: 9px; }
 .check-item {
   display: flex; align-items: flex-start; gap: 10px;
-  padding: 12px 14px; border: 2px solid #D1E3F8;
-  border-radius: 9px; cursor: pointer; background: #FAFCFF;
-  transition: border-color 0.2s, background 0.2s;
+  padding: 12px 14px; border: 2px solid var(--line);
+  border-radius: 9px; cursor: pointer; background: #FAFCFF; transition: border-color 0.2s, background 0.2s;
 }
 .check-item:hover { border-color: var(--blue); background: var(--blue-l); }
 .check-item.checked { border-color: var(--blue); background: var(--blue-l); }
 .check-item input[type="checkbox"], .check-item input[type="radio"] {
-  width: 18px; height: 18px; min-width: 18px; margin-top: 2px;
-  accent-color: var(--blue); cursor: pointer;
+  width: 18px; height: 18px; min-width: 18px; margin-top: 2px; accent-color: var(--blue); cursor: pointer;
 }
-.check-text { font-size: 0.87rem; line-height: 1.5; }
-.check-sub { font-size: 0.74rem; color: var(--gray); margin-top: 2px; }
+.check-text { font-size: 0.88rem; line-height: 1.5; }
+.check-sub { font-size: 0.75rem; color: var(--gray); margin-top: 2px; line-height: 1.5; }
 
 /* ── ボックス ── */
-.info-box {
-  background: var(--green-l); border: 2px solid var(--green);
-  border-radius: 10px; padding: 13px 16px;
-  font-size: 0.82rem; color: #1A5C38; margin-bottom: 16px; line-height: 1.6;
+.info-box, .warn-box, .tip-box {
+  border-radius: 10px; padding: 13px 16px; font-size: 0.83rem; margin-bottom: 16px; line-height: 1.65;
 }
-.warn-box {
-  background: var(--org-l); border: 2px solid var(--orange);
-  border-radius: 10px; padding: 13px 16px;
-  font-size: 0.82rem; color: #7A4200; margin-bottom: 16px; line-height: 1.6;
-}
-.tip-box {
-  background: var(--blue-l); border: 2px solid var(--blue-m);
-  border-radius: 10px; padding: 13px 16px;
-  font-size: 0.82rem; color: var(--blue-d); margin-bottom: 16px; line-height: 1.65;
-}
-.faq-box {
-  background: #FFF8E8; border: 2px solid #F0C040;
-  border-radius: 10px; padding: 14px 16px;
-  font-size: 0.82rem; color: #5A4000; margin: 12px 0 16px; line-height: 1.7;
-  display: none;
-}
-.faq-box.show { display: block; }
-.faq-box h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+.info-box { background: var(--green-l); border: 2px solid var(--green); color: #1A5C38; }
+.warn-box { background: var(--org-l); border: 2px solid var(--orange); color: #7A4200; }
+.tip-box  { background: var(--blue-l); border: 2px solid var(--blue-m); color: var(--blue-d); }
 
-/* ファイルチェックリスト */
-.file-checklist {
-  background: var(--blue-l); border: 2px solid var(--blue);
-  border-radius: 10px; padding: 14px; margin-bottom: 14px;
-}
+.file-checklist { background: var(--blue-l); border: 2px solid var(--blue); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
 .file-checklist-title { font-size: 0.84rem; font-weight: 700; color: var(--blue-d); margin-bottom: 10px; }
 .file-check-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; }
 .file-check-row input[type="checkbox"] { width: 16px; height: 16px; min-width: 16px; accent-color: var(--blue); margin-top: 2px; }
 .file-check-row span { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+.small-note { font-size: 0.74rem; color: #777; }
 
-/* スクリーンショットゾーン */
-.ss-zone {
-  border: 2px dashed #A0BFE0; border-radius: 10px;
-  padding: 20px 16px; text-align: center; cursor: pointer;
-  background: #F5F9FF; transition: border-color 0.2s, background 0.2s;
-  margin-bottom: 10px;
-}
-.ss-zone:hover { border-color: var(--blue); background: var(--blue-l); }
-.ss-zone.has-image { border-style: solid; border-color: var(--green); background: var(--green-l); }
-.ss-zone-icon { font-size: 2rem; margin-bottom: 8px; }
-.ss-zone-text { font-size: 0.82rem; color: var(--gray); line-height: 1.6; }
-.ss-preview { max-width: 100%; border-radius: 6px; margin-top: 8px; display: none; }
+/* 自動確認 */
+.auto-check { border: 2px solid var(--blue); border-radius: 10px; padding: 14px; margin-bottom: 14px; background: #fff; }
+.auto-row { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; font-size: 0.84rem; line-height: 1.5; border-bottom: 1px dashed #E3EAF3; }
+.auto-row:last-of-type { border-bottom: none; }
+.auto-mark { width: 22px; flex-shrink: 0; text-align: center; }
+.auto-row.ng { color: #8A3A10; }
+.auto-row .names { font-size: 0.72rem; color: var(--gray); word-break: break-all; }
 
-/* フォルダボタン */
 .folder-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 13px;
-  background: var(--white); border: 2px solid var(--blue);
-  border-radius: 10px; color: var(--blue);
-  font-family: inherit; font-size: 0.9rem; font-weight: 700;
-  cursor: pointer; transition: all 0.2s; text-decoration: none;
-  margin-bottom: 12px;
+  width: 100%; padding: 13px; background: var(--white); border: 2px solid var(--blue);
+  border-radius: 10px; color: var(--blue); font-family: inherit; font-size: 0.9rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; text-decoration: none; margin-bottom: 12px;
 }
 .folder-btn:hover { background: var(--blue-l); }
 
-/* ── ボタン群 ── */
+/* ── ボタン ── */
 .btn-primary {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 15px;
-  background: var(--blue); color: var(--white);
-  border: none; border-radius: 10px;
-  font-family: inherit; font-size: 0.97rem; font-weight: 700;
-  cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px;
+  width: 100%; padding: 15px; background: var(--blue); color: var(--white);
+  border: none; border-radius: 10px; font-family: inherit; font-size: 0.97rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px; text-decoration: none;
 }
 .btn-primary:hover:not(:disabled) { background: var(--blue-d); transform: translateY(-1px); }
 .btn-primary:disabled { background: #B0C4D8; cursor: not-allowed; }
 .btn-primary.red-btn { background: var(--red); }
-.btn-primary.red-btn:hover:not(:disabled) { background: #a93226; }
-
+.btn-primary.green-btn { background: var(--green); }
+.btn-primary.gray-btn { background: var(--gray); }
+.btn-primary.sun-btn { background: var(--sun); }
+.btn-row { display: flex; gap: 10px; }
+.btn-ghost {
+  background: none; border: 2px solid var(--line); color: var(--blue-d);
+  border-radius: 9px; padding: 9px 14px; font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(--blue); background: var(--blue-l); }
+.btn-link {
+  background: none; border: none; color: var(--blue); font-family: inherit; font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 3px;
+}
 .btn-back {
-  display: flex; align-items: center; gap: 6px;
-  background: none; border: none; color: var(--blue);
-  font-family: inherit; font-size: 0.85rem; font-weight: 700;
-  cursor: pointer; padding: 0; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--blue);
+  font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; padding: 0; margin-bottom: 16px;
   text-decoration: underline; text-underline-offset: 3px;
 }
-.btn-back:hover { color: var(--blue-d); }
 
-/* ── ローディング ── */
 .loading {
   display: inline-block; width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: var(--white); border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  border: 2px solid rgba(255,255,255,0.4); border-top-color: var(--white);
+  border-radius: 50%; animation: spin 0.7s linear infinite;
 }
+.loading.dark { border-color: rgba(0,94,173,0.2); border-top-color: var(--blue); }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── おかえり・はじめて ── */
+.welcome-back { text-align: center; }
+.welcome-back .wb-name { font-size: 1.2rem; font-weight: 700; color: var(--blue-d); margin: 4px 0 2px; }
+.welcome-back .wb-mail { font-size: 0.8rem; color: var(--gray); margin-bottom: 16px; }
+.type-cards { display: grid; gap: 10px; }
+.type-card { border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #FCFDFF; }
+.type-card h3 { font-size: 0.9rem; color: var(--blue-d); margin-bottom: 4px; }
+.type-card p { font-size: 0.79rem; line-height: 1.6; }
+.type-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+  background: var(--blue-l); color: var(--blue-d); white-space: nowrap;
+}
+.pill.sun { background: #FFF1DC; color: #8A4B00; }
+.pill.green { background: var(--green-l); color: #1A5C38; }
+.pill.gray { background: #EEF1F5; color: var(--gray); }
+.reason-box { background: #F7F9FC; border-left: 4px solid var(--blue); padding: 10px 12px; font-size: 0.78rem; line-height: 1.65; margin-bottom: 18px; border-radius: 0 8px 8px 0; }
+
+/* ── 本ができるまで（道のり） ── */
+.journey { display: flex; align-items: flex-start; margin: 6px 0 4px; }
+.j-step { flex: 1; text-align: center; position: relative; min-width: 0; }
+.j-step::before {
+  content: ''; position: absolute; top: 13px; left: -50%; width: 100%; height: 3px; background: var(--line); z-index: 0;
+}
+.j-step:first-child::before { display: none; }
+.j-dot {
+  position: relative; z-index: 1; width: 28px; height: 28px; margin: 0 auto 4px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--line); display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+}
+.j-label { font-size: 0.64rem; color: var(--gray); line-height: 1.3; }
+.j-step.done .j-dot { background: var(--green); border-color: var(--green); color: #fff; }
+.j-step.done::before, .j-step.now::before { background: var(--green); }
+.j-step.now .j-dot { border-color: var(--sun); background: #FFF6E8; box-shadow: 0 0 0 4px rgba(243,152,0,0.18); }
+.j-step.now .j-label { color: #8A4B00; font-weight: 700; }
+.j-step.next .j-dot { border-color: var(--blue); border-style: dashed; }
+.j-caption { font-size: 0.76rem; color: var(--gray); text-align: center; margin-top: 4px; }
+
+/* ── ホーム：足あと・進み具合 ── */
+.greet { font-size: 1.05rem; font-weight: 700; color: var(--blue-d); margin-bottom: 4px; }
+.greet-sub { font-size: 0.8rem; color: var(--gray); margin-bottom: 16px; line-height: 1.6; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.stat { background: #F7FAFE; border: 1px solid #E1ECF8; border-radius: 12px; padding: 10px 6px; text-align: center; }
+.stat-num { font-size: 1.45rem; font-weight: 700; color: var(--blue); line-height: 1.15; }
+.stat-num small { font-size: 0.7rem; margin-left: 1px; }
+.stat-label { font-size: 0.66rem; color: var(--gray); margin-top: 3px; line-height: 1.35; }
+.stat.hl .stat-num { color: #C76E00; }
+.footnote { font-size: 0.72rem; color: var(--gray); margin-top: 10px; line-height: 1.6; }
+.milestone {
+  display: flex; gap: 12px; align-items: center;
+  background: linear-gradient(135deg, #FFF6E6, #FFFDF8); border: 2px solid #F6C77A;
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.84rem; line-height: 1.6; color: #6B3E00;
+}
+.milestone .ms-icon { font-size: 1.8rem; }
+.mytask {
+  border: 2px solid var(--sun); background: #FFFCF6; border-radius: 12px; padding: 14px; margin-bottom: 16px;
+}
+.mytask-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.mytask-title { font-size: 0.92rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+.mytask-meta { font-size: 0.78rem; color: var(--gray); line-height: 1.6; margin-bottom: 10px; }
+.due { font-size: 0.74rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--blue-l); color: var(--blue-d); white-space: nowrap; }
+.due.soon { background: #FFF1DC; color: #8A4B00; }
+.due.over { background: var(--red-l); color: var(--red); }
+.lang-bars { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; }
+.lang-bar { display: grid; grid-template-columns: 7.5em 1fr 3.2em; gap: 8px; align-items: center; font-size: 0.76rem; }
+.lang-bar .track { height: 10px; background: #EEF3F9; border-radius: 6px; overflow: hidden; display: flex; }
+.lang-bar .fill-pub { background: var(--green); }
+.lang-bar .fill-wip { background: #9CC6EE; }
+.lang-bar .num { text-align: right; color: var(--gray); }
+.legend { display: flex; gap: 14px; font-size: 0.7rem; color: var(--gray); margin-top: 8px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+.team-big { display: flex; gap: 10px; }
+.team-big .stat { flex: 1; }
+.voice {
+  position: relative; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 18px 20px 16px 52px; max-width: 640px; margin: 0 auto 16px; font-size: 0.86rem; line-height: 1.75;
+}
+.voice::before { content: '“'; position: absolute; left: 16px; top: 4px; font-size: 3rem; color: var(--sun); font-family: Georgia, serif; }
+.voice .from { display: block; text-align: right; font-size: 0.74rem; color: var(--gray); margin-top: 6px; }
+.skeleton { background: linear-gradient(90deg,#EEF3F9 25%,#F7FAFD 50%,#EEF3F9 75%); background-size: 200% 100%; animation: sk 1.2s infinite; border-radius: 8px; }
+@keyframes sk { to { background-position: -200% 0; } }
+
+/* ── 作業カード（予約） ── */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chip {
+  border: 2px solid var(--line); background: #fff; color: var(--blue-d);
+  border-radius: 20px; padding: 5px 12px; font-family: inherit; font-size: 0.76rem; font-weight: 700; cursor: pointer;
+}
+.chip.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+.chip.mine.on { background: var(--sun); border-color: var(--sun); }
+.task-list { display: flex; flex-direction: column; gap: 10px; }
+.task-card {
+  border: 2px solid var(--line); border-radius: 12px; padding: 13px 14px; background: #fff;
+  cursor: pointer; transition: border-color .2s, box-shadow .2s, transform .1s; text-align: left;
+  font-family: inherit; color: inherit; width: 100%;
+}
+.task-card:hover, .task-card:focus-visible { border-color: var(--blue); outline: none; }
+.task-card.selected { border-color: var(--blue); background: var(--blue-l); box-shadow: 0 3px 12px rgba(0,94,173,0.18); }
+.tc-top { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+.tc-title { font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
+.tc-title small { display: block; font-size: 0.72rem; color: var(--gray); font-weight: 400; margin-top: 1px; }
+.tc-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.74rem; color: var(--gray); margin-top: 6px; }
+.tc-journey { margin-top: 8px; display: none; }
+.task-card.selected .tc-journey { display: block; }
+.empty { text-align: center; padding: 22px 10px; color: var(--gray); font-size: 0.85rem; line-height: 1.7; }
+.empty .big { font-size: 2.2rem; display: block; margin-bottom: 6px; }
+.sticky-bar {
+  position: sticky; bottom: 0; margin: 14px -22px -22px; padding: 12px 22px 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 30%);
+}
+.sel-summary { font-size: 0.8rem; color: var(--blue-d); text-align: center; margin-bottom: 6px; min-height: 1.2em; }
+
+/* マイ作業カード */
+.steps-check { margin: 4px 0 10px; }
+.steps-check label { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; font-size: 0.84rem; line-height: 1.55; cursor: pointer; border-bottom: 1px dashed #E3EAF3; }
+.steps-check label:last-child { border-bottom: none; }
+.steps-check input { width: 18px; height: 18px; min-width: 18px; margin-top: 2px; accent-color: var(--green); }
+.steps-check input:checked + span { color: var(--gray); text-decoration: line-through; }
+.cal-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.cal-row a, .cal-row button { flex: 1; min-width: 140px; text-align: center; text-decoration: none; }
+
+/* 期限の相談 */
+.ext-panel { display: none; border: 2px dashed var(--blue-m); border-radius: 10px; padding: 14px; margin: -4px 0 16px; background: #FAFCFF; }
+.ext-panel.open { display: block; }
+.ext-days { display: flex; gap: 8px; margin: 8px 0 12px; }
+.ext-days .chip { flex: 1; text-align: center; }
 
 /* ── 完了カード ── */
 .complete-card {
-  max-width: 640px; margin: 0 auto;
-  background: var(--white); border-radius: var(--radius);
-  box-shadow: var(--shadow); padding: 40px 28px;
-  text-align: center; display: none;
+  max-width: 640px; margin: 0 auto; background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 36px 24px; text-align: center; display: none; position: relative; overflow: hidden;
 }
-.complete-icon { font-size: 3.5rem; margin-bottom: 14px; }
+.complete-icon { font-size: 3.4rem; margin-bottom: 12px; }
 .complete-title { font-size: 1.3rem; font-weight: 700; color: var(--green); margin-bottom: 10px; }
-.complete-msg { font-size: 0.88rem; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
-.next-steps { background: var(--blue-l); border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 20px; }
-.next-steps h3 { font-size: 0.84rem; font-weight: 700; color: var(--blue-d); margin-bottom: 10px; }
-.next-step-item { display: flex; gap: 10px; font-size: 0.83rem; color: var(--text); padding: 5px 0; line-height: 1.55; }
+.complete-msg { font-size: 0.88rem; color: var(--gray); line-height: 1.75; margin-bottom: 18px; }
+.next-steps { background: var(--blue-l); border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 4px; }
+.next-steps h3 { font-size: 0.86rem; font-weight: 700; color: var(--blue-d); margin-bottom: 10px; }
+.next-step-item { display: flex; gap: 10px; font-size: 0.83rem; color: var(--text); padding: 5px 0; line-height: 1.6; }
 .step-num {
   background: var(--blue); color: var(--white); font-size: 0.68rem; font-weight: 700;
-  width: 20px; height: 20px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
 }
+.handoff { background: #FFFCF6; border: 2px solid #F6C77A; border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: left; }
+.handoff p { font-size: 0.85rem; line-height: 1.7; margin-top: 8px; color: #5A3A00; }
+.confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.confetti i { position: absolute; top: -12px; width: 8px; height: 12px; border-radius: 2px; opacity: 0.9; animation: fall 2.6s ease-in forwards; }
+@keyframes fall { to { transform: translateY(560px) rotate(540deg); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } .fade-in { animation: none !important; } }
+
+/* ── 画面内メッセージ ── */
+.toast-wrap { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 50; width: calc(100% - 32px); max-width: 520px; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  background: #1F3347; color: #fff; border-radius: 12px; padding: 12px 40px 12px 16px; font-size: 0.85rem; line-height: 1.6;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25); position: relative; animation: fadeIn .25s ease; white-space: pre-line;
+}
+.toast.error { background: #8E2A1F; }
+.toast.ok { background: #1E6F45; }
+.toast button { position: absolute; right: 8px; top: 8px; background: none; border: none; color: #fff; font-size: 1rem; cursor: pointer; }
 
 /* ── セクション制御 ── */
 .section { display: none; }
 .section.active { display: block; }
 .fade-in { animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.hidden { display: none !important; }
+.footer { max-width: 640px; margin: 24px auto 0; text-align: center; font-size: 0.72rem; color: var(--gray); line-height: 1.7; }
 
 @media(max-width:480px) {
-  .header h1 { font-size: 1.35rem; }
+  .hero img { height: 180px; }
+  .hero h1 { font-size: 1.12rem; }
   .card-body { padding: 16px; }
+  .sticky-bar { margin: 14px -16px -16px; padding: 12px 16px 14px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .lang-bar { grid-template-columns: 6.5em 1fr 3em; }
 }
 </style>
 </head>
 <body>
 
-<!-- ヘッダー -->
-<div class="header">
-  <div class="header-badge">📚 OurDAISY Studio</div>
-  <h1>ボランティア<span class="accent">フォーム</span></h1>
-  <p class="header-sub">特定非営利活動法人 エファジャパン</p>
-</div>
+<!-- ヘッダー（イラスト） -->
+<header class="hero">
+  <img src="volunteer_hero.jpg" alt="図書館でタブレットや本を楽しむ、いろいろなルーツの子どもたち" width="1000" height="460">
+  <button type="button" class="font-toggle" id="fontToggle" onclick="toggleFont()" aria-pressed="false">文字を大きく</button>
+  <div class="hero-text">
+    <span class="hero-badge">OurDAISY ボランティア</span>
+    <h1>あなたの1冊が、<br>子どもの母語の本だなになる</h1>
+    <p class="hero-sub">認定NPO法人 エファジャパン</p>
+  </div>
+</header>
 
 <!-- プログレスバー -->
 <div class="progress-wrap" id="progressWrap">
-  <div class="prog-step">
-    <div class="prog-circle active" id="pc1">1</div>
-    <div class="prog-label">本人確認</div>
-  </div>
+  <div class="prog-step"><div class="prog-circle active" id="pc1">1</div><div class="prog-label">本人確認</div></div>
   <div class="prog-line" id="pl1"></div>
-  <div class="prog-step">
-    <div class="prog-circle" id="pc2">2</div>
-    <div class="prog-label">作業選択</div>
-  </div>
+  <div class="prog-step"><div class="prog-circle" id="pc2">2</div><div class="prog-label">作業を選ぶ</div></div>
   <div class="prog-line" id="pl2"></div>
-  <div class="prog-step">
-    <div class="prog-circle" id="pc3">3</div>
-    <div class="prog-label">内容入力</div>
-  </div>
+  <div class="prog-step"><div class="prog-circle" id="pc3">3</div><div class="prog-label">内容の入力</div></div>
 </div>
 
 <!-- ══ STEP 1：メール確認 ══ -->
 <div class="section active" id="sec1">
-  <div class="card fade-in">
+
+  <!-- おかえりなさい（前回のメールアドレスが残っているとき） -->
+  <div class="card fade-in hidden" id="returningCard">
+    <div class="card-body welcome-back">
+      <div style="font-size:2.2rem;">👋</div>
+      <div class="wb-name" id="wbName">おかえりなさい</div>
+      <div class="wb-mail" id="wbMail"></div>
+      <button class="btn-primary" onclick="quickStart()"><span id="quickBtnText">はじめる →</span></button>
+      <p style="margin-top:14px;"><button type="button" class="btn-link" onclick="useOtherEmail()">別のメールアドレスで入る</button></p>
+    </div>
+  </div>
+
+  <div class="card fade-in" id="emailCard">
     <div class="card-header">
       <span class="step-no">STEP 1</span>
       <h2>メールアドレスを入力してください</h2>
     </div>
     <div class="card-body">
-      <div class="tip-box">
-        💡 前回と同じメールアドレスを入力すると<br>
-        登録情報が自動で読み込まれます。
-      </div>
+      <div class="tip-box">💡 前回と同じメールアドレスを入力すると、登録情報が自動で読み込まれます。はじめての方は、そのまま登録に進みます。</div>
       <div class="field">
         <label class="field-label" for="email">メールアドレス<span class="req">（必須）</span></label>
-        <input type="email" id="email" placeholder="例：yamada@email.com" autocapitalize="off" autocorrect="off" autocomplete="email" spellcheck="false">
+        <input type="email" id="email" placeholder="例：yamada@email.com" autocapitalize="off" autocorrect="off" autocomplete="email" spellcheck="false" onkeydown="if(event.key==='Enter'){checkEmail();}">
         <div class="error-msg" id="emailErr">正しいメールアドレスを入力してください</div>
-        <p class="hint">📌 エファジャパン以外には公開しません。作業の連絡に使用します。</p>
+        <p class="hint">📌 エファジャパン以外には公開しません。作業の連絡に使います。</p>
       </div>
-      <button class="btn-primary" onclick="checkEmail()">
-        <span id="checkBtnText">次へ進む →</span>
-      </button>
+      <button class="btn-primary" onclick="checkEmail()"><span id="checkBtnText">次へ進む →</span></button>
+    </div>
+  </div>
+
+  <!-- はじめての方へ -->
+  <div class="card fade-in" id="aboutCard">
+    <div class="card-body">
+      <div class="card-title">🌱 はじめての方へ：ボランティアでできること</div>
+      <p class="hint" style="margin:-6px 0 12px;">外国にルーツをもつ子どもたちのために、母語と日本語の「読める・聴ける」電子図書（マルチメディアデイジー図書）を、みんなで分担してつくっています。</p>
+      <div class="journey" aria-label="本ができるまで">
+        <div class="j-step"><div class="j-dot">✍️</div><div class="j-label">原稿</div></div>
+        <div class="j-step"><div class="j-dot">🔄</div><div class="j-label">翻訳</div></div>
+        <div class="j-step"><div class="j-dot">📝</div><div class="j-label">日本語</div></div>
+        <div class="j-step"><div class="j-dot">🎧</div><div class="j-label">DAISY</div></div>
+        <div class="j-step"><div class="j-dot">🔊</div><div class="j-label">音声</div></div>
+        <div class="j-step"><div class="j-dot">📚</div><div class="j-label">公開</div></div>
+      </div>
+      <p class="j-caption" style="margin-bottom:14px;">1冊の本が、何人ものボランティアのバトンで図書館に並びます</p>
+      <div class="type-cards">
+        <div class="type-card">
+          <h3>🔵 タイプA：オールラウンド</h3>
+          <p>原稿づくりから、翻訳アプリ・DAISY図書アプリ（電子図書をつくるアプリ）の実行、音声の確認まで、どの工程も担当できます。</p>
+          <div class="type-meta"><span class="pill">💻 Windowsパソコン</span><span class="pill gray">アプリのインストールあり</span></div>
+        </div>
+        <div class="type-card">
+          <h3>🟢 タイプB：やさしい日本語の確認</h3>
+          <p>アプリが訳した「やさしい日本語」を読んで、子どもにわかりやすい表現に直します。</p>
+          <div class="type-meta"><span class="pill">📄 Wordが使えるパソコン</span><span class="pill gray">アプリの準備は不要</span></div>
+        </div>
+        <div class="type-card">
+          <h3>🟡 タイプC：音声の確認</h3>
+          <p>できあがった電子図書を再生して、TTS（機械音声の読み上げ）のまちがいを記録します。</p>
+          <div class="type-meta"><span class="pill">📱 パソコンかスマホ</span><span class="pill gray">無料のリーダーアプリを入れます</span></div>
+        </div>
+      </div>
+      <p class="hint" style="margin-top:10px;">都合のよいときに1件ずつ予約できます。お休みしたいときは、お知らせを止められます。</p>
     </div>
   </div>
 </div>
@@ -335,48 +504,49 @@ select {
     </div>
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec1')">← 戻る</button>
-      <div class="info-box">
-        ✨ はじめてご利用の方は、お名前と参加タイプを入力してください。<br>
-        次回からはメールアドレスだけで自動認識されます。
-      </div>
+      <div class="info-box">✨ ようこそ！ お名前と参加タイプを入力してください。次回からはメールアドレスだけで入れます。</div>
       <div class="field">
         <label class="field-label" for="name">お名前<span class="req">（必須）</span></label>
-        <input type="text" id="name" placeholder="例：山田 太郎">
+        <input type="text" id="name" placeholder="例：山田 太郎" autocomplete="name">
         <div class="error-msg" id="nameErr">お名前を入力してください</div>
+      </div>
+      <div class="reason-box">
+        📌 <b>電話番号とご住所をうかがう理由</b><br>
+        書籍の著作権を扱っていること、また緊急時の連絡のためです。エファジャパン以外には公開しません。
       </div>
       <div class="field">
         <label class="field-label" for="phone">電話番号<span class="req">（必須）</span></label>
-        <input type="tel" id="phone" placeholder="例：090-1234-5678" inputmode="tel">
+        <input type="tel" id="phone" placeholder="例：090-1234-5678" inputmode="tel" autocomplete="tel">
         <div class="error-msg" id="phoneErr">正しい電話番号を入力してください</div>
       </div>
       <div class="field">
         <label class="field-label" for="address">住所<span class="req">（必須）</span></label>
-        <input type="text" id="address" placeholder="例：東京都新宿区〇〇1-2-3">
+        <input type="text" id="address" placeholder="例：東京都新宿区〇〇1-2-3" autocomplete="street-address">
         <div class="error-msg" id="addressErr">住所を入力してください</div>
       </div>
       <div class="field">
         <label class="field-label">参加タイプを選んでください<span class="req">（必須・複数可）</span></label>
-        <p class="hint" style="margin-bottom:10px;">わからない場合はタイプAを選んでください</p>
+        <p class="hint" style="margin-bottom:10px;">わからない場合はタイプAを選んでください。あとから変えることもできます。</p>
         <div class="check-list">
           <label class="check-item" id="typeA-wrap">
             <input type="checkbox" id="typeA">
             <div>
-              <div class="check-text">🔵 タイプA：フルコース</div>
-              <div class="check-sub">Word原稿作成 → EFATranslator（翻訳アプリ）実行 → EFAOurDaisyBilingual（DAISY図書アプリ）実行 → 音声確認まで</div>
+              <div class="check-text">🔵 タイプA：オールラウンド</div>
+              <div class="check-sub">Word原稿の作成 → EFATranslator（翻訳アプリ）の実行 → EFAOurDaisyBilingual（DAISY図書アプリ）の実行 → 音声の確認まで</div>
             </div>
           </label>
           <label class="check-item" id="typeB-wrap">
             <input type="checkbox" id="typeB">
             <div>
-              <div class="check-text">🟢 タイプB：日本語校正</div>
-              <div class="check-sub">やさしい日本語の確認・修正だけを担当します</div>
+              <div class="check-text">🟢 タイプB：やさしい日本語の確認</div>
+              <div class="check-sub">やさしい日本語の確認・修正を担当します</div>
             </div>
           </label>
           <label class="check-item" id="typeC-wrap">
             <input type="checkbox" id="typeC">
             <div>
-              <div class="check-text">🟡 タイプC：音声確認</div>
-              <div class="check-sub">TTS（機械音声の読み上げ）の確認だけを担当します。音声は無料のリーダーアプリ（電子図書を再生するアプリ）で聴くため、お使いのパソコンかスマホへのインストールが必要です</div>
+              <div class="check-text">🟡 タイプC：音声の確認</div>
+              <div class="check-sub">TTS（機械音声の読み上げ）の確認を担当します。音声は無料のリーダーアプリ（電子図書を再生するアプリ）で聴くため、お使いのパソコンかスマホへのインストールが必要です</div>
             </div>
           </label>
         </div>
@@ -403,7 +573,7 @@ select {
         </div>
       </div>
       <div class="field">
-        <label class="field-label">メールマガジンのご案内<span class="req" style="color:var(--gray)">（任意）</span></label>
+        <label class="field-label">メールマガジンのご案内<span class="opt">（任意）</span></label>
         <div class="check-list">
           <label class="check-item" id="newsletter-wrap">
             <input type="checkbox" id="newsletter">
@@ -420,57 +590,87 @@ select {
           <span class="hint" style="display:block;">ページが開かない場合も、登録完了メールに同じ申込ページのURLを記載します。</span>
         </div>
       </div>
-      <button class="btn-primary" onclick="register()">
-        <span id="regBtnText">登録して次へ →</span>
-      </button>
+      <button class="btn-primary" onclick="register()"><span id="regBtnText">登録して次へ →</span></button>
     </div>
   </div>
 </div>
 
-<!-- ══ STEP 2：作業を選ぶ ══ -->
+<!-- ══ STEP 2：ホーム（作業を選ぶ） ══ -->
 <div class="section" id="sec2">
+
+  <div class="card fade-in">
+    <div class="card-body">
+      <div class="greet" id="greet">ようこそ！</div>
+      <div class="greet-sub" id="welcomeMsg"></div>
+
+      <div class="milestone hidden" id="milestone"><span class="ms-icon" id="msIcon">🎉</span><div id="msText"></div></div>
+
+      <!-- 担当中の作業 -->
+      <div class="mytask hidden" id="homeMyTask"></div>
+
+      <!-- あなたの足あと -->
+      <div id="footprint" class="hidden">
+        <div class="card-title" style="margin-bottom:8px;">👣 あなたの足あと</div>
+        <div class="stats" id="fpStats"></div>
+        <p class="footnote" id="fpNote"></p>
+      </div>
+    </div>
+  </div>
+
   <div class="card fade-in">
     <div class="card-header">
       <span class="step-no">STEP 2</span>
       <h2 id="sec2Title">今日はどの作業をしますか？</h2>
     </div>
     <div class="card-body">
-      <p style="font-size:0.85rem;color:var(--gray);margin-bottom:16px;" id="welcomeMsg"></p>
       <div class="choice-list">
-        <div class="choice-item" onclick="selectAction('reserve', this)">
+        <button type="button" class="choice-item" onclick="selectAction('reserve', this)">
           <div class="choice-icon">📖</div>
           <div>
             <div class="choice-title">作業を予約する</div>
-            <div class="choice-sub">担当したい作業を選んで予約します。予約後にフォルダURLをメールでお送りします。</div>
+            <div class="choice-sub">いま予約できる作業を、本の言語や内容を見ながら選べます。</div>
           </div>
-        </div>
-        <div class="choice-item" onclick="selectAction('complete', this)">
+        </button>
+        <button type="button" class="choice-item" onclick="selectAction('complete', this)">
           <div class="choice-icon">📤</div>
           <div>
             <div class="choice-title">作業完了を報告する</div>
-            <div class="choice-sub">作業が終わった書籍の完了報告をします。ファイルをGoogleドライブにアップロードしてから報告してください。</div>
+            <div class="choice-sub">できあがったファイルをGoogleドライブに入れてから報告します。期限の相談もここからできます。</div>
           </div>
-        </div>
-        <div class="choice-item" onclick="selectAction('help', this)">
-          <div class="choice-icon">🆘</div>
+        </button>
+        <button type="button" class="choice-item" onclick="selectAction('help', this)">
+          <div class="choice-icon">🤝</div>
           <div>
-            <div class="choice-title">エラー・困っていることを報告する</div>
-            <div class="choice-sub">アプリのエラーや操作でわからないことを報告します。</div>
+            <div class="choice-title">困ったときは（エラー・わからないこと）</div>
+            <div class="choice-sub">アプリのエラーや、操作でわからないことを、えんりょなく知らせてください。</div>
           </div>
-        </div>
-        <div class="choice-item" onclick="selectAction('notify', this)">
+        </button>
+        <button type="button" class="choice-item" onclick="selectAction('notify', this)">
           <div class="choice-icon">🔔</div>
           <div>
             <div class="choice-title">お知らせの受け取り方を変える</div>
-            <div class="choice-sub">新しい作業のお知らせを「週1回まとめて」か「すぐに」受け取るかを選べます。</div>
+            <div class="choice-sub">「週1回まとめて」「すぐに」「しばらくお休み」から選べます。</div>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- みんなの進み具合 -->
+  <div class="card fade-in hidden" id="teamCard">
+    <div class="card-body">
+      <div class="card-title">🌏 みんなの進み具合</div>
+      <div class="team-big" id="teamBig"></div>
+      <div class="lang-bars" id="langBars"></div>
+      <div class="legend"><span><i style="background:var(--green)"></i>図書館で公開中</span><span><i style="background:#9CC6EE"></i>制作中</span></div>
+    </div>
+  </div>
+
+  <!-- 現場の声 -->
+  <div class="voice hidden" id="voiceCard"><span id="voiceText"></span><span class="from" id="voiceFrom"></span></div>
 </div>
 
-<!-- ══ STEP 3A：書籍予約 ══ -->
+<!-- ══ STEP 3A：作業を予約する ══ -->
 <div class="section" id="sec3a">
   <div class="card fade-in">
     <div class="card-header">
@@ -479,25 +679,21 @@ select {
     </div>
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
-      <div class="field">
-        <label class="field-label" for="taskSelect">担当したい作業を選んでください<span class="req">（必須）</span></label>
-        <select id="taskSelect">
-          <option value="">-- 読み込み中... --</option>
-        </select>
-        <div class="error-msg" id="taskSelectErr">作業を選んでください</div>
-        <p class="hint">📌 リストに表示されているのは、現在予約できる作業です。フォルダが準備できた順に表示されます。</p>
+      <p class="hint" style="margin:-6px 0 12px;">担当したい作業をタップしてください。本の題名は、自動で訳した「仮訳」です。</p>
+      <div class="filters" id="taskFilters"></div>
+      <div class="task-list" id="taskList">
+        <div class="skeleton" style="height:84px;"></div>
+        <div class="skeleton" style="height:84px;"></div>
       </div>
-      <div class="tip-box">
-        📋 予約すると、担当フォルダのURLをメールでお送りします。<br>
-        作業マニュアルをよく読んでから作業を始めてください。<br>
-        <strong>📥 マニュアルのダウンロードはこちら：</strong><br>
-        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" style="color:var(--blue);font-weight:700;word-break:break-all;">
-          https://efajapan.github.io/ourdaisy-bilingual-updates/
-        </a>
+      <div class="error-msg" id="taskSelectErr">作業を選んでください</div>
+      <div class="tip-box" style="margin-top:14px;">
+        📋 予約すると、作業フォルダのURLをメールでお送りします。作業マニュアルを読みながら進めてください。<br>
+        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" style="font-weight:700;">📥 マニュアルのダウンロードページを開く</a>
       </div>
-      <button class="btn-primary" onclick="submitReserve()">
-        <span id="reserveBtnText">この作業を予約する →</span>
-      </button>
+      <div class="sticky-bar">
+        <div class="sel-summary" id="selSummary"></div>
+        <button class="btn-primary" id="reserveBtn" onclick="submitReserve()" disabled><span id="reserveBtnText">作業を選んでください</span></button>
+      </div>
     </div>
   </div>
 </div>
@@ -512,18 +708,35 @@ select {
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
 
-      <!-- 担当タスク自動表示エリア -->
-      <div id="myTaskDisplay">
-        <p class="hint">読み込み中...</p>
+      <div id="myTaskDisplay"><p class="hint"><span class="loading dark"></span> 読み込み中...</p></div>
+
+      <!-- 期限の相談 -->
+      <div class="ext-panel" id="extPanel">
+        <div style="font-size:0.88rem;font-weight:700;color:var(--blue-d);">🗓 期限の相談</div>
+        <p class="hint">予定どおりに進まないことは、よくあります。どのくらい延ばしたいかを選んで送ってください。事務局で確認して、メールでお返事します。</p>
+        <div class="ext-days" id="extDays">
+          <button type="button" class="chip" data-days="3" onclick="pickExtDays(this)">3日</button>
+          <button type="button" class="chip on" data-days="7" onclick="pickExtDays(this)">1週間</button>
+          <button type="button" class="chip" data-days="14" onclick="pickExtDays(this)">2週間</button>
+        </div>
+        <textarea id="extReason" placeholder="（任意）理由や、いまの進み具合があれば書いてください" style="min-height:70px;"></textarea>
+        <div class="btn-row" style="margin-top:10px;">
+          <button type="button" class="btn-primary gray-btn" onclick="toggleExt(false)">閉じる</button>
+          <button type="button" class="btn-primary" onclick="submitExtension()"><span id="extBtnText">この内容で相談する</span></button>
+        </div>
+        <p class="hint" style="margin-top:8px;">続けるのが難しい場合も、ここに書いて送ってください。ほかの方に引き継ぎます。</p>
       </div>
 
-      <!-- 担当タスクなしメッセージ -->
       <div class="warn-box" id="noTaskMsg" style="display:none;">
-        ⚠️ 現在担当中の作業がありません。<br>
-        まず「書籍の作業を予約する」から作業を予約してください。
+        いま担当中の作業はありません。<br>
+        まず「作業を予約する」から作業を予約してください。
+        <button type="button" class="btn-primary" style="margin-top:10px;" onclick="goReserve()">📖 作業を予約する</button>
       </div>
 
-      <!-- Word原稿作成ガイド（DRAFTタスク時） -->
+      <!-- アップロード済みファイルの自動確認（新しいGASのときだけ表示） -->
+      <div class="auto-check hidden" id="autoCheck"></div>
+
+      <!-- Word原稿作成ガイド（DRAFT） -->
       <div id="draftGuideSection" style="display:none;">
         <div class="tip-box">
           💡 <strong>アップロードの方法</strong><br>
@@ -533,18 +746,13 @@ select {
         </div>
       </div>
 
-      <!-- EFATranslator実行ガイド（TRANSLATEタスク時） -->
+      <!-- EFATranslator実行ガイド（TRANSLATE） -->
       <div id="translateFileSection" style="display:none;">
-        <div class="file-checklist">
-          <div class="file-checklist-title">
-            ✅ アップロード必須ファイルの確認<br>
-            <span style="font-weight:400;font-size:0.76rem;">
-              以下のファイルをすべてGoogleドライブにアップロードしてから、チェックを入れてください
-            </span>
-          </div>
+        <div class="file-checklist manual-check">
+          <div class="file-checklist-title">✅ アップロード必須ファイルの確認<br><span style="font-weight:400;font-size:0.76rem;">以下のファイルをすべてGoogleドライブにアップロードしてから、チェックを入れてください</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc-tr1"><span>Wordファイル × 3種類（母語・やさしい日本語・標準）</span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc-tr2"><span>_classify.json（分類情報ファイル）<br><span style="font-size:0.74rem;color:#888;">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc-tr3"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）<br><span style="font-size:0.74rem;color:#888;">※カタカナの名前（人や動物の名前など）が少ない作品では、この仕様上ファイルが作られないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tr2"><span>_classify.json（分類情報ファイル）<br><span class="small-note">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tr3"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）<br><span class="small-note">※カタカナの名前（人や動物の名前など）が少ない作品では、この仕様上ファイルが作られないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
         </div>
         <div class="warn-box">
           💡 <strong>アップロードの方法</strong><br>
@@ -555,28 +763,23 @@ select {
         </div>
       </div>
 
-      <!-- 日本語校正ガイド（PROOFREADINGタスク時） -->
+      <!-- 日本語校正ガイド（PROOFREADING） -->
       <div id="proofGuideSection" style="display:none;">
         <div class="tip-box">
-          💡 <strong>校正完了後のアップロード</strong><br>
+          💡 <strong>確認・修正が終わったら</strong><br>
           ① 修正したWordファイルを作業フォルダに上書きアップロード<br>
           ② 元のファイルを削除せず、同じ名前で上書き保存してください
         </div>
       </div>
 
-      <!-- ファイルチェックリスト（DAISYタスク時） -->
+      <!-- ファイルチェックリスト（DAISY） -->
       <div id="daisyFileSection" style="display:none;">
-        <div class="file-checklist">
-          <div class="file-checklist-title">
-            ✅ アップロード必須ファイルの確認<br>
-            <span style="font-weight:400;font-size:0.76rem;">
-              以下のファイルをすべてGoogleドライブにアップロードしてから、チェックを入れてください
-            </span>
-          </div>
+        <div class="file-checklist manual-check">
+          <div class="file-checklist-title">✅ アップロード必須ファイルの確認<br><span style="font-weight:400;font-size:0.76rem;">以下のファイルをすべてGoogleドライブにアップロードしてから、チェックを入れてください</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc1"><span>EPUBファイル × 3種類（やさしい日本語・標準・母語）</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc2"><span>_books_import.tsv（ライブラリー登録用ファイル）</span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc3"><span>_classify.json（分類情報ファイル）<br><span style="font-size:0.74rem;color:#888;">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc4"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）<br><span style="font-size:0.74rem;color:#888;">※カタカナの名前（人や動物の名前など）が少ない作品では、この仕様上ファイルが作られないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc3"><span>_classify.json（分類情報ファイル）<br><span class="small-note">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc4"><span>_proper_nouns.json（固有名詞ファイル ※絶対に削除しないでください）<br><span class="small-note">※カタカナの名前（人や動物の名前など）が少ない作品では、この仕様上ファイルが作られないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
         </div>
         <div class="warn-box">
           💡 <strong>アップロードの方法</strong><br>
@@ -587,18 +790,13 @@ select {
         </div>
       </div>
 
-      <!-- TTSファイル案内（TTSタスク時） -->
+      <!-- TTS（音声確認） -->
       <div id="ttsFileSection" style="display:none;">
-        <div class="file-checklist">
-          <div class="file-checklist-title">
-            📋 TTS確認時のファイル提出について<br>
-            <span style="font-weight:400;font-size:0.76rem;">
-              以下のファイルをGoogleドライブにアップロードしてから完了報告を送信してください
-            </span>
-          </div>
+        <div class="file-checklist manual-check">
+          <div class="file-checklist-title">📋 音声確認のファイル提出について<br><span style="font-weight:400;font-size:0.76rem;">以下のファイルをGoogleドライブにアップロードしてから完了報告を送信してください</span></div>
           <div class="file-check-row"><input type="checkbox" id="fc-tts1"><span>TTS（音声読み上げ）確認レポートフォーム.docx（作業中に記録したもの）</span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc-tts2"><span>_proper_nouns.json（固有名詞ファイル）<br><span style="font-size:0.74rem;color:#888;">※カタカナの名前（人や動物の名前など）が少ない作品では、この仕様上ファイルが作られないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
-          <div class="file-check-row"><input type="checkbox" id="fc-tts3"><span>_classify.json（分類情報ファイル）<br><span style="font-size:0.74rem;color:#888;">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tts2"><span>_proper_nouns.json（固有名詞ファイル）<br><span class="small-note">※カタカナの名前（人や動物の名前など）が少ない作品では、この仕様上ファイルが作られないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
+          <div class="file-check-row"><input type="checkbox" id="fc-tts3"><span>_classify.json（分類情報ファイル）<br><span class="small-note">※母語本文が短い作品では、この仕様上ファイルが生成されないことがあります。フォルダに無い場合はチェック不要です（見落とし・削除ではありません。そのまま次に進んでください）。</span></span></div>
         </div>
         <div class="warn-box">
           📝 <strong>TTSレポートフォームの記入方法</strong><br>
@@ -609,15 +807,12 @@ select {
         </div>
       </div>
 
-      <!-- Googleドライブフォルダボタン -->
       <div id="folderLinkSection" style="display:none; margin-bottom:14px;">
-        <a id="folderLinkBtn" href="#" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" class="folder-btn">
-          📁 Googleドライブの作業フォルダを開く
-        </a>
-        <p class="hint">↑ このボタンを押してファイルをアップロードしてから、下の報告を送信してください</p>
+        <a id="folderLinkBtn" href="#" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" class="folder-btn">📁 Googleドライブの作業フォルダを開く</a>
+        <p class="hint">↑ このボタンでフォルダを開いてファイルを入れてから、下の報告を送信してください</p>
       </div>
 
-      <div class="field">
+      <div class="field" id="notesField">
         <label class="field-label" for="notes">気になったこと・特記事項<span class="opt">（任意）</span></label>
         <textarea id="notes" placeholder="作業中に気になったこと、うまくいかなかったこと、エラーが出た場合は内容などを書いてください。"></textarea>
       </div>
@@ -625,127 +820,105 @@ select {
       <button class="btn-primary" id="completeBtnWrapper" onclick="submitComplete()" style="display:none;">
         <span id="completeBtnText">完了報告を送信する →</span>
       </button>
-
     </div>
   </div>
 </div>
 
-
-<!-- ══ STEP 3C：エラー報告 ══ -->
+<!-- ══ STEP 3C：困ったときは ══ -->
 <div class="section" id="sec3c">
   <div class="card fade-in">
-    <div class="card-header" style="background:linear-gradient(135deg,#c0392b,#922b21);">
+    <div class="card-header soft">
       <span class="step-no">STEP 3</span>
-      <h2>SOS エラー・困っていることを報告する</h2>
+      <h2>🤝 困ったときは（エラー・わからないこと）</h2>
     </div>
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
 
-      <!-- Phase 1: 問題の分類 -->
       <div id="err-step1">
-        <p style="font-size:0.88rem;font-weight:700;color:var(--blue-d);margin-bottom:12px;">どちらの問題ですか？</p>
+        <p style="font-size:0.88rem;font-weight:700;color:var(--blue-d);margin-bottom:12px;">どちらに近いですか？</p>
         <div class="choice-list">
-          <div class="choice-item" onclick="selectErrorPath('app', this)">
-            <div class="choice-icon">&#9888;</div>
+          <button type="button" class="choice-item" onclick="selectErrorPath('app', this)">
+            <div class="choice-icon">⚠️</div>
             <div>
               <div class="choice-title">アプリが動かない・エラーが出た</div>
-              <div class="choice-sub">EFATranslatorまたはEFAOurDaisyBilingualで問題が発生した</div>
+              <div class="choice-sub">EFATranslator（翻訳アプリ）またはEFAOurDaisyBilingual（DAISY図書アプリ）で問題が起きた</div>
             </div>
-          </div>
-          <div class="choice-item" onclick="selectErrorPath('op', this)">
-            <div class="choice-icon">&#10067;</div>
+          </button>
+          <button type="button" class="choice-item" onclick="selectErrorPath('op', this)">
+            <div class="choice-icon">❓</div>
             <div>
               <div class="choice-title">操作方法・手順がわからない</div>
-              <div class="choice-sub">どうすれば良いかわからない・操作に迷っている</div>
+              <div class="choice-sub">どうすればよいかわからない・操作に迷っている</div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
 
-      <!-- Phase 2: FAQ確認 -->
       <div id="err-step2" style="display:none;">
         <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
-          <div style="background:var(--blue);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 1：まず試してみてください</div>
+          <div style="background:var(--blue);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">その1：まず試してみてください</div>
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
         </div>
         <div class="tip-box" id="err-faq-content" style="margin-bottom:16px;"></div>
-        <p style="font-size:0.85rem;margin-bottom:12px;font-weight:700;color:var(--text);">上記を試して解決しましたか？</p>
-        <div style="display:flex;gap:10px;">
-          <button class="btn-primary" style="background:var(--green);" onclick="resolveError()">解決した</button>
+        <p style="font-size:0.85rem;margin-bottom:12px;font-weight:700;">上の方法で解決しましたか？</p>
+        <div class="btn-row">
+          <button class="btn-primary green-btn" onclick="resolveError()">解決した</button>
           <button class="btn-primary" onclick="showErrorStep(3)">解決しない → 次へ</button>
         </div>
       </div>
 
-      <!-- Phase 3: マニュアル確認 -->
       <div id="err-step3" style="display:none;">
         <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
-          <div style="background:var(--orange);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 2：マニュアルを確認</div>
+          <div style="background:var(--orange);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">その2：マニュアルを確認</div>
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
         </div>
-        <div class="tip-box">
-          制作マニュアルのトラブルシューティング章に多くの解決策が記載されています。<br>
-          下のボタンからマニュアルを開いて確認してください。
-        </div>
-        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" class="folder-btn">マニュアルを開く</a>
-        <p style="font-size:0.85rem;margin-bottom:12px;font-weight:700;color:var(--text);">マニュアルを確認して解決しましたか？</p>
-        <div style="display:flex;gap:10px;">
-          <button class="btn-primary" style="background:var(--green);" onclick="resolveError()">解決した</button>
-          <button class="btn-primary red-btn" onclick="showErrorStep(4)">解決しない → EFAに報告</button>
+        <div class="tip-box">制作マニュアルのトラブルシューティング（困ったときの対処）の章に、多くの解決策がのっています。下のボタンから開いて確認してください。</div>
+        <a href="https://efajapan.github.io/ourdaisy-bilingual-updates/" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" class="folder-btn">📘 マニュアルを開く</a>
+        <p style="font-size:0.85rem;margin-bottom:12px;font-weight:700;">マニュアルを確認して解決しましたか？</p>
+        <div class="btn-row">
+          <button class="btn-primary green-btn" onclick="resolveError()">解決した</button>
+          <button class="btn-primary sun-btn" onclick="showErrorStep(4)">解決しない → 事務局に知らせる</button>
         </div>
       </div>
 
-      <!-- Phase 4a: バグ報告フォーム（アプリエラー） -->
       <div id="err-step4-app" style="display:none;">
         <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
-          <div style="background:#C0392B;color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 3：EFAにバグ報告</div>
+          <div style="background:var(--sun);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">その3：事務局に知らせる</div>
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
         </div>
-        <div class="warn-box">
-          以下の情報をできるだけ正確に入力してください。<br>
-          これらの情報がないとバグを修正できません。
-        </div>
+        <div class="warn-box">ご報告ありがとうございます。直すために、次の内容をできるだけ正確に教えてください。</div>
         <div class="field">
           <label class="field-label">どのアプリで問題が起きましたか？<span class="req">（必須）</span></label>
           <div class="choice-list" id="app-choice-list">
-            <div class="choice-item" onclick="selectApp('EFATranslator（翻訳アプリ）', this)">
-              <div class="choice-icon">&#128260;</div>
-              <div><div class="choice-title">EFATranslator（翻訳アプリ）</div></div>
-            </div>
-            <div class="choice-item" onclick="selectApp('EFAOurDaisyBilingual（DAISY図書アプリ）', this)">
-              <div class="choice-icon">&#128241;</div>
-              <div><div class="choice-title">EFAOurDaisyBilingual（DAISY図書アプリ）</div></div>
-            </div>
+            <button type="button" class="choice-item" onclick="selectApp('EFATranslator（翻訳アプリ）', this)">
+              <div class="choice-icon">🔄</div><div><div class="choice-title">EFATranslator（翻訳アプリ）</div></div>
+            </button>
+            <button type="button" class="choice-item" onclick="selectApp('EFAOurDaisyBilingual（DAISY図書アプリ）', this)">
+              <div class="choice-icon">🎧</div><div><div class="choice-title">EFAOurDaisyBilingual（DAISY図書アプリ）</div></div>
+            </button>
           </div>
           <div class="error-msg" id="appErr">アプリを選択してください</div>
         </div>
         <div class="field">
           <label class="field-label" for="errorMsg">エラーメッセージを全文コピーして貼り付けてください<span class="req">（必須）</span></label>
-          <div class="tip-box" style="margin-bottom:8px;">
-            コピーの方法：エラー画面のテキストをすべて選択（Ctrl+A）→コピー（Ctrl+C）→下の欄に貼り付け（Ctrl+V）<br>
-            エラーメッセージがない場合は何が起きているかを詳しく書いてください。
-          </div>
+          <div class="tip-box" style="margin-bottom:8px;">コピーの方法：エラー画面の文字をすべて選択（Ctrl+A）→ コピー（Ctrl+C）→ 下の欄に貼り付け（Ctrl+V）<br>エラーメッセージがない場合は、何が起きているかを書いてください。</div>
           <textarea id="errorMsg" placeholder="エラーメッセージをここに貼り付けてください&#10;&#10;エラーメッセージがない場合は、何が起きているかを書いてください。"></textarea>
           <div class="error-msg" id="errorMsgErr">エラーメッセージまたは状況の説明を入力してください</div>
         </div>
         <div class="field">
-          <label class="field-label" for="bugBookId">作業していた書籍IDを入力してください<span class="req">（必須）</span></label>
+          <label class="field-label" for="bugBookId">作業していた書籍ID<span class="req">（必須）</span></label>
           <input type="text" id="bugBookId" placeholder="例：LAO-001">
+          <p class="hint" id="bugBookHint"></p>
           <div class="error-msg" id="bugBookIdErr">書籍IDを入力してください</div>
         </div>
         <div class="field">
           <label class="field-label">パソコンのOSを選んでください<span class="req">（必須）</span></label>
           <div class="choice-list" id="os-choice-list" style="flex-direction:row;gap:10px;">
-            <div class="choice-item" style="flex:1;" onclick="selectOS('Windows', this)">
-              <div class="choice-icon">&#129695;</div>
-              <div><div class="choice-title">Windows</div></div>
-            </div>
-            <div class="choice-item" style="flex:1;" onclick="selectOS('Mac', this)">
-              <div class="choice-icon">&#127822;</div>
-              <div><div class="choice-title">Mac</div></div>
-            </div>
+            <button type="button" class="choice-item" style="flex:1;" onclick="selectOS('Windows', this)"><div class="choice-icon">🪟</div><div><div class="choice-title">Windows</div></div></button>
+            <button type="button" class="choice-item" style="flex:1;" onclick="selectOS('Mac', this)"><div class="choice-icon">🍎</div><div><div class="choice-title">Mac</div></div></button>
           </div>
           <div class="error-msg" id="osErr">OSを選択してください</div>
         </div>
@@ -753,42 +926,31 @@ select {
           <label class="field-label" for="appVersion">アプリのバージョン<span class="opt">（任意・アプリ起動画面に表示）</span></label>
           <input type="text" id="appVersion" placeholder="例：v1.2.27">
         </div>
-        <button class="btn-primary red-btn" onclick="submitBugReport()">
-          <span id="bugBtnText">EFAにバグを報告する</span>
-        </button>
+        <button class="btn-primary sun-btn" onclick="submitBugReport()"><span id="bugBtnText">事務局に報告する</span></button>
       </div>
 
-      <!-- Phase 4b: EFA直接連絡（操作疑問） -->
       <div id="err-step4-op" style="display:none;">
         <div style="display:flex;align-items:center;gap:10px;margin:20px 0 14px;">
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
-          <div style="background:var(--blue);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">STEP 3：EFAに報告する</div>
+          <div style="background:var(--sun);color:#fff;font-size:0.76rem;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;">その3：事務局に知らせる</div>
           <div style="flex:1;height:2px;background:#E0E0E0;"></div>
         </div>
-        <div class="warn-box">
-          マニュアルでも解決しない場合は、以下の内容を記入してEFAに報告してください。
-        </div>
+        <div class="warn-box">マニュアルでも解決しないときは、次の内容を書いて事務局に知らせてください。</div>
         <div class="field">
-          <label class="field-label" for="opDetail">わからないこと・詰まっている箇所を詳しく教えてください<span class="req">（必須）</span></label>
-          <div class="tip-box" style="margin-bottom:8px;">
-            どの作業をしようとしていたか・何がわからないか・マニュアルのどこを確認したか（ページ番号など）を書いてください。
-          </div>
+          <label class="field-label" for="opDetail">わからないこと・止まっているところ<span class="req">（必須）</span></label>
+          <div class="tip-box" style="margin-bottom:8px;">どの作業をしようとしていたか・何がわからないか・マニュアルのどこを確認したか（ページ番号など）を書いてください。</div>
           <textarea id="opDetail" placeholder="例：EFATranslatorを実行しようとしているが、どのボタンを押せばよいかわからない。マニュアルのP.12を読んだが解決しなかった。"></textarea>
-          <div class="error-msg" id="opDetailErr">詳細を入力してください</div>
+          <div class="error-msg" id="opDetailErr">内容を入力してください</div>
         </div>
         <div class="field">
           <label class="field-label" for="opBookId">作業していた書籍ID<span class="opt">（任意）</span></label>
           <input type="text" id="opBookId" placeholder="例：LAO-001">
         </div>
-        <button class="btn-primary" onclick="submitOperationReport()">
-          <span id="opBtnText">EFAに報告する →</span>
-        </button>
+        <button class="btn-primary sun-btn" onclick="submitOperationReport()"><span id="opBtnText">事務局に知らせる →</span></button>
       </div>
-
     </div>
   </div>
 </div>
-
 
 <!-- ══ STEP 3D：お知らせの受け取り方 ══ -->
 <div class="section" id="sec3d">
@@ -826,30 +988,36 @@ select {
         </div>
         <p class="hint">どれを選んでも、作業の一覧は「作業を予約する」からいつでも見られます。</p>
       </div>
-      <button class="btn-primary" onclick="saveNotifyPref()">
-        <span id="notifyBtnText">この設定で保存する</span>
-      </button>
+      <button class="btn-primary" onclick="saveNotifyPref()"><span id="notifyBtnText">この設定で保存する</span></button>
     </div>
   </div>
 </div>
 
 <!-- ══ 完了カード ══ -->
 <div class="complete-card" id="completeCard">
+  <div class="confetti" id="confetti"></div>
   <div class="complete-icon" id="completeIcon">✅</div>
   <div class="complete-title" id="completeTitle">送信完了！</div>
   <div class="complete-msg" id="completeMsg"></div>
+  <div id="completeExtra"></div>
   <div class="next-steps" id="nextSteps"></div>
 </div>
+
+<div class="footer">
+  OurDAISY Studio ／ 認定NPO法人 エファジャパン<br>
+  <a href="https://efajapan.github.io/ourdaisy/" target="_blank" rel="noopener">📚 OurDAISY図書館を見る</a>
+</div>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 
 <script>
 // ── 定数 ──────────────────────────────────────────────
 var GAS_URL    = 'https://script.google.com/macros/s/AKfycbyAKQeY8CP3MZN6MJllvSYUjO3FbwCrRLtQJBmhUFFM0UlLfKjhNXKc8zjn8Owdvra6/exec';
 var FORM_TOKEN = 'efa2026daisy';
 var MANUAL_URL = 'https://efajapan.github.io/ourdaisy-bilingual-updates/';
+var LIBRARY_URL = 'https://efajapan.github.io/ourdaisy/';
 
-// タスク種別 → 完了報告画面で表示するガイドセクションID
-// ここが唯一の定義。表示（showMyTask）とリセット（loadMyTask）の双方がこれを参照する。
-// 新しいタスク種別を追加するときは、この1箇所に追記すれば両方に反映される。
+// タスク種別 → 完了報告画面で表示するガイドセクションID（表示とリセットの唯一の定義）
 var TASK_GUIDE_MAP = {
   DRAFT:        'draftGuideSection',
   TRANSLATE:    'translateFileSection',
@@ -858,448 +1026,60 @@ var TASK_GUIDE_MAP = {
   TTS:          'ttsFileSection'
 };
 
-// 新ウィンドウで開く（作業画面に戻りやすくするため）
-function openInNewWindow(url) {
-  if (!url || url === '#') return;
-  window.open(url, '_blank', 'noopener,noreferrer,width=1200,height=800');
-}
-
-// ── FAQ内容 ──────────────────────────────────────────
-var FAQ_CONTENT = {
-  'アプリが起動しない（開かない）':
-    '① パソコンを再起動して、もう一度アプリを開いてみてください。<br>' +
-    '② 画面下のタスクバーにアプリが隠れていないか確認してください。<br>' +
-    '③ アプリのフォルダには同じ名前のファイルが2つあります。種類が「Windows バッチ ファイル」の方をダブルクリックしてください（「Python File」の方ではありません）。<br>' +
-    '④ DAISYアプリだけが開かない場合は、Microsoftの「Visual C++ 再頒布可能パッケージ（x64）」をインストールしてください（制作マニュアル Ch.2-5）。',
-
-  'エラーメッセージが出た':
-    '以下を確認してください：<br>' +
-    '① Wordファイルが別のウィンドウで開いたままになっていませんか？<br>' +
-    '　 Wordをすべて閉じてから再実行してください。<br>' +
-    '② _classify.jsonや_proper_nouns.jsonを削除・移動していませんか？<br>' +
-    '　 出力フォルダのファイルはすべてそのままにしてください。<br>' +
-    '※ ファイルの名前は変えないでください（原書の題名のままで問題ありません）。',
-
-  'ファイルが見つからない・消えた':
-    '⓪ 作業フォルダのWord原稿の名前は、書籍IDではなく原書の題名のことがあります。ファイル名は入力せず、画面の一覧からクリックして選んでください。<br>' +
-    '① アプリの「出力先フォルダ」の設定を確認してください。<br>' +
-    '② デスクトップや「ドキュメント」フォルダを確認してください。<br>' +
-    '③ Windowsの検索（Windowsキー+S）でファイル名を入力して探してください。<br>' +
-    '　 上記で見つからない場合は、アプリを再実行してみてください。',
-
-  'Googleドライブにアクセスできない':
-    '① ブラウザでGoogleドライブを直接開いてください。<br>' +
-    '　 → <a href="https://drive.google.com" target="_blank" style="color:var(--blue);">https://drive.google.com</a><br>' +
-    '② Googleアカウントにログインしているか確認してください。<br>' +
-    '③ EFAから届いたメールのフォルダリンクをブラウザに直接貼り付けてください。'
+// v20：作業の種類ごとの表示情報。est（目安時間）は事務局の想定。変えるときはここだけ直す
+var TASK_META = {
+  DRAFT:        { icon: '✍️', name: 'Word原稿の作成',       est: '2〜4時間',   need: 'パソコン・Word・スキャナー' },
+  TRANSLATE:    { icon: '🔄', name: '翻訳アプリの実行',     est: '30分〜1時間', need: 'Windowsパソコン' },
+  PROOFREADING: { icon: '📝', name: 'やさしい日本語の確認', est: '1〜2時間',   need: 'Wordが使えるパソコン' },
+  DAISY:        { icon: '🎧', name: 'DAISY図書アプリの実行', est: '30分〜1時間', need: 'Windowsパソコン' },
+  TTS:          { icon: '🔊', name: '音声の確認',           est: '1〜2時間',   need: 'リーダーアプリ（パソコンかスマホ）' }
 };
 
-// ── 状態管理 ──────────────────────────────────────────
-var state = {
-  email:          '',
-  memberId:       '',
-  name:           '',
-  type:           '',
-  action:         '',
-  problem:        '',
-  errorPath:      '',
-  selectedApp:    '',
-  selectedOS:     '',
-  notify:         'weekly',
-  currentTask:    null
+// 本ができるまでの道のり（ボランティアの工程。現地スタッフ確認は表示しない）
+var JOURNEY = [
+  { key: 'DRAFT',        icon: '✍️', label: '原稿' },
+  { key: 'TRANSLATE',    icon: '🔄', label: '翻訳' },
+  { key: 'PROOFREADING', icon: '📝', label: '日本語' },
+  { key: 'DAISY',        icon: '🎧', label: 'DAISY' },
+  { key: 'TTS',          icon: '🔊', label: '音声' },
+  { key: 'PUBLISH',      icon: '📚', label: '公開' }
+];
+
+// 予約後の手順チェック（マイ作業カード）
+var TASK_STEPS = {
+  DRAFT: [
+    '作業フォルダを開いて、原書のファイルを確認する',
+    'OCRアプリとWordで、母語の原稿をつくる（制作マニュアル Ch.4）',
+    'できたWordファイルを作業フォルダにアップロードする',
+    'このフォームから「作業完了を報告する」'
+  ],
+  TRANSLATE: [
+    '作業フォルダからWord原稿をダウンロードする（ファイル名は変えない）',
+    'EFATranslator（翻訳アプリ）で実行する（制作マニュアル Ch.5）',
+    'できたWord 3種類とJSONファイルを、作業フォルダにアップロードする',
+    'このフォームから「作業完了を報告する」'
+  ],
+  PROOFREADING: [
+    '作業フォルダから、やさしい日本語のWordファイルをダウンロードする',
+    '子どもにわかりやすい表現か確認して、直す（制作マニュアル Ch.6）',
+    '同じファイル名のまま、作業フォルダに上書きアップロードする',
+    'このフォームから「作業完了を報告する」'
+  ],
+  DAISY: [
+    '作業フォルダから、Word 3種類とJSONファイルをダウンロードする',
+    'EFAOurDaisyBilingual（DAISY図書アプリ）で電子図書をつくる（制作マニュアル Ch.7）',
+    'EPUB 3種類・_books_import.tsv・JSONファイルを、作業フォルダにアップロードする',
+    'このフォームから「作業完了を報告する」'
+  ],
+  TTS: [
+    '作業フォルダから電子図書（EPUB）をダウンロードし、リーダーアプリで再生する',
+    '読み上げのまちがいを、TTS確認レポートに記録する（制作マニュアル Ch.8）',
+    'TTS確認レポートを、作業フォルダにアップロードする',
+    'このフォームから「作業完了を報告する」'
+  ]
 };
 
-// ── 初期化 ────────────────────────────────────────────
-window.addEventListener('load', function() {
-  loadEmailFromStorage();
-  setupListeners();
-});
-
-// ── メールをlocalStorageから復元 ─────────────────────
-function loadEmailFromStorage() {
-  try {
-    var saved = localStorage.getItem('ourdaisy_email');
-    if (saved) document.getElementById('email').value = saved;
-  } catch(e) {}
-}
-
-function saveEmailToStorage(email) {
-  try { localStorage.setItem('ourdaisy_email', email); } catch(e) {}
-}
-
-// ── イベント設定 ──────────────────────────────────────
-function setupListeners() {
-  // チェックボックスのビジュアル更新
-  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-      var item = this.closest('.check-item');
-      if (item) item.classList.toggle('checked', this.checked);
-    });
-  });
-  // ラジオボタン（お知らせの受け取り方）のビジュアル更新
-  document.querySelectorAll('.check-item input[type="radio"]').forEach(function(rb) {
-    rb.addEventListener('change', function() { syncRadioCards(this.name); });
-  });
-  // DAISYアプリ選択でファイルチェックリスト表示
-  // ガイドボックスはshowMyTask()でタスクタイプに応じて自動表示（リスナー不要）
-
-
-}
-
-// ── プログレス更新 ────────────────────────────────────
-function setProgress(step) {
-  for (var i = 1; i <= 3; i++) {
-    var circle = document.getElementById('pc' + i);
-    var line   = document.getElementById('pl' + i);
-    if (circle) {
-      circle.className = 'prog-circle' +
-        (i < step ? ' done' : '') + (i === step ? ' active' : '');
-      circle.textContent = i < step ? '✓' : String(i);
-    }
-    if (line) line.className = 'prog-line' + (i < step ? ' done' : '');
-  }
-}
-
-// ── セクション切り替え ────────────────────────────────
-function showSection(id) {
-  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-  var el = document.getElementById(id);
-  if (el) {
-    el.classList.add('active');
-    el.classList.remove('fade-in');
-    void el.offsetWidth;
-    el.classList.add('fade-in');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-// ── Backボタン ────────────────────────────────────────
-function goBack(targetSection) {
-  if (targetSection === 'sec2') {
-    setProgress(2);
-    document.querySelectorAll('#sec2 .choice-item').forEach(function(el) { el.classList.remove('selected'); });
-    resetErrorForm();
-  } else if (targetSection === 'sec1') {
-    setProgress(1);
-  }
-  showSection(targetSection);
-}
-
-// ── Step 1：メール照合 ───────────────────────────────
-function checkEmail() {
-  // 2026-10-12：スマホの自動大文字化（Seki.…）でも照合できるよう、小文字にそろえる
-  var email = document.getElementById('email').value.trim().toLowerCase();
-  document.getElementById('email').value = email;
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showErr('emailErr'); return;
-  }
-  hideErr('emailErr');
-  state.email = email;
-  saveEmailToStorage(email);
-
-  setBtnLoading('checkBtnText', true);
-  gasCall({ action_type: 'member_check', email: email, token: FORM_TOKEN }, function(res) {
-    setBtnLoading('checkBtnText', false);
-    if (res.status === 'ok') {
-      if (res.registered) {
-        state.memberId = res.memberId;
-        state.name     = res.name;
-        state.type     = res.type;
-        state.notify   = (res.notify === 'instant' || res.notify === 'pause') ? res.notify : 'weekly';
-        showWelcome();
-      } else {
-        setProgress(1);
-        showSection('sec1b');
-      }
-    } else {
-      alert('エラーが発生しました。\n' + (res.message || 'しばらく後に再試行してください。'));
-    }
-  });
-}
-
-function showWelcome() {
-  setProgress(2);
-  document.getElementById('welcomeMsg').textContent =
-    state.name + ' さん、ようこそ！（担当者ID：' + state.memberId + '）' +
-    (state.notify === 'pause'
-      ? '　いまはお休み中です。戻るときは「お知らせの受け取り方を変える」から選び直してください。'
-      : '');
-  showSection('sec2');
-}
-
-// 2026-10-06：メルマガ購読にチェックしたときだけ、申込ページへのリンクを表示する
-document.addEventListener('DOMContentLoaded', function() {
-  var cb = document.getElementById('newsletter');
-  var box = document.getElementById('newsletter-link-box');
-  if (!cb || !box) return;
-  var sync = function() { box.style.display = cb.checked ? 'block' : 'none'; };
-  cb.addEventListener('change', sync); sync();
-});
-
-// ── Step 1b：新規登録 ────────────────────────────────
-function register() {
-  var name    = document.getElementById('name').value.trim();
-  var phone   = document.getElementById('phone').value.trim();
-  var address = document.getElementById('address').value.trim();
-  var types = ['A','B','C'].filter(function(t) {
-    return document.getElementById('type' + t).checked;
-  });
-  var valid = true;
-  if (!name)    { showErr('nameErr');    valid = false; } else hideErr('nameErr');
-  if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) { showErr('phoneErr'); valid = false; } else hideErr('phoneErr');
-  if (!address) { showErr('addressErr'); valid = false; } else hideErr('addressErr');
-  if (!types.length){ showErr('typeErr'); valid = false; } else hideErr('typeErr');
-  if (!valid) return;
-
-  var primaryType = types.indexOf('A') >= 0 ? 'A' : (types.indexOf('B') >= 0 ? 'B' : 'C');
-  setBtnLoading('regBtnText', true);
-  gasCall({
-    action_type: 'register', email: state.email,
-    name: name, phone: phone, address: address,
-    type: 'volunteer',
-    volunteer_type: primaryType,
-    newsletter: document.getElementById('newsletter').checked,
-    notify: getRadioValue('notifyReg') || 'weekly',
-    token: FORM_TOKEN
-  }, function(res) {
-    setBtnLoading('regBtnText', false);
-    if (res.status === 'ok') {
-      state.memberId = res.memberId;
-      state.name     = name;
-      state.type     = 'volunteer';
-      state.notify   = getRadioValue('notifyReg') || 'weekly';
-      showWelcome();
-    } else {
-      alert('登録に失敗しました。\n' + (res.message || ''));
-    }
-  });
-}
-// ── Step 2：アクション選択 ───────────────────────────
-function selectAction(action, el) {
-  state.action = action;
-  document.querySelectorAll('#sec2 .choice-item').forEach(function(e) { e.classList.remove('selected'); });
-  el.classList.add('selected');
-  setTimeout(function() {
-    setProgress(3);
-    if (action === 'reserve') {
-      showSection('sec3a');
-      loadAvailableTasks();
-    } else if (action === 'complete') {
-      showSection('sec3b');
-      loadMyTask();
-    } else if (action === 'help') {
-      showSection('sec3c');
-    } else if (action === 'notify') {
-      setRadioValue('notifyPref', state.notify || 'weekly');
-      showSection('sec3d');
-    }
-  }, 200);
-}
-
-// ── お知らせの受け取り方 ─────────────────────────────
-function getRadioValue(name) {
-  var el = document.querySelector('input[name="' + name + '"]:checked');
-  return el ? el.value : '';
-}
-function setRadioValue(name, value) {
-  document.querySelectorAll('input[name="' + name + '"]').forEach(function(rb) {
-    rb.checked = (rb.value === value);
-  });
-  syncRadioCards(name);
-}
-function syncRadioCards(name) {
-  document.querySelectorAll('input[name="' + name + '"]').forEach(function(rb) {
-    var item = rb.closest('.check-item');
-    if (item) item.classList.toggle('checked', rb.checked);
-  });
-}
-function saveNotifyPref() {
-  var pref = getRadioValue('notifyPref');
-  if (!pref) { alert('受け取り方を選んでください。'); return; }
-  setBtnLoading('notifyBtnText', true);
-  gasCall({ action_type: 'set_notify_pref', email: state.email, notify: pref, token: FORM_TOKEN }, function(res) {
-    setBtnLoading('notifyBtnText', false);
-    if (res.status === 'ok') {
-      state.notify = pref;
-      alert('保存しました。\n' + (res.message || ''));
-      showWelcome();
-      goBack('sec2');
-    } else {
-      alert('保存できませんでした。\n' + (res.message || 'しばらく後に再試行してください。'));
-    }
-  });
-}
-
-// ── Step 3A：予約送信 ────────────────────────────────
-function submitReserve() {
-  var taskId = document.getElementById('taskSelect').value;
-  if (!taskId) { showErr('taskSelectErr'); return; }
-  hideErr('taskSelectErr');
-  setBtnLoading('reserveBtnText', true);
-  gasCall({
-    action_type: 'reserve_task',
-    email: state.email,
-    member_id: state.memberId,
-    task_id: taskId,
-    token: FORM_TOKEN
-  }, function(res) {
-    setBtnLoading('reserveBtnText', false);
-    if (res.status === 'ok') {
-      showReserveComplete(res);
-    } else {
-      alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
-    }
-  });
-}
-
-
-// ── タスク一覧読み込み（予約フォーム用）────────────────
-function loadAvailableTasks() {
-  var sel = document.getElementById('taskSelect');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">-- 読み込み中... --</option>';
-  gasCall({ action_type: 'get_available_tasks', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
-    sel.innerHTML = '';
-    if (res.status === 'ok' && res.tasks && res.tasks.length > 0) {
-      var def = document.createElement('option');
-      def.value = ''; def.textContent = '-- 作業を選んでください --';
-      sel.appendChild(def);
-      res.tasks.forEach(function(t) {
-        var opt = document.createElement('option');
-        opt.value = t.id; opt.textContent = t.label;
-        sel.appendChild(opt);
-      });
-    } else {
-      var noOpt = document.createElement('option');
-      noOpt.value = '';
-      noOpt.textContent = '-- 現在予約できる作業はありません（準備ができたらメールでご連絡します） --';
-      sel.appendChild(noOpt);
-    }
-  });
-}
-
-// ── 担当タスク読み込み（完了報告フォーム用）────────────
-function loadMyTask() {
-  var display = document.getElementById('myTaskDisplay');
-  if (display) display.innerHTML = '<p class="hint">読み込み中...</p>';
-  state.currentTask = null;
-
-  // ガイドセクションを全て非表示にリセット
-  // v17修正：リセット対象をTASK_GUIDE_MAPから自動導出する。
-  //   旧実装は 'wordGuideSection'（v9のDRAFT/TRANSLATE分離で消滅したID）を参照し、
-  //   実在する draftGuideSection / translateFileSection がリセット対象から漏れていた。
-  //   その結果、続けて別タスクの完了報告を開くと前のガイドが残る不具合があった。
-  //   以後はマップに追記するだけで表示・リセット双方に反映される。
-  Object.keys(TASK_GUIDE_MAP).map(function(k) { return TASK_GUIDE_MAP[k]; })
-    .concat(['folderLinkSection']).forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  var btn = document.getElementById('completeBtnWrapper');
-  if (btn) btn.style.display = 'none';
-
-  gasCall({ action_type: 'get_my_task', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
-    if (res.status === 'ok' && res.task_id) {
-      state.currentTask = res;
-      showMyTask(res);
-    } else {
-      showNoTask();
-    }
-  });
-}
-
-// ── 担当タスクを画面に表示 ───────────────────────────────
-function showMyTask(task) {
-  var display = document.getElementById('myTaskDisplay');
-  if (display) {
-    display.innerHTML =
-      '<div class="info-box">' +
-      '<strong>📋 担当中の作業</strong><br><br>' +
-      '📚 <strong>' + task.book_id + '</strong>　' + (task.book_title || '') + '<br>' +
-      '🔧 ' + task.task_label + '<br>' +
-      '⏰ 期限：' + (task.deadline ? (function(d) {
-        try { return new Date(d).toLocaleDateString('ja-JP', {year:'numeric',month:'2-digit',day:'2-digit'}); }
-        catch(e) { return d; }
-      })(task.deadline) : '未設定') +
-      '</div>';
-  }
-
-  // フォルダボタン設定
-  var folderSection = document.getElementById('folderLinkSection');
-  var folderBtn     = document.getElementById('folderLinkBtn');
-  if (folderSection && folderBtn && task.folder_url) {
-    folderBtn.href = task.folder_url;
-    folderSection.style.display = 'block';
-  }
-
-  // タスクタイプ別ガイドボックス表示（v9：DRAFT/TRANSLATE分離対応）
-  var guideId = TASK_GUIDE_MAP[task.task_type];
-  if (guideId) {
-    var guide = document.getElementById(guideId);
-    if (guide) guide.style.display = 'block';
-  }
-
-  var noMsg = document.getElementById('noTaskMsg');
-  if (noMsg) noMsg.style.display = 'none';
-  var btn = document.getElementById('completeBtnWrapper');
-  if (btn) btn.style.display = 'block';
-}
-
-// ── 担当タスクなし表示 ───────────────────────────────────
-function showNoTask() {
-  var display = document.getElementById('myTaskDisplay');
-  if (display) display.innerHTML = '';
-  var noMsg = document.getElementById('noTaskMsg');
-  if (noMsg) noMsg.style.display = 'block';
-  var btn = document.getElementById('completeBtnWrapper');
-  if (btn) btn.style.display = 'none';
-}
-
-// ── 完了後クロージング画面 ───────────────────────────────
-function showCompleteWithClosing(res) {
-  document.getElementById('progressWrap').style.display = 'none';
-  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-
-  document.getElementById('completeIcon').textContent  = '✅';
-  document.getElementById('completeTitle').textContent = '完了報告を送信しました！';
-  document.getElementById('completeTitle').style.color = 'var(--green)';
-  document.getElementById('completeMsg').textContent   = res.message || '完了報告を受け付けました。お疲れ様でした！';
-
-  document.getElementById('nextSteps').innerHTML =
-    '<h3>次はどうしますか？</h3>' +
-    '<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">' +
-    '<button class="btn-primary" onclick="continueReservation()">📖 続けて別の作業を予約する</button>' +
-    '<button class="btn-primary" style="background:var(--gray);" onclick="finishForToday()">✋ 今日は終わりにする</button>' +
-    '</div>';
-
-  var card = document.getElementById('completeCard');
-  card.style.display = 'block';
-  card.classList.add('fade-in');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  state.currentTask = null;
-}
-
-// ── クロージング①：続けて予約する ───────────────────────
-function continueReservation() {
-  document.getElementById('completeCard').style.display = 'none';
-  document.getElementById('progressWrap').style.display = 'flex';
-  setProgress(3);
-  state.action = 'reserve';
-  loadAvailableTasks();
-  showSection('sec3a');
-}
-
-// ── クロージング②：今日は終わりにする ──────────────────
-function finishForToday() {
-  document.getElementById('completeIcon').textContent  = '🙏';
-  document.getElementById('completeTitle').textContent = 'お疲れ様でした！';
-  document.getElementById('completeTitle').style.color = 'var(--blue)';
-  document.getElementById('completeMsg').textContent   = '本日の作業ありがとうございました。また次回よろしくお願いします。';
-  document.getElementById('nextSteps').innerHTML = '';
-}
-
-// v19：予約完了画面に「この作業で使うアプリ」を表示する（OCRアプリとの取り違え防止）。
+// 予約完了画面の「この作業で使うアプリ」（OCRアプリとの取り違え防止）
 var TASK_APP_GUIDE = {
   DRAFT:        'EFAOurDaisyOCR（OCRアプリ）とWord（制作マニュアル Ch.4）',
   TRANSLATE:    'EFATranslator（翻訳アプリ）だけです（制作マニュアル Ch.5）。DAISYアプリ・OCRアプリは使いません',
@@ -1308,350 +1088,1012 @@ var TASK_APP_GUIDE = {
   TTS:          'リーダーアプリです。EFAのアプリは不要です（制作マニュアル Ch.8）'
 };
 
-function showReserveComplete(res) {
-  document.getElementById('progressWrap').style.display = 'none';
+// 書籍IDの先頭 → 言語名（古いGASの応答でも言語を表示するため）
+var LANG_JA = {
+  LAO: 'ラオス語', KHM: 'クメール語', NEP: 'ネパール語', MYA: 'ミャンマー語',
+  VIE: 'ベトナム語', TGL: 'タガログ語', POR: 'ポルトガル語', IND: 'インドネシア語',
+  THA: 'タイ語', SIN: 'シンハラ語', SPA: 'スペイン語（ペルー）', HIN: 'ヒンディー語'
+};
+
+// タイプごとの主な作業（「あなたのタイプ向け」の印）
+var TYPE_MAIN = { A: null, B: ['PROOFREADING'], C: ['TTS'] };
+
+// 節目（終えた作業の数）とお礼のことば
+var MILESTONES = [
+  { n: 1,  icon: '🌱', text: 'はじめての作業、ありがとうございました！ あなたのバトンで、1冊の本が前に進みました。' },
+  { n: 3,  icon: '🌿', text: '3つめの作業を終えました。すっかり、チームの一員です。' },
+  { n: 5,  icon: '🌳', text: '5つの作業を終えました。子どもたちの本だなが、着実に育っています。' },
+  { n: 10, icon: '🏅', text: '10の作業を終えました！ 長く関わってくださり、心から感謝しています。' },
+  { n: 20, icon: '🌟', text: '20の作業を終えました。あなたは、OurDAISYを支える大切な柱です。' },
+  { n: 50, icon: '👑', text: '50の作業を終えました！ 言葉になりません。本当にありがとうございます。' }
+];
+
+// 困ったとき：まず試すこと
+var FAQ_APP_HTML =
+  'まず次のことを試してください：<br><br>' +
+  '(1) パソコンを再起動してから、もう一度アプリを起動する<br>' +
+  '(2) Wordファイルが別のウィンドウで開いたままになっていないか確認する<br>' +
+  '&nbsp;&nbsp;&nbsp;&nbsp;→ Wordをすべて閉じてから、もう一度実行する<br>' +
+  '(3) アプリは、種類が「Windows バッチ ファイル」の方をダブルクリックして開く<br>' +
+  '&nbsp;&nbsp;&nbsp;&nbsp;→ DAISYアプリだけが開かない場合は「Visual C++ 再頒布可能パッケージ（x64）」を入れる（制作マニュアル Ch.2-5）<br>' +
+  '(4) 作業に合ったアプリを開いているか確認する（翻訳アプリ実行＝EFATranslator、EPUB作成＝EFAOurDaisyBilingual）<br>' +
+  '※ ファイルの名前は変えないでください（原書の題名のままで問題ありません）';
+var FAQ_OP_HTML =
+  'まず次のことを試してください：<br><br>' +
+  '(1) その作業の手順を、最初からゆっくり読み直してやり直してみる<br>' +
+  '(2) わからない用語は、（かっこ内の説明）を見る<br>' +
+  '(3) 同じ操作を、別の書籍ファイルや別のフォルダで試してみる';
+
+// ── 状態管理 ──────────────────────────────────────────
+var state = {
+  email: '', memberId: '', name: '', type: '', volType: '',
+  action: '', errorPath: '', selectedApp: '', selectedOS: '',
+  notify: 'weekly', currentTask: null,
+  stats: null, tasks: [], selectedTaskId: '', filterLang: '', filterMine: false,
+  autoCheck: null, extDays: 7
+};
+
+// ── 小道具 ────────────────────────────────────────────
+function esc(s) {
+  return String(s === undefined || s === null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function store(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function $(id) { return document.getElementById(id); }
+function langOf(bookId) { var p = String(bookId || '').split('-')[0].toUpperCase(); return { code: p, name: LANG_JA[p] || '' }; }
+
+function openInNewWindow(url) {
+  if (!url || url === '#') return;
+  window.open(url, '_blank', 'noopener,noreferrer,width=1200,height=800');
+}
+
+// 画面内メッセージ（ポップアップの代わり）
+function toast(msg, kind, ms) {
+  var wrap = $('toastWrap');
+  var t = document.createElement('div');
+  t.className = 'toast' + (kind ? ' ' + kind : '');
+  t.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  t.textContent = msg;
+  var x = document.createElement('button');
+  x.type = 'button'; x.setAttribute('aria-label', '閉じる'); x.textContent = '✕';
+  x.onclick = function() { if (t.parentNode) t.parentNode.removeChild(t); };
+  t.appendChild(x);
+  wrap.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, ms || (kind === 'error' ? 9000 : 4500));
+}
+
+// 日付（"2026/11/20" や ISO 文字列）→ Date
+function parseDate(d) {
+  if (!d) return null;
+  if (d instanceof Date) return d;
+  var s = String(d);
+  var m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+  var dt = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(s);
+  return isNaN(dt.getTime()) ? null : dt;
+}
+function fmtDate(d) {
+  var dt = parseDate(d);
+  if (!dt) return d ? String(d) : '未設定';
+  var w = '日月火水木金土'.charAt(dt.getDay());
+  return dt.getFullYear() + '年' + (dt.getMonth() + 1) + '月' + dt.getDate() + '日（' + w + '）';
+}
+function daysLeft(d) {
+  var dt = parseDate(d);
+  if (!dt) return null;
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var due = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  return Math.round((due - today) / 86400000);
+}
+function dueBadge(d) {
+  var n = daysLeft(d);
+  if (n === null) return '';
+  if (n > 3)  return '<span class="due">⏰ あと' + n + '日</span>';
+  if (n > 0)  return '<span class="due soon">⏰ あと' + n + '日</span>';
+  if (n === 0) return '<span class="due soon">⏰ 今日まで</span>';
+  return '<span class="due over">⏰ 期限を' + (-n) + '日すぎています</span>';
+}
+
+// 本ができるまでの道のり（current＝いまの工程）
+function journeyHtml(current, mode) {
+  var idx = -1;
+  for (var i = 0; i < JOURNEY.length; i++) if (JOURNEY[i].key === current) idx = i;
+  var h = '<div class="journey">';
+  for (var j = 0; j < JOURNEY.length; j++) {
+    var cls = '';
+    if (idx >= 0) {
+      if (mode === 'handoff') cls = j <= idx ? 'done' : (j === idx + 1 ? 'now' : '');
+      else cls = j < idx ? 'done' : (j === idx ? 'now' : (j === idx + 1 ? 'next' : ''));
+    }
+    var mark = cls === 'done' ? '✓' : JOURNEY[j].icon;
+    h += '<div class="j-step ' + cls + '"><div class="j-dot">' + mark + '</div><div class="j-label">' + JOURNEY[j].label + '</div></div>';
+  }
+  return h + '</div>';
+}
+
+// ── 初期化 ────────────────────────────────────────────
+window.addEventListener('load', function() {
+  if (load('od_font_lg') === '1') applyFont(true);
+  setupListeners();
+  loadRemembered();
+});
+
+function loadRemembered() {
+  var saved = load('ourdaisy_email');
+  var name  = load('ourdaisy_name');
+  if (saved) $('email').value = saved;
+  if (saved && name) {
+    $('wbName').textContent = 'おかえりなさい、' + name + ' さん';
+    $('wbMail').textContent = saved;
+    $('returningCard').classList.remove('hidden');
+    $('emailCard').classList.add('hidden');
+    $('aboutCard').classList.add('hidden');
+  }
+}
+function quickStart() { checkEmail('quickBtnText'); }
+function useOtherEmail() {
+  store('ourdaisy_name', null);
+  $('email').value = '';
+  $('returningCard').classList.add('hidden');
+  $('emailCard').classList.remove('hidden');
+  $('aboutCard').classList.remove('hidden');
+  $('email').focus();
+}
+
+function toggleFont() { var on = !document.documentElement.classList.contains('lg'); applyFont(on); store('od_font_lg', on ? '1' : null); }
+function applyFont(on) {
+  document.documentElement.classList.toggle('lg', on);
+  $('fontToggle').textContent = on ? '文字をもとに戻す' : '文字を大きく';
+  $('fontToggle').setAttribute('aria-pressed', on ? 'true' : 'false');
+}
+
+function setupListeners() {
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      var item = this.closest('.check-item');
+      if (item) item.classList.toggle('checked', this.checked);
+    });
+  });
+  document.querySelectorAll('.check-item input[type="radio"]').forEach(function(rb) {
+    rb.addEventListener('change', function() { syncRadioCards(this.name); });
+  });
+  var cb = $('newsletter'), box = $('newsletter-link-box');
+  if (cb && box) {
+    var sync = function() { box.style.display = cb.checked ? 'block' : 'none'; };
+    cb.addEventListener('change', sync); sync();
+  }
+}
+
+// ── プログレス・画面切り替え ───────────────────────────
+function setProgress(step) {
+  for (var i = 1; i <= 3; i++) {
+    var circle = $('pc' + i), line = $('pl' + i);
+    if (circle) {
+      circle.className = 'prog-circle' + (i < step ? ' done' : '') + (i === step ? ' active' : '');
+      circle.textContent = i < step ? '✓' : String(i);
+    }
+    if (line) line.className = 'prog-line' + (i < step ? ' done' : '');
+  }
+}
+function showSection(id) {
+  $('completeCard').style.display = 'none';
+  $('progressWrap').style.display = 'flex';
   document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-  document.getElementById('completeIcon').textContent  = '📖';
-  document.getElementById('completeTitle').textContent = '予約完了！';
-  document.getElementById('completeTitle').style.color = 'var(--green)';
-  document.getElementById('completeMsg').textContent   = res.message || '書籍の予約が完了しました。';
-  document.getElementById('nextSteps').innerHTML =
-    '<h3>📬 これから行うこと</h3>' +
-    (TASK_APP_GUIDE[res.task_type] ? '<div class="next-step-item"><span class="step-num">🛠</span><div><strong>この作業で使うアプリ</strong><br>' + TASK_APP_GUIDE[res.task_type] + '</div></div>' : '') +
-    (res.folderUrl ? '<div class="next-step-item"><span class="step-num">💡</span><div>作業フォルダは、Googleにログインした状態で開いてください。ファイルは右クリック→「ダウンロード」で1つずつ保存し、名前は変えずに使ってください。</div></div>' : '') +
-    (res.folderUrl ? '<div class="next-step-item"><span class="step-num">📁</span><div style="width:100%;"><strong>Googleドライブで書籍を確認・ダウンロードする</strong><br><a href="' + res.folderUrl + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" style="display:inline-block;margin-top:6px;padding:8px 16px;background:var(--blue);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;">📁 Googleドライブを開く</a></div></div>' : '') +
-    '<div class="next-step-item"><span class="step-num">1</span>登録したメールアドレスに確認メールが届きます。</div>' +
-    '<div class="next-step-item"><span class="step-num">2</span>マニュアルをダウンロードして作業方法を確認してください。<br><a href="' + MANUAL_URL + '" onclick="openInNewWindow(this.href); return false;" style="color:var(--blue);font-size:0.8rem;">' + MANUAL_URL + '</a></div>' +
-    '<div class="next-step-item"><span class="step-num">3</span>作業が完了したら、このフォームから「作業完了を報告する」を選んでください。</div>' +
-    (res.deadline ? '<div class="next-step-item"><span class="step-num">⏰</span>期限：<strong>' + res.deadline + '</strong></div>' : '');
-  var card = document.getElementById('completeCard');
+  var el = $(id);
+  if (el) {
+    el.classList.add('active');
+    el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+function goBack(target) {
+  if (target === 'sec2') { goHome(); return; }
+  if (target === 'sec1') setProgress(1);
+  showSection(target);
+}
+function goHome() {
+  setProgress(2);
+  document.querySelectorAll('#sec2 .choice-item').forEach(function(el) { el.classList.remove('selected'); });
+  resetErrorForm();
+  toggleExt(false);
+  showSection('sec2');
+  loadHome();
+}
+function goReserve() { setProgress(3); state.action = 'reserve'; showSection('sec3a'); loadAvailableTasks(); }
+
+// ── Step 1：メール照合 ───────────────────────────────
+function checkEmail(btnId) {
+  btnId = btnId || 'checkBtnText';
+  // スマホの自動大文字化でも照合できるよう、小文字にそろえる
+  var email = $('email').value.trim().toLowerCase();
+  $('email').value = email;
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showErr('emailErr');
+    if (btnId === 'quickBtnText') useOtherEmail();
+    return;
+  }
+  hideErr('emailErr');
+  state.email = email;
+  store('ourdaisy_email', email);
+  setBtnLoading(btnId, true, '確認中...');
+  gasCall({ action_type: 'member_check', email: email, token: FORM_TOKEN }, function(res) {
+    setBtnLoading(btnId, false);
+    if (res.status === 'ok') {
+      if (res.registered) {
+        state.memberId = res.memberId;
+        state.name     = res.name;
+        state.type     = res.type;
+        state.volType  = String(res.volunteer_type || '').toUpperCase();
+        state.notify   = (res.notify === 'instant' || res.notify === 'pause') ? res.notify : 'weekly';
+        store('ourdaisy_name', res.name || '');
+        showWelcome();
+      } else {
+        store('ourdaisy_name', null);
+        setProgress(1);
+        showSection('sec1b');
+      }
+    } else {
+      toast('うまく確認できませんでした。\n' + (res.message || 'しばらくしてから、もう一度お試しください。'), 'error');
+    }
+  });
+}
+
+function showWelcome() {
+  setProgress(2);
+  var h = new Date().getHours();
+  var hello = h < 10 ? 'おはようございます' : (h < 18 ? 'こんにちは' : 'こんばんは');
+  $('greet').textContent = state.name + ' さん、' + hello + '！';
+  $('welcomeMsg').textContent = '担当者ID：' + state.memberId +
+    (state.notify === 'pause' ? '　いまはお知らせをお休み中です。戻るときは「お知らせの受け取り方を変える」から選び直してください。' : '');
+  showSection('sec2');
+  loadHome();
+}
+
+// ── Step 1b：新規登録 ────────────────────────────────
+function register() {
+  var name    = $('name').value.trim();
+  var phone   = $('phone').value.trim();
+  var address = $('address').value.trim();
+  var types = ['A', 'B', 'C'].filter(function(t) { return $('type' + t).checked; });
+  var valid = true;
+  if (!name)    { showErr('nameErr');    valid = false; } else hideErr('nameErr');
+  if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) { showErr('phoneErr'); valid = false; } else hideErr('phoneErr');
+  if (!address) { showErr('addressErr'); valid = false; } else hideErr('addressErr');
+  if (!types.length) { showErr('typeErr'); valid = false; } else hideErr('typeErr');
+  if (!valid) { var f = document.querySelector('#sec1b .error-msg.show'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+
+  var primaryType = types.indexOf('A') >= 0 ? 'A' : (types.indexOf('B') >= 0 ? 'B' : 'C');
+  setBtnLoading('regBtnText', true);
+  gasCall({
+    action_type: 'register', email: state.email,
+    name: name, phone: phone, address: address,
+    type: 'volunteer', volunteer_type: primaryType,
+    newsletter: $('newsletter').checked,
+    notify: getRadioValue('notifyReg') || 'weekly',
+    token: FORM_TOKEN
+  }, function(res) {
+    setBtnLoading('regBtnText', false);
+    if (res.status === 'ok') {
+      state.memberId = res.memberId;
+      state.name     = name;
+      state.type     = 'volunteer';
+      state.volType  = primaryType;
+      state.notify   = getRadioValue('notifyReg') || 'weekly';
+      store('ourdaisy_name', name);
+      toast('登録しました。ようこそ、OurDAISYへ！', 'ok');
+      showWelcome();
+    } else {
+      toast('登録できませんでした。\n' + (res.message || ''), 'error');
+    }
+  });
+}
+
+// ── ホーム：担当中の作業・足あと・みんなの進み具合 ─────────
+function loadHome() {
+  if (!state.memberId) return;
+  // 担当中の作業（従来のGASでも動く）
+  gasCall({ action_type: 'get_my_task', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
+    var box = $('homeMyTask');
+    if (res.status === 'ok' && res.task_id) {
+      state.currentTask = res;
+      var meta = TASK_META[res.task_type] || { icon: '🔧', name: res.task_label || res.task_type };
+      var lg = langOf(res.book_id);
+      box.innerHTML =
+        '<div class="mytask-head"><span class="pill sun">いま担当中</span>' + dueBadge(res.deadline) + '</div>' +
+        '<div class="mytask-title">' + meta.icon + ' ' + esc(meta.name) + '</div>' +
+        '<div class="mytask-meta">📚 ' + esc(res.book_id) + (lg.name ? '（' + esc(lg.name) + '）' : '') + '　' + esc(res.book_title || '') +
+        '<br>期限：' + esc(fmtDate(res.deadline)) + '</div>' +
+        journeyHtml(res.task_type) +
+        '<div class="btn-row" style="margin-top:12px;">' +
+        '<button type="button" class="btn-primary" onclick="selectAction(\'complete\')">📤 完了を報告</button>' +
+        '<button type="button" class="btn-primary gray-btn" onclick="openExtFromHome()">🗓 期限の相談</button></div>';
+      box.classList.remove('hidden');
+    } else {
+      box.classList.add('hidden');
+    }
+  });
+  // 足あと・みんなの進み具合（新しいGASのときだけ）
+  gasCall({ action_type: 'get_volunteer_home', member_id: state.memberId, email: state.email, token: FORM_TOKEN }, function(res) {
+    if (res.status !== 'ok') { $('footprint').classList.add('hidden'); $('teamCard').classList.add('hidden'); $('voiceCard').classList.add('hidden'); return; }
+    if (res.volunteer_type && !state.volType) state.volType = String(res.volunteer_type).toUpperCase();
+    renderFootprint(res.stats || {});
+    renderTeam(res.team || null);
+    renderVoice(res.voices || []);
+  });
+}
+
+function renderFootprint(s) {
+  state.stats = s;
+  var tasks = +s.tasks || 0, books = +s.books || 0, langs = +s.langs || 0, dl = +s.downloads || 0;
+  var box = $('fpStats');
+  box.innerHTML =
+    '<div class="stat"><div class="stat-num">' + books + '<small>冊</small></div><div class="stat-label">関わった本</div></div>' +
+    '<div class="stat"><div class="stat-num">' + langs + '<small>言語</small></div><div class="stat-label">関わった言語</div></div>' +
+    '<div class="stat"><div class="stat-num">' + tasks + '<small>件</small></div><div class="stat-label">終えた作業</div></div>' +
+    '<div class="stat hl"><div class="stat-num">' + dl.toLocaleString() + '<small>回</small></div><div class="stat-label">あなたの本が<br>読まれた回数</div></div>';
+  var note;
+  if (tasks === 0) note = '最初の1冊を、いっしょにつくりましょう。終えた作業は、ここに記録されていきます。';
+  else if ((+s.published_books || 0) > 0) note = '関わった本のうち ' + s.published_books + '冊が図書館に並んでいます。読まれた回数は、その本が図書館からダウンロードされた回数です。';
+  else note = '関わった本が図書館に並ぶと、読まれた回数がここに表示されます。';
+  $('fpNote').textContent = note;
+  $('footprint').classList.remove('hidden');
+  showMilestone(tasks);
+}
+
+// 節目のお礼（同じ節目は1回だけ表示）
+function showMilestone(tasks) {
+  var key = 'od_ms_' + state.memberId;
+  var shown = parseInt(load(key) || '0', 10);
+  var hit = null;
+  for (var i = 0; i < MILESTONES.length; i++) if (tasks >= MILESTONES[i].n) hit = MILESTONES[i];
+  if (hit && hit.n > shown) {
+    $('msIcon').textContent = hit.icon;
+    $('msText').textContent = hit.text;
+    $('milestone').classList.remove('hidden');
+    store(key, String(hit.n));
+  } else {
+    $('milestone').classList.add('hidden');
+  }
+}
+
+function renderTeam(t) {
+  if (!t) { $('teamCard').classList.add('hidden'); return; }
+  $('teamBig').innerHTML =
+    '<div class="stat"><div class="stat-num">' + (+t.month_tasks || 0) + '<small>件</small></div><div class="stat-label">今月みんなで<br>終えた作業</div></div>' +
+    '<div class="stat"><div class="stat-num">' + (+t.month_published || 0) + '<small>冊</small></div><div class="stat-label">今月図書館に<br>並んだ本</div></div>' +
+    '<div class="stat hl"><div class="stat-num">' + (+t.total_published || 0) + '<small>冊</small></div><div class="stat-label">図書館に<br>並んだ本（合計）</div></div>';
+  var langs = t.langs || [];
+  var max = 1;
+  langs.forEach(function(l) { max = Math.max(max, (+l.published || 0) + (+l.in_progress || 0)); });
+  var h = '';
+  langs.forEach(function(l) {
+    var p = +l.published || 0, w = +l.in_progress || 0;
+    h += '<div class="lang-bar"><span>' + esc(l.name || l.code) + '</span><div class="track">' +
+      '<div class="fill-pub" style="width:' + (p / max * 100) + '%"></div>' +
+      '<div class="fill-wip" style="width:' + (w / max * 100) + '%"></div></div>' +
+      '<span class="num">' + p + '／' + (p + w) + '</span></div>';
+  });
+  $('langBars').innerHTML = h;
+  $('teamCard').classList.remove('hidden');
+}
+
+function renderVoice(list) {
+  if (!list || !list.length) { $('voiceCard').classList.add('hidden'); return; }
+  var v = list[Math.floor(Math.random() * list.length)];
+  $('voiceText').textContent = v.text || '';
+  $('voiceFrom').textContent = v.from ? '— ' + v.from : '';
+  $('voiceCard').classList.remove('hidden');
+}
+
+// ── Step 2：アクション選択 ───────────────────────────
+function selectAction(action, el) {
+  state.action = action;
+  document.querySelectorAll('#sec2 .choice-item').forEach(function(e) { e.classList.remove('selected'); });
+  if (el) el.classList.add('selected');
+  setTimeout(function() {
+    setProgress(3);
+    if (action === 'reserve') { showSection('sec3a'); loadAvailableTasks(); }
+    else if (action === 'complete') { showSection('sec3b'); loadMyTask(); }
+    else if (action === 'help') { showSection('sec3c'); prefillBookId(); }
+    else if (action === 'notify') { setRadioValue('notifyPref', state.notify || 'weekly'); showSection('sec3d'); }
+  }, el ? 180 : 0);
+}
+function prefillBookId() {
+  var t = state.currentTask;
+  if (t && t.book_id) {
+    if (!$('bugBookId').value) $('bugBookId').value = t.book_id;
+    if (!$('opBookId').value)  $('opBookId').value  = t.book_id;
+    $('bugBookHint').textContent = '担当中の作業の書籍IDを入れてあります。違う場合は書き直してください。';
+  } else {
+    $('bugBookHint').textContent = '書籍IDは、予約確認メールや作業フォルダの名前（例：LAO-001_…）にあります。';
+  }
+}
+
+// ── お知らせの受け取り方 ─────────────────────────────
+function getRadioValue(name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+function setRadioValue(name, value) {
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(rb) { rb.checked = (rb.value === value); });
+  syncRadioCards(name);
+}
+function syncRadioCards(name) {
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(rb) {
+    var item = rb.closest('.check-item'); if (item) item.classList.toggle('checked', rb.checked);
+  });
+}
+function saveNotifyPref() {
+  var pref = getRadioValue('notifyPref');
+  if (!pref) { toast('受け取り方を選んでください。', 'error'); return; }
+  setBtnLoading('notifyBtnText', true, '保存中...');
+  gasCall({ action_type: 'set_notify_pref', email: state.email, notify: pref, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('notifyBtnText', false);
+    if (res.status === 'ok') {
+      state.notify = pref;
+      toast('保存しました。' + (res.message ? '\n' + res.message : ''), 'ok');
+      showWelcome();
+    } else {
+      toast('保存できませんでした。\n' + (res.message || 'しばらくしてから、もう一度お試しください。'), 'error');
+    }
+  });
+}
+
+// ── Step 3A：作業をカードで選ぶ ───────────────────────
+function loadAvailableTasks() {
+  state.tasks = []; state.selectedTaskId = ''; state.filterLang = '';
+  updateReserveBar();
+  $('taskFilters').innerHTML = '';
+  $('taskList').innerHTML = '<div class="skeleton" style="height:84px;"></div><div class="skeleton" style="height:84px;"></div>';
+  gasCall({ action_type: 'get_available_tasks', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
+    if (res.status === 'ok' && res.tasks && res.tasks.length > 0) {
+      state.tasks = res.tasks.map(normalizeTask);
+      // あなたのタイプ向けを先に
+      state.tasks.sort(function(a, b) { return (b.mine ? 1 : 0) - (a.mine ? 1 : 0) || a.order - b.order; });
+      state.filterMine = false;
+      renderFilters();
+      renderTasks();
+    } else if (res.status === 'ok') {
+      $('taskList').innerHTML = '<div class="empty"><span class="big">🌙</span>いま予約できる作業はありません。<br>準備ができたら、メールでお知らせします。</div>';
+    } else {
+      $('taskList').innerHTML = '<div class="empty"><span class="big">📡</span>作業の一覧を読み込めませんでした。<br>' + esc(res.message || '') +
+        '<br><button type="button" class="btn-ghost" style="margin-top:10px;" onclick="loadAvailableTasks()">もう一度読み込む</button></div>';
+    }
+  });
+}
+
+// GASの応答（新旧どちらでも）を表示用にそろえる
+// 旧GASのlabel書式：BookID（言語）【作業】仮訳：タイトル
+function normalizeTask(t, i) {
+  var lg = langOf(t.book_id);
+  var title = t.title_ja || t.title || '';
+  var isProvisional = !!t.title_ja;
+  if (!title && t.label) {
+    var after = String(t.label).split('】');
+    title = after.length > 1 ? after.slice(1).join('】') : String(t.label);
+    if (title.indexOf('仮訳：') === 0) { title = title.slice(3); isProvisional = true; }
+  }
+  var main = TYPE_MAIN[state.volType];
+  var mine = (typeof t.recommended === 'boolean') ? t.recommended : !!(main && main.indexOf(t.task_type) >= 0);
+  return {
+    id: t.id, book_id: t.book_id, task_type: t.task_type,
+    lang_code: t.lang_code || lg.code, lang: t.lang_ja || lg.name,
+    title: title, provisional: isProvisional, original: t.title && t.title_ja ? t.title : '',
+    deadline_days: t.deadline_days || '', mine: mine, order: i
+  };
+}
+
+function renderFilters() {
+  var langs = [];
+  state.tasks.forEach(function(t) { if (t.lang && langs.indexOf(t.lang) < 0) langs.push(t.lang); });
+  var anyMine = state.tasks.some(function(t) { return t.mine; });
+  var h = '<button type="button" class="chip' + (!state.filterLang ? ' on' : '') + '" onclick="setLangFilter(\'\')">すべて（' + state.tasks.length + '）</button>';
+  langs.forEach(function(l) {
+    var n = state.tasks.filter(function(t) { return t.lang === l; }).length;
+    h += '<button type="button" class="chip' + (state.filterLang === l ? ' on' : '') + '" data-lang="' + esc(l) + '" onclick="setLangFilter(this.getAttribute(\'data-lang\'))">' + esc(l) + '（' + n + '）</button>';
+  });
+  if (anyMine) h += '<button type="button" class="chip mine' + (state.filterMine ? ' on' : '') + '" onclick="toggleMine()">⭐ わたしのタイプ向け</button>';
+  $('taskFilters').innerHTML = h;
+}
+function setLangFilter(l) { state.filterLang = l || ''; renderFilters(); renderTasks(); }
+function toggleMine() { state.filterMine = !state.filterMine; renderFilters(); renderTasks(); }
+
+function renderTasks() {
+  var first = state.stats && (+state.stats.tasks || 0) === 0;
+  var list = state.tasks.filter(function(t) {
+    return (!state.filterLang || t.lang === state.filterLang) && (!state.filterMine || t.mine);
+  });
+  if (!list.length) { $('taskList').innerHTML = '<div class="empty">この条件の作業はありません。</div>'; return; }
+  var h = '';
+  list.forEach(function(t) {
+    var meta = TASK_META[t.task_type] || { icon: '🔧', name: t.task_type, est: '', need: '' };
+    h += '<button type="button" class="task-card' + (t.id === state.selectedTaskId ? ' selected' : '') + '" data-id="' + esc(t.id) + '" onclick="pickTask(this.getAttribute(\'data-id\'))" aria-pressed="' + (t.id === state.selectedTaskId) + '">' +
+      '<div class="tc-top">' +
+        (t.lang ? '<span class="pill">🌏 ' + esc(t.lang) + '</span>' : '') +
+        '<span class="pill green">' + meta.icon + ' ' + esc(meta.name) + '</span>' +
+        (t.mine ? '<span class="pill sun">⭐ ' + (first ? 'はじめての方に' : 'あなたのタイプ向け') + '</span>' : '') +
+      '</div>' +
+      '<div class="tc-title">' + esc(t.title || t.book_id) +
+        '<small>' + esc(t.book_id) + (t.provisional ? '　※題名は自動で訳した仮訳です' : '') + (t.original ? '　原題：' + esc(t.original) : '') + '</small></div>' +
+      '<div class="tc-meta">' +
+        (meta.est ? '<span>⏱ 目安 ' + esc(meta.est) + '</span>' : '') +
+        (t.deadline_days ? '<span>📅 予約から' + esc(t.deadline_days) + '日以内</span>' : '') +
+        (meta.need ? '<span>🧰 ' + esc(meta.need) + '</span>' : '') +
+      '</div>' +
+      '<div class="tc-journey">' + journeyHtml(t.task_type) + '<div class="j-caption">この本の、いまの工程です</div></div>' +
+      '</button>';
+  });
+  $('taskList').innerHTML = h;
+}
+
+function pickTask(id) {
+  state.selectedTaskId = (state.selectedTaskId === id) ? '' : id;
+  hideErr('taskSelectErr');
+  document.querySelectorAll('#taskList .task-card').forEach(function(c) {
+    var on = c.getAttribute('data-id') === state.selectedTaskId;
+    c.classList.toggle('selected', on); c.setAttribute('aria-pressed', on);
+  });
+  updateReserveBar();
+}
+function findTask(id) { for (var i = 0; i < state.tasks.length; i++) if (state.tasks[i].id === id) return state.tasks[i]; return null; }
+function updateReserveBar() {
+  var t = findTask(state.selectedTaskId);
+  var btn = $('reserveBtn');
+  if (t) {
+    var meta = TASK_META[t.task_type] || { name: t.task_type };
+    $('selSummary').textContent = '選択中：' + t.book_id + '「' + (t.title || '') + '」の' + meta.name;
+    btn.disabled = false; $('reserveBtnText').textContent = 'この作業を予約する →';
+  } else {
+    $('selSummary').textContent = '';
+    btn.disabled = true; $('reserveBtnText').textContent = '作業を選んでください';
+  }
+  btnOriginalText.reserveBtnText = $('reserveBtnText').innerHTML;
+}
+
+function submitReserve() {
+  var taskId = state.selectedTaskId;
+  if (!taskId) { showErr('taskSelectErr'); return; }
+  hideErr('taskSelectErr');
+  var picked = findTask(taskId);
+  setBtnLoading('reserveBtnText', true, '予約中...');
+  gasCall({ action_type: 'reserve_task', email: state.email, member_id: state.memberId, task_id: taskId, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('reserveBtnText', false);
+    if (res.status === 'ok') {
+      showReserveComplete(res, picked);
+    } else {
+      toast('予約できませんでした。\n' + (res.message || 'もう一度お試しください。'), 'error');
+      loadAvailableTasks();
+    }
+  });
+}
+
+// ── 予約完了：マイ作業カード ───────────────────────────
+function showCompleteCard() {
+  $('progressWrap').style.display = 'none';
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  $('confetti').innerHTML = '';
+  $('completeExtra').innerHTML = '';
+  var card = $('completeCard');
   card.style.display = 'block';
-  card.classList.add('fade-in');
+  card.classList.remove('fade-in'); void card.offsetWidth; card.classList.add('fade-in');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── Step 3B：完了報告送信 ────────────────────────────
+function showReserveComplete(res, picked) {
+  showCompleteCard();
+  var type = res.task_type || (picked && picked.task_type) || '';
+  var meta = TASK_META[type] || { icon: '📖', name: '' };
+  var bookId = res.book_id || (picked && picked.book_id) || '';
+  var title  = res.book_title || (picked && picked.title) || '';
+  var taskId = res.task_id || (picked && picked.id) || '';
+  $('completeIcon').textContent  = '📖';
+  $('completeTitle').textContent = '予約できました！';
+  $('completeTitle').style.color = 'var(--green)';
+  $('completeMsg').textContent   = res.message || '作業の予約が完了しました。確認メールもお送りします。';
+
+  var steps = TASK_STEPS[type] || [];
+  var done = {};
+  try { done = JSON.parse(load('od_steps_' + taskId) || '{}'); } catch (e) {}
+  var stepsHtml = '';
+  steps.forEach(function(s, i) {
+    stepsHtml += '<label><input type="checkbox" data-task="' + esc(taskId) + '" data-i="' + i + '" onchange="saveStep(this)"' + (done[i] ? ' checked' : '') + '><span>' + esc(s) + '</span></label>';
+  });
+
+  var h = '<h3>🗂 マイ作業カード</h3>' +
+    '<div class="next-step-item"><span class="step-num">' + meta.icon + '</span><div><strong>' + esc(meta.name || '') + '</strong><br>' +
+      esc(bookId) + (title ? '「' + esc(title) + '」' : '') + '</div></div>' +
+    (res.deadline ? '<div class="next-step-item"><span class="step-num">⏰</span><div>期限：<strong>' + esc(fmtDate(res.deadline)) + '</strong> ' + dueBadge(res.deadline) + '</div></div>' : '') +
+    journeyHtml(type) +
+    (TASK_APP_GUIDE[type] ? '<div class="next-step-item" style="margin-top:8px;"><span class="step-num">🛠</span><div><strong>この作業で使うアプリ</strong><br>' + TASK_APP_GUIDE[type] + '</div></div>' : '') +
+    (steps.length ? '<div style="margin-top:10px;font-weight:700;font-size:0.84rem;color:var(--blue-d);">✅ 進め方（チェックしながら進められます）</div><div class="steps-check">' + stepsHtml + '</div>' : '') +
+    (res.folderUrl ? '<div class="next-step-item"><span class="step-num">💡</span><div>作業フォルダは、Googleにログインした状態で開いてください。ファイルは右クリック→「ダウンロード」で1つずつ保存し、名前は変えずに使ってください。</div></div>' +
+      '<a class="btn-primary" style="margin:6px 0 4px;" href="' + esc(res.folderUrl) + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer">📁 Googleドライブの作業フォルダを開く</a>' : '') +
+    '<a class="folder-btn" style="margin-top:8px;" href="' + MANUAL_URL + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer">📘 マニュアルのダウンロードページを開く</a>' +
+    (res.deadline ? calendarHtml(type, bookId, title, res.deadline, res.folderUrl) : '') +
+    '<p class="hint" style="margin-top:10px;">終わったら、このフォームの「作業完了を報告する」から知らせてください。予定どおりに進まないときは、そこから期限の相談もできます。</p>' +
+    '<button type="button" class="btn-primary gray-btn" style="margin-top:12px;" onclick="goHome()">ホームに戻る</button>';
+  $('nextSteps').innerHTML = h;
+}
+
+function saveStep(cb) {
+  var key = 'od_steps_' + cb.getAttribute('data-task');
+  var d = {};
+  try { d = JSON.parse(load(key) || '{}'); } catch (e) {}
+  d[cb.getAttribute('data-i')] = cb.checked;
+  store(key, JSON.stringify(d));
+}
+
+// カレンダー登録（Googleカレンダー／iPhone・Outlook用の.icsファイル）
+function calendarHtml(type, bookId, title, deadline, folderUrl) {
+  var dt = parseDate(deadline); if (!dt) return '';
+  var meta = TASK_META[type] || { name: '作業' };
+  var ymd = function(d) { return d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2); };
+  var next = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 1);
+  var summary = 'OurDAISY 期限：' + bookId + ' ' + meta.name;
+  var detail = (title ? '「' + title + '」\n' : '') + '完了報告：https://efajapan.github.io/ourdaisy-studio/volunteer-form.html' + (folderUrl ? '\n作業フォルダ：' + folderUrl : '');
+  var g = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(summary) +
+    '&dates=' + ymd(dt) + '/' + ymd(next) + '&details=' + encodeURIComponent(detail);
+  var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//EFA Japan//OurDAISY//JA', 'BEGIN:VEVENT',
+    'UID:' + bookId + '-' + type + '-' + ymd(dt) + '@ourdaisy', 'DTSTAMP:' + ymd(new Date()) + 'T000000Z',
+    'DTSTART;VALUE=DATE:' + ymd(dt), 'DTEND;VALUE=DATE:' + ymd(next),
+    'SUMMARY:' + summary, 'DESCRIPTION:' + detail.replace(/\n/g, '\\n'),
+    'BEGIN:VALARM', 'TRIGGER:-P2D', 'ACTION:DISPLAY', 'DESCRIPTION:' + summary, 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  var icsUrl = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+  return '<div style="margin-top:6px;font-weight:700;font-size:0.84rem;color:var(--blue-d);">📅 期限をカレンダーに入れる</div>' +
+    '<div class="cal-row"><a class="btn-ghost" href="' + g + '" target="_blank" rel="noopener">Googleカレンダー</a>' +
+    '<a class="btn-ghost" href="' + icsUrl + '" download="OurDAISY_' + esc(bookId) + '.ics">iPhone・Outlook など</a></div>';
+}
+
+// ── Step 3B：完了報告 ────────────────────────────────
+function loadMyTask() {
+  var display = $('myTaskDisplay');
+  display.innerHTML = '<p class="hint"><span class="loading dark"></span> 読み込み中...</p>';
+  state.currentTask = null; state.autoCheck = null;
+  Object.keys(TASK_GUIDE_MAP).map(function(k) { return TASK_GUIDE_MAP[k]; })
+    .concat(['folderLinkSection']).forEach(function(id) { var el = $(id); if (el) el.style.display = 'none'; });
+  $('autoCheck').classList.add('hidden');
+  document.querySelectorAll('.manual-check').forEach(function(el) { el.style.display = ''; });
+  document.querySelectorAll('.file-check-row input').forEach(function(cb) { cb.checked = false; });
+  $('completeBtnWrapper').style.display = 'none';
+  $('noTaskMsg').style.display = 'none';
+  $('notesField').style.display = '';
+
+  gasCall({ action_type: 'get_my_task', member_id: state.memberId, token: FORM_TOKEN }, function(res) {
+    if (res.status === 'ok' && res.task_id) {
+      state.currentTask = res;
+      showMyTask(res);
+      runAutoCheck(false);
+    } else if (res.status === 'ok') {
+      showNoTask();
+    } else {
+      display.innerHTML = '<div class="warn-box">担当中の作業を読み込めませんでした。' + esc(res.message || '') +
+        '<br><button type="button" class="btn-ghost" style="margin-top:8px;" onclick="loadMyTask()">もう一度読み込む</button></div>';
+    }
+  });
+}
+
+function showMyTask(task) {
+  var meta = TASK_META[task.task_type] || { icon: '🔧', name: task.task_label || task.task_type };
+  var lg = langOf(task.book_id);
+  $('myTaskDisplay').innerHTML =
+    '<div class="mytask">' +
+      '<div class="mytask-head"><span class="pill sun">担当中の作業</span>' + dueBadge(task.deadline) + '</div>' +
+      '<div class="mytask-title">' + meta.icon + ' ' + esc(meta.name) + '</div>' +
+      '<div class="mytask-meta">📚 <strong>' + esc(task.book_id) + '</strong>' + (lg.name ? '（' + esc(lg.name) + '）' : '') + '　' + esc(task.book_title || '') +
+        '<br>期限：' + esc(fmtDate(task.deadline)) + '</div>' +
+      journeyHtml(task.task_type) +
+      '<p style="text-align:right;margin-top:8px;"><button type="button" class="btn-link" onclick="toggleExt(true)">🗓 期限の相談・続けるのが難しいとき</button></p>' +
+    '</div>';
+  if (task.folder_url) { $('folderLinkBtn').href = task.folder_url; $('folderLinkSection').style.display = 'block'; }
+  var guideId = TASK_GUIDE_MAP[task.task_type];
+  if (guideId && $(guideId)) $(guideId).style.display = 'block';
+  $('completeBtnWrapper').style.display = 'flex';
+}
+
+function showNoTask() {
+  $('myTaskDisplay').innerHTML = '';
+  $('noTaskMsg').style.display = 'block';
+  $('completeBtnWrapper').style.display = 'none';
+  $('notesField').style.display = 'none';
+}
+
+// アップロード済みファイルの自動確認（新しいGASのときだけ。古いGASでは手動のチェック欄を使う）
+function runAutoCheck(thenSubmit) {
+  if (!state.currentTask) return;
+  var box = $('autoCheck');
+  if (thenSubmit === 'refresh') box.innerHTML = '<p class="hint"><span class="loading dark"></span> フォルダの中を確かめています...</p>';
+  gasCall({ action_type: 'check_task_files', member_id: state.memberId, task_id: state.currentTask.task_id, token: FORM_TOKEN }, function(res) {
+    if (res.status !== 'ok' || !res.files) {
+      state.autoCheck = null;
+      box.classList.add('hidden');
+      if (thenSubmit === true) doSubmitComplete();
+      return;
+    }
+    state.autoCheck = res;
+    var h = '<div class="file-checklist-title">🔍 作業フォルダの中を自動で確かめました</div>';
+    res.files.forEach(function(f) {
+      var mark = f.found ? '✅' : (f.required ? '⚠️' : '➖');
+      h += '<div class="auto-row' + (!f.found && f.required ? ' ng' : '') + '"><span class="auto-mark">' + mark + '</span><div>' + esc(f.label) +
+        (f.found && f.names && f.names.length ? '<div class="names">' + esc(f.names.join('、')) + '</div>' : '') +
+        (!f.found && f.note ? '<div class="names">' + esc(f.note) + '</div>' : '') + '</div></div>';
+    });
+    h += res.ready
+      ? '<p class="hint" style="color:#1A5C38;margin-top:8px;">必要なファイルがそろっています。このまま報告を送信できます。</p>'
+      : '<p class="hint" style="color:#8A3A10;margin-top:8px;">⚠️ のファイルが見つかりません。作業フォルダに入れてから「もう一度確かめる」を押してください。</p>';
+    h += '<button type="button" class="btn-ghost" style="margin-top:8px;" onclick="runAutoCheck(\'refresh\')">🔄 もう一度確かめる</button>';
+    box.innerHTML = h;
+    box.classList.remove('hidden');
+    document.querySelectorAll('.manual-check').forEach(function(el) { el.style.display = 'none'; });
+    if (thenSubmit === true) {
+      if (res.ready) doSubmitComplete();
+      else { setBtnLoading('completeBtnText', false); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); toast('まだ入っていないファイルがあります。', 'error'); }
+    }
+  });
+}
+
 function submitComplete() {
-  if (!state.currentTask) {
-    alert('担当中の作業が見つかりません。ページを再読み込みしてください。');
+  if (!state.currentTask) { toast('担当中の作業が見つかりません。ページを読み込み直してください。', 'error'); return; }
+  if (state.autoCheck) {
+    // 送信の直前に、もう一度フォルダを確かめる
+    setBtnLoading('completeBtnText', true, 'ファイルを確かめています...');
+    runAutoCheck(true);
     return;
   }
-
-  var notes   = document.getElementById('notes').value;
+  // 古いGAS：手動のチェック欄で確認
   var taskType = state.currentTask.task_type;
-  var valid   = true;
-
-  // TRANSLATEタスクのファイルチェック（v9新設）
-  // v17変更：_classify.jsonは、母語本文が短い作品では仕様上生成されないことがあるため、
-  // 必須チェックから除外（Wordファイル3種類・proper_nouns.jsonのみ必須とする）。
-  // v18変更：_proper_nouns.jsonも、カタカナの固有名詞が無い作品では翻訳アプリが生成しないため必須から除外
-  //（DAISYアプリはこのファイルを読まず本文から固有名詞を検出するため、無くても後工程に支障なし）。
-  if (taskType === 'TRANSLATE') {
-    var trChecked = ['fc-tr1'].every(function(id) {
-      var el = document.getElementById(id);
-      return el && el.checked;
-    });
-    if (!trChecked) {
-      alert('3種類のWordファイルをGoogleドライブに\nアップロードしてからチェックを入れてください。');
-      valid = false;
-    }
+  var need = { TRANSLATE: ['fc-tr1'], DAISY: ['fc1', 'fc2'], TTS: ['fc-tts1'] }[taskType] || [];
+  var ok = need.every(function(id) { var el = $(id); return el && el.checked; });
+  if (!ok) {
+    var msg = { TRANSLATE: '3種類のWordファイルをGoogleドライブにアップロードしてから、チェックを入れてください。',
+                DAISY: 'EPUBファイルとTSVをGoogleドライブにアップロードしてから、チェックを入れてください。',
+                TTS: 'TTSレポートフォームをGoogleドライブにアップロードしてから、チェックを入れてください。' }[taskType];
+    toast(msg, 'error');
+    var first = document.querySelector('#' + TASK_GUIDE_MAP[taskType] + ' .file-checklist');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
   }
-
-  // DAISYタスクのファイルチェック
-  // v17変更：_classify.jsonは母語本文が短い作品では生成されないことがあるため必須から除外
-  if (taskType === 'DAISY') {
-    var allChecked = ['fc1','fc2'].every(function(id) {
-      var el = document.getElementById(id);
-      return el && el.checked;
-    });
-    if (!allChecked) {
-      alert('EPUBファイルとTSVをGoogleドライブに\nアップロードしてからチェックボックスにチェックを入れてください。');
-      valid = false;
-    }
-  }
-
-  // TTSタスクのファイルチェック
-  // v17変更：_classify.jsonは母語本文が短い作品では生成されないことがあるため必須から除外
-  if (taskType === 'TTS') {
-    var ttsChecked = ['fc-tts1'].every(function(id) {
-      var el = document.getElementById(id);
-      return el && el.checked;
-    });
-    if (!ttsChecked) {
-      alert('TTSレポートフォームをGoogleドライブに\nアップロードしてからチェックを入れてください。');
-      valid = false;
-    }
-  }
-
-  if (!valid) return;
-
   setBtnLoading('completeBtnText', true);
-  gasCall({
-    action_type: 'complete_task',
-    email:       state.email,
-    member_id:   state.memberId,
-    task_id:     state.currentTask.task_id,
-    notes:       notes,
-    token:       FORM_TOKEN
-  }, function(res) {
+  doSubmitComplete();
+}
+
+function doSubmitComplete() {
+  var task = state.currentTask;
+  setBtnLoading('completeBtnText', true);
+  gasCall({ action_type: 'complete_task', email: state.email, member_id: state.memberId,
+            task_id: task.task_id, notes: $('notes').value, token: FORM_TOKEN }, function(res) {
     setBtnLoading('completeBtnText', false);
     if (res.status === 'ok') {
-      showCompleteWithClosing(res);
+      $('notes').value = '';
+      store('od_steps_' + task.task_id, null);
+      showCompleteWithClosing(res, task);
     } else {
-      alert('エラー：' + (res.message || '送信に失敗しました。'));
+      toast('送信できませんでした。\n' + (res.message || 'もう一度お試しください。'), 'error');
     }
   });
 }
 
-// ── エラー報告：解決完了 ─────────────────────────────────
+// ── 完了画面：次の行き先・お礼 ─────────────────────────
+function showCompleteWithClosing(res, task) {
+  showCompleteCard();
+  launchConfetti();
+  var type = task.task_type;
+  var meta = TASK_META[type] || { name: '' };
+  $('completeIcon').textContent  = '🎉';
+  $('completeTitle').textContent = 'ありがとうございました！';
+  $('completeTitle').style.color = 'var(--green)';
+  $('completeMsg').textContent   = res.message || (meta.name + 'の完了報告を受け付けました。お疲れさまでした！');
+
+  var nextType = res.next_task_type || '';
+  var nextMeta = TASK_META[nextType];
+  var handoff;
+  if (type === 'TTS') {
+    handoff = '音声の確認が終わり、この本は<strong>完成</strong>しました。図書館での公開の準備に入ります。公開されたら、メールでお知らせします。';
+  } else if (nextMeta) {
+    handoff = 'この本は次に<strong>「' + esc(nextMeta.name) + '」</strong>へ進みます。あなたのバトンを、次の方が受け取ります。';
+  } else {
+    handoff = 'この本は、次の工程の準備に入ります。あなたのバトンで、また一歩前に進みました。';
+  }
+  $('completeExtra').innerHTML =
+    '<div class="handoff"><div style="font-weight:700;font-size:0.86rem;color:#8A4B00;">📚 ' + esc(task.book_id) + '　' + esc(task.book_title || '') + '</div>' +
+    journeyHtml(type, 'handoff') + '<p>' + handoff + '</p></div>';
+
+  // 節目のお礼（終えた作業の数が分かるときだけ）
+  if (state.stats) {
+    state.stats.tasks = (+state.stats.tasks || 0) + 1;
+    var n = state.stats.tasks;
+    for (var i = 0; i < MILESTONES.length; i++) {
+      if (MILESTONES[i].n === n) {
+        $('completeExtra').innerHTML += '<div class="milestone" style="text-align:left;"><span class="ms-icon">' + MILESTONES[i].icon + '</span><div>' + esc(MILESTONES[i].text) + '</div></div>';
+        store('od_ms_' + state.memberId, String(n));
+      }
+    }
+  }
+
+  $('nextSteps').innerHTML =
+    '<h3>次はどうしますか？</h3>' +
+    '<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">' +
+    '<button class="btn-primary" onclick="continueReservation()">📖 続けて別の作業を予約する</button>' +
+    '<button class="btn-primary gray-btn" onclick="finishForToday()">✋ 今日は終わりにする</button></div>';
+  state.currentTask = null;
+}
+
+function launchConfetti() {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var colors = ['#F39800', '#005EAD', '#2A9D5C', '#E84B6A', '#F6C77A', '#7BB8F0'];
+  var box = $('confetti'), h = '';
+  for (var i = 0; i < 46; i++) {
+    h += '<i style="left:' + (Math.random() * 100) + '%;background:' + colors[i % colors.length] +
+      ';animation-delay:' + (Math.random() * 0.6).toFixed(2) + 's;transform:rotate(' + Math.floor(Math.random() * 360) + 'deg)"></i>';
+  }
+  box.innerHTML = h;
+  setTimeout(function() { box.innerHTML = ''; }, 3600);
+}
+
+function continueReservation() { $('completeCard').style.display = 'none'; goReserve(); }
+function finishForToday() {
+  $('confetti').innerHTML = '';
+  $('completeIcon').textContent  = '🙏';
+  $('completeTitle').textContent = 'お疲れさまでした！';
+  $('completeTitle').style.color = 'var(--blue)';
+  $('completeMsg').textContent   = '今日の作業、ありがとうございました。また次回、よろしくお願いします。';
+  $('completeExtra').innerHTML = '<a class="folder-btn" href="' + LIBRARY_URL + '" target="_blank" rel="noopener">📚 OurDAISY図書館をのぞいてみる</a>';
+  $('nextSteps').innerHTML = '';
+}
+
+// ── 期限の相談 ─────────────────────────────────────────
+function openExtFromHome() { selectAction('complete'); setTimeout(function() { toggleExt(true); }, 900); }
+function toggleExt(open) {
+  var p = $('extPanel');
+  p.classList.toggle('open', !!open);
+  if (open) p.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function pickExtDays(el) {
+  state.extDays = +el.getAttribute('data-days');
+  document.querySelectorAll('#extDays .chip').forEach(function(c) { c.classList.toggle('on', c === el); });
+}
+function submitExtension() {
+  var t = state.currentTask;
+  if (!t) { toast('担当中の作業が見つかりません。', 'error'); return; }
+  var reason = $('extReason').value.trim();
+  setBtnLoading('extBtnText', true, '送信中...');
+  gasCall({ action_type: 'request_extension', email: state.email, member_id: state.memberId, task_id: t.task_id,
+            days: state.extDays, reason: reason, token: FORM_TOKEN }, function(res) {
+    if (res.status === 'ok') { extDone(res); return; }
+    // 古いGAS：事務局への連絡として送る
+    gasCall({ action_type: 'help', email: state.email, member_id: state.memberId, book_id: t.book_id,
+              problem_type: '期限延長の相談', has_screenshot: false, token: FORM_TOKEN,
+              details: '【期限延長の相談】\nタスク：' + t.task_id + '（' + (TASK_META[t.task_type] ? TASK_META[t.task_type].name : t.task_type) + '）\n' +
+                       '現在の期限：' + fmtDate(t.deadline) + '\n希望：' + state.extDays + '日延長\n理由・状況：' + (reason || '（記入なし）') }, function(r2) {
+      if (r2.status === 'ok') extDone(r2);
+      else { setBtnLoading('extBtnText', false); toast('送信できませんでした。\n' + (r2.message || ''), 'error'); }
+    });
+  });
+}
+function extDone(res) {
+  setBtnLoading('extBtnText', false);
+  $('extReason').value = '';
+  toggleExt(false);
+  toast(res.ext_message || '期限の相談を受け付けました。事務局からメールでお返事します。', 'ok', 6000);
+}
+
+// ── 困ったときは ─────────────────────────────────────
 function resolveError() {
-  showGenericComplete('✅', '解決できました！',
-    'お疲れ様でした。作業を続けてください。',
-    ['引き続き作業をお続けください。', '書籍の作業が完了したら完了報告を忘れずに送信してください。']
-  );
-}
-
-// ── エラー報告：操作疑問フォーム送信 ────────────────────
-function submitOperationReport() {
-  var detail = document.getElementById('opDetail').value.trim();
-  var bookId = document.getElementById('opBookId').value.trim();
-  if (!detail) { showErr('opDetailErr'); return; }
-  hideErr('opDetailErr');
-  setBtnLoading('opBtnText', true);
-  gasCall({
-    action_type:    'help',
-    email:          state.email,
-    member_id:      state.memberId,
-    book_id:        bookId || '不明',
-    problem_type:   '操作方法の疑問',
-    details:        detail,
-    has_screenshot: false,
-    token:          FORM_TOKEN
-  }, function(res) {
-    setBtnLoading('opBtnText', false);
-    if (res.status === 'ok') {
-      showHelpComplete(false, false, res);
-    } else {
-      alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
-    }
-  });
+  showCompleteCard();
+  $('completeIcon').textContent  = '✅';
+  $('completeTitle').textContent = '解決できてよかったです！';
+  $('completeTitle').style.color = 'var(--green)';
+  $('completeMsg').textContent   = 'このまま作業を続けてください。';
+  $('nextSteps').innerHTML = '<h3>📬 次にすること</h3>' +
+    '<div class="next-step-item"><span class="step-num">1</span>引き続き作業をお続けください。</div>' +
+    '<div class="next-step-item"><span class="step-num">2</span>作業が終わったら、完了報告をお忘れなく。</div>' +
+    '<button type="button" class="btn-primary gray-btn" style="margin-top:12px;" onclick="goHome()">ホームに戻る</button>';
 }
 function resetErrorForm() {
-  state.errorPath   = '';
-  state.selectedApp = '';
-  state.selectedOS  = '';
-  ['err-step2','err-step3','err-step4-app','err-step4-op'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.style.display = 'none';
+  state.errorPath = ''; state.selectedApp = ''; state.selectedOS = '';
+  ['err-step2', 'err-step3', 'err-step4-app', 'err-step4-op'].forEach(function(id) { var el = $(id); if (el) el.style.display = 'none'; });
+  ['err-step1', 'app-choice-list', 'os-choice-list'].forEach(function(id) {
+    var el = $(id); if (el) el.querySelectorAll('.choice-item').forEach(function(e) { e.classList.remove('selected'); });
   });
-  ['err-step1','app-choice-list','os-choice-list'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.querySelectorAll('.choice-item').forEach(function(e) { e.classList.remove('selected'); });
-  });
-  var em = document.getElementById('errorMsg');
-  var bi = document.getElementById('bugBookId');
-  var av = document.getElementById('appVersion');
-  if (em) em.value = '';
-  if (bi) bi.value = '';
-  if (av) av.value = '';
+  ['errorMsg', 'bugBookId', 'appVersion', 'opDetail', 'opBookId'].forEach(function(id) { var el = $(id); if (el) el.value = ''; });
 }
-
-// ── エラー報告：パス選択 ─────────────────────────────────
 function selectErrorPath(path, el) {
   state.errorPath = path;
   document.querySelectorAll('#err-step1 .choice-item').forEach(function(e) { e.classList.remove('selected'); });
   el.classList.add('selected');
-  var faq = document.getElementById('err-faq-content');
-  if (faq) {
-    if (path === 'app') {
-      faq.innerHTML =
-        'まず以下を試してください：<br><br>' +
-        '(1) パソコンを再起動してから、もう一度アプリを起動する<br>' +
-        '(2) Wordファイルが別のウィンドウで開いたままになっていないか確認する<br>' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;→ Wordをすべて閉じてから再実行する<br>' +
-        '(3) アプリは、種類が「Windows バッチ ファイル」の方をダブルクリックして開く<br>' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;→ DAISYアプリだけが開かない場合は「Visual C++ 再頒布可能パッケージ（x64）」を入れる（制作マニュアル Ch.2-5）<br>' +
-        '(4) 作業に合ったアプリを開いているか確認する（翻訳アプリ実行＝EFATranslator、EPUB作成＝EFAOurDaisyBilingual）<br>' +
-        '※ ファイルの名前は変えないでください（原書の題名のままで問題ありません）';
-    } else {
-      faq.innerHTML =
-        'まず以下を自分で試してください：<br><br>' +
-        '(1) 該当の作業手順を最初からゆっくり読み直してやり直してみる<br>' +
-        '(2) 不明な用語は（括弧内の説明）を参照する<br>' +
-        '(3) 同じ操作を別の書籍ファイルや別のフォルダで試してみる';
-    }
-  }
-  setTimeout(function() { showErrorStep(2); }, 200);
+  ['err-step2', 'err-step3', 'err-step4-app', 'err-step4-op'].forEach(function(id) { $(id).style.display = 'none'; });
+  $('err-faq-content').innerHTML = path === 'app' ? FAQ_APP_HTML : FAQ_OP_HTML;
+  setTimeout(function() { showErrorStep(2); }, 180);
 }
-
-// ── エラー報告：ステップ表示 ─────────────────────────────
 function showErrorStep(step) {
-  var target = step === 4
-    ? (state.errorPath === 'app' ? 'err-step4-app' : 'err-step4-op')
-    : 'err-step' + step;
-  var el = document.getElementById(target);
-  if (!el) return;
+  var target = step === 4 ? (state.errorPath === 'app' ? 'err-step4-app' : 'err-step4-op') : 'err-step' + step;
+  var el = $(target); if (!el) return;
   el.style.display = 'block';
   setTimeout(function() { el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
 }
-
-// ── エラー報告：解決完了 ─────────────────────────────────
-function resolveError() {
-  showGenericComplete('OK', '解決できました！',
-    'お疲れ様でした。作業を続けてください。',
-    ['引き続き作業をお続けください。', '書籍の作業が完了したら完了報告を忘れずに送信してください。']
-  );
-}
-
-// ── エラー報告：アプリ選択 ───────────────────────────────
 function selectApp(appName, el) {
   state.selectedApp = appName;
   document.querySelectorAll('#app-choice-list .choice-item').forEach(function(e) { e.classList.remove('selected'); });
-  el.classList.add('selected');
-  hideErr('appErr');
+  el.classList.add('selected'); hideErr('appErr');
 }
-
-// ── エラー報告：OS選択 ───────────────────────────────────
 function selectOS(osName, el) {
   state.selectedOS = osName;
   document.querySelectorAll('#os-choice-list .choice-item').forEach(function(e) { e.classList.remove('selected'); });
-  el.classList.add('selected');
-  hideErr('osErr');
+  el.classList.add('selected'); hideErr('osErr');
 }
-
-// ── エラー報告：バグ報告送信 ─────────────────────────────
 function submitBugReport() {
-  var errorMsg = document.getElementById('errorMsg').value.trim();
-  var bookId   = document.getElementById('bugBookId').value.trim();
-  var version  = document.getElementById('appVersion').value.trim();
-  var valid    = true;
-  if (!state.selectedApp) { showErr('appErr');       valid = false; } else hideErr('appErr');
-  if (!errorMsg)           { showErr('errorMsgErr');  valid = false; } else hideErr('errorMsgErr');
-  if (!bookId)             { showErr('bugBookIdErr'); valid = false; } else hideErr('bugBookIdErr');
-  if (!state.selectedOS)   { showErr('osErr');        valid = false; } else hideErr('osErr');
-  if (!valid) {
-    var firstErr = document.querySelector('#err-step4-app .error-msg.show');
-    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-  var details =
-    '【アプリ】' + state.selectedApp + '\n' +
-    '【エラーメッセージ】\n' + errorMsg + '\n\n' +
-    '【書籍ID】' + bookId + '\n' +
-    '【OS】' + state.selectedOS + '\n' +
-    '【アプリバージョン】' + (version || '不明');
+  var errorMsg = $('errorMsg').value.trim();
+  var bookId   = $('bugBookId').value.trim();
+  var version  = $('appVersion').value.trim();
+  var valid = true;
+  if (!state.selectedApp) { showErr('appErr'); valid = false; } else hideErr('appErr');
+  if (!errorMsg) { showErr('errorMsgErr'); valid = false; } else hideErr('errorMsgErr');
+  if (!bookId) { showErr('bugBookIdErr'); valid = false; } else hideErr('bugBookIdErr');
+  if (!state.selectedOS) { showErr('osErr'); valid = false; } else hideErr('osErr');
+  if (!valid) { var f = document.querySelector('#err-step4-app .error-msg.show'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  var details = '【アプリ】' + state.selectedApp + '\n【エラーメッセージ】\n' + errorMsg + '\n\n' +
+    '【書籍ID】' + bookId + '\n【OS】' + state.selectedOS + '\n【アプリバージョン】' + (version || '不明');
   setBtnLoading('bugBtnText', true);
-  console.log('[OurDAISY] バグ報告送信開始');
-  gasCall({
-    action_type:    'help',
-    email:          state.email,
-    member_id:      state.memberId,
-    book_id:        bookId,
-    problem_type:   'アプリバグ報告：' + state.selectedApp,
-    details:        details,
-    has_screenshot: false,
-    token:          FORM_TOKEN
-  }, function(res) {
+  gasCall({ action_type: 'help', email: state.email, member_id: state.memberId, book_id: bookId,
+            problem_type: 'アプリバグ報告：' + state.selectedApp, details: details, has_screenshot: false, token: FORM_TOKEN }, function(res) {
     setBtnLoading('bugBtnText', false);
-    console.log('[OurDAISY] バグ報告応答:', JSON.stringify(res));
-    if (res.status === 'ok') {
-      showHelpComplete(false, false, res);
-    } else {
-      alert('エラー：' + (res.message || '送信に失敗しました。再試行してください。'));
-    }
+    if (res.status === 'ok') showHelpComplete(res);
+    else toast('送信できませんでした。\n' + (res.message || 'もう一度お試しください。'), 'error');
   });
 }
-
-
-// ── 汎用完了画面 ──────────────────────────────────────
-function showGenericComplete(icon, title, msg, steps) {
-  document.getElementById('progressWrap').style.display = 'none';
-  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-  document.getElementById('completeIcon').textContent  = icon;
-  document.getElementById('completeTitle').textContent = title;
-  document.getElementById('completeTitle').style.color = icon === '🆘' ? 'var(--red)' : 'var(--green)';
-  document.getElementById('completeMsg').textContent   = msg;
-  var stepsHtml = '<h3>📬 次にすること</h3>';
-  steps.forEach(function(s, i) {
-    stepsHtml += '<div class="next-step-item"><span class="step-num">' + (i+1) + '</span>' + s + '</div>';
+function submitOperationReport() {
+  var detail = $('opDetail').value.trim();
+  var bookId = $('opBookId').value.trim();
+  if (!detail) { showErr('opDetailErr'); return; }
+  hideErr('opDetailErr');
+  setBtnLoading('opBtnText', true);
+  gasCall({ action_type: 'help', email: state.email, member_id: state.memberId, book_id: bookId || '不明',
+            problem_type: '操作方法の疑問', details: detail, has_screenshot: false, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('opBtnText', false);
+    if (res.status === 'ok') showHelpComplete(res);
+    else toast('送信できませんでした。\n' + (res.message || 'もう一度お試しください。'), 'error');
   });
-  document.getElementById('nextSteps').innerHTML = stepsHtml;
-  var card = document.getElementById('completeCard');
-  card.style.display = 'block';
-  card.classList.add('fade-in');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function showHelpComplete(res) {
+  showCompleteCard();
+  $('completeIcon').textContent  = '🤝';
+  $('completeTitle').textContent = '知らせてくださり、ありがとうございます';
+  $('completeTitle').style.color = 'var(--blue)';
+  $('completeMsg').textContent   = res.message || '事務局で内容を確認します。';
+  $('nextSteps').innerHTML = '<h3>📬 このあと</h3>' +
+    '<div class="next-step-item"><span class="step-num">1</span>よくある内容の場合は、解決方法をメールでお送りします。</div>' +
+    '<div class="next-step-item"><span class="step-num">2</span>事務局で内容を確認し、必要に応じてご連絡します。</div>' +
+    '<button type="button" class="btn-primary gray-btn" style="margin-top:12px;" onclick="goHome()">ホームに戻る</button>';
 }
 
-// ── エラー報告完了画面（スクショ有無で分岐）────────────
-var SCREENSHOT_DRIVE_URL = 'https://drive.google.com/drive/folders/1eXT64UKgMpZeJVa4IrPWzI4AO37VKRjl';
-function showHelpComplete(isFaq, hasShot, res) {
-  document.getElementById('progressWrap').style.display = 'none';
-  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-  document.getElementById('completeIcon').textContent  = isFaq ? '💡' : '🆘';
-  document.getElementById('completeTitle').textContent = isFaq ? 'よくある解決方法をメールでお送りしました！' : 'エラー報告を受け付けました！';
-  document.getElementById('completeTitle').style.color = isFaq ? 'var(--green)' : 'var(--red)';
-  document.getElementById('completeMsg').textContent   = res.message || 'ご報告ありがとうございます。';
-
-  var stepsHtml = '<h3>📬 次にすること</h3>';
-  if (isFaq) {
-    stepsHtml += '<div class="next-step-item"><span class="step-num">1</span>登録メールに解決方法が届きます。まずお試しください。</div>';
-    stepsHtml += '<div class="next-step-item"><span class="step-num">2</span>解決しない場合は、返信メールにご連絡ください。</div>';
-  } else {
-    stepsHtml += '<div class="next-step-item"><span class="step-num">1</span>ご報告ありがとうございます。EFAで内容を確認します。</div>';
-    stepsHtml += '<div class="next-step-item"><span class="step-num">2</span>深刻な問題の場合は折り返しご連絡します。</div>';
-  }
-
-  // スクショがある場合：Driveへの直接アップロードを案内
-  if (hasShot) {
-    stepsHtml +=
-      '<div class="next-step-item" style="margin-top:12px;padding:12px;background:var(--org-l);border:2px solid var(--orange);border-radius:10px;flex-direction:column;gap:8px;">' +
-      '<div style="font-weight:700;color:#7A4200;">📸 スクリーンショットの提出</div>' +
-      '<div style="font-size:0.82rem;color:#7A4200;">撮影したスクリーンショットを以下のGoogleドライブフォルダに直接アップロードしてください。</div>' +
-      '<a href="' + SCREENSHOT_DRIVE_URL + '" onclick="openInNewWindow(this.href); return false;" rel="noopener noreferrer" ' +
-      'style="display:inline-block;padding:8px 16px;background:var(--orange);color:#fff;border-radius:7px;font-weight:700;font-size:0.82rem;text-decoration:none;margin-top:4px;">' +
-      '📁 Googleドライブにアップロード</a>' +
-      '</div>';
-  }
-
-  document.getElementById('nextSteps').innerHTML = stepsHtml;
-  var card = document.getElementById('completeCard');
-  card.style.display = 'block';
-  card.classList.add('fade-in');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ── GAS通信 ──────────────────────────────────────────
-function gasCall(data, callback) {
+// ── GAS通信（失敗したら1回だけやり直す） ─────────────────
+function gasCall(data, callback, retried) {
   var url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
   fetch(url)
-  .then(function(r) { return r.json(); })
-  .then(function(res) { callback(res); })
-  .catch(function(err) {
-    console.error('通信エラー:', err);
-    document.querySelectorAll('.btn-primary').forEach(function(b) { b.disabled = false; });
-    callback({ status: 'error', message: 'ネットワークエラーが発生しました。インターネット接続を確認して再試行してください。' });
-  });
+    .then(function(r) { return r.json(); })
+    .then(function(res) { callback(res || { status: 'error' }); })
+    .catch(function(err) {
+      if (!retried) { setTimeout(function() { gasCall(data, callback, true); }, 1200); return; }
+      console.error('通信エラー:', err);
+      callback({ status: 'error', message: 'インターネットに接続できませんでした。接続を確かめて、もう一度お試しください。' });
+    });
 }
 
-// ── ボタンローディング ────────────────────────────────
+// ── ボタンの読み込み表示 ───────────────────────────────
 var btnOriginalText = {};
-function setBtnLoading(btnTextId, loading) {
-  var el  = document.getElementById(btnTextId);
-  if (!el) return;
+function setBtnLoading(btnTextId, loading, label) {
+  var el = $(btnTextId); if (!el) return;
   var btn = el.closest('button');
   if (loading) {
-    if (!btnOriginalText[btnTextId]) btnOriginalText[btnTextId] = el.innerHTML;
-    el.innerHTML = '<span class="loading"></span> 送信中...';
+    if (!(btnTextId in btnOriginalText) || el.innerHTML.indexOf('class="loading"') < 0) btnOriginalText[btnTextId] = el.innerHTML;
+    el.innerHTML = '<span class="loading"></span> ' + (label || '送信中...');
     if (btn) btn.disabled = true;
   } else {
-    if (btnOriginalText[btnTextId]) el.innerHTML = btnOriginalText[btnTextId];
-    if (btn) btn.disabled = false;
+    if (btnTextId in btnOriginalText) el.innerHTML = btnOriginalText[btnTextId];
+    if (btn) btn.disabled = (btnTextId === 'reserveBtnText') ? !state.selectedTaskId : false;
   }
 }
 
-// ── バリデーション補助 ────────────────────────────────
-function showErr(id) { var el = document.getElementById(id); if (el) el.classList.add('show'); }
-function hideErr(id) { var el = document.getElementById(id); if (el) el.classList.remove('show'); }
+function showErr(id) { var el = $(id); if (el) el.classList.add('show'); }
+function hideErr(id) { var el = $(id); if (el) el.classList.remove('show'); }
 </script>
 </body>
 </html>
