@@ -713,7 +713,7 @@ textarea { resize: vertical; min-height: 110px; }
       <!-- 期限の相談 -->
       <div class="ext-panel" id="extPanel">
         <div style="font-size:0.88rem;font-weight:700;color:var(--blue-d);">🗓 期限の相談</div>
-        <p class="hint">予定どおりに進まないことは、よくあります。どのくらい延ばしたいかを選んで送ってください。事務局で確認して、メールでお返事します。</p>
+        <p class="hint">予定どおりに進まないことは、よくあります。どのくらい延ばしたいかを選んで送ってください。1回目は、その場で期限を延ばします。2回目からは、事務局で確認してメールでお返事します。</p>
         <div class="ext-days" id="extDays">
           <button type="button" class="chip" data-days="3" onclick="pickExtDays(this)">3日</button>
           <button type="button" class="chip on" data-days="7" onclick="pickExtDays(this)">1週間</button>
@@ -724,7 +724,7 @@ textarea { resize: vertical; min-height: 110px; }
           <button type="button" class="btn-primary gray-btn" onclick="toggleExt(false)">閉じる</button>
           <button type="button" class="btn-primary" onclick="submitExtension()"><span id="extBtnText">この内容で相談する</span></button>
         </div>
-        <p class="hint" style="margin-top:8px;">続けるのが難しい場合も、ここに書いて送ってください。ほかの方に引き継ぎます。</p>
+        <label class="check-item" style="margin-top:10px;"><input type="checkbox" id="extRelease"><div><div class="check-text">続けるのが難しいので、ほかの方に引き継いでほしい</div><div class="check-sub">チェックして送ると、この作業はほかの方が予約できる状態に戻ります。気にせず、またいつでも予約してください。</div></div></label>
       </div>
 
       <div class="warn-box" id="noTaskMsg" style="display:none;">
@@ -1571,13 +1571,16 @@ function normalizeTask(t, i) {
     title = after.length > 1 ? after.slice(1).join('】') : String(t.label);
     if (title.indexOf('仮訳：') === 0) { title = title.slice(3); isProvisional = true; }
   }
+  var wait = (typeof t.wait_days === 'number') ? t.wait_days : null;
+  var wm = String(title).match(/（(\d+)日待ち）$/);
+  if (wm) { title = title.replace(/（\d+日待ち）$/, ''); if (wait === null) wait = +wm[1]; }
   var main = TYPE_MAIN[state.volType];
   var mine = (typeof t.recommended === 'boolean') ? t.recommended : !!(main && main.indexOf(t.task_type) >= 0);
   return {
     id: t.id, book_id: t.book_id, task_type: t.task_type,
     lang_code: t.lang_code || lg.code, lang: t.lang_ja || lg.name,
     title: title, provisional: isProvisional, original: t.title && t.title_ja ? t.title : '',
-    deadline_days: t.deadline_days || '', mine: mine, order: i
+    deadline_days: t.deadline_days || '', mine: mine, order: i, wait: wait
   };
 }
 
@@ -1610,6 +1613,7 @@ function renderTasks() {
         (t.lang ? '<span class="pill">🌏 ' + esc(t.lang) + '</span>' : '') +
         '<span class="pill green">' + meta.icon + ' ' + esc(meta.name) + '</span>' +
         (t.mine ? '<span class="pill sun">⭐ ' + (first ? 'はじめての方に' : 'あなたのタイプ向け') + '</span>' : '') +
+        (t.wait !== null && t.wait >= 14 ? '<span class="pill gray">⌛ ' + t.wait + '日、担当を待っています</span>' : '') +
       '</div>' +
       '<div class="tc-title">' + esc(t.title || t.book_id) +
         '<small>' + esc(t.book_id) + (t.provisional ? '　※題名は自動で訳した仮訳です' : '') + (t.original ? '　原題：' + esc(t.original) : '') + '</small></div>' +
@@ -1679,6 +1683,7 @@ function showCompleteCard() {
 
 function showReserveComplete(res, picked) {
   showCompleteCard();
+  res.folderUrl = res.folderUrl || res.folder_url || '';
   var type = res.task_type || (picked && picked.task_type) || '';
   var meta = TASK_META[type] || { icon: '📖', name: '' };
   var bookId = res.book_id || (picked && picked.book_id) || '';
@@ -1955,13 +1960,14 @@ function submitExtension() {
   if (!t) { toast('担当中の作業が見つかりません。', 'error'); return; }
   var reason = $('extReason').value.trim();
   setBtnLoading('extBtnText', true, '送信中...');
+  var release = $('extRelease').checked;
   gasCall({ action_type: 'request_extension', email: state.email, member_id: state.memberId, task_id: t.task_id,
-            days: state.extDays, reason: reason, token: FORM_TOKEN }, function(res) {
+            days: state.extDays, reason: reason, release: release, token: FORM_TOKEN }, function(res) {
     if (res.status === 'ok') { extDone(res); return; }
     // 古いGAS：事務局への連絡として送る
     gasCall({ action_type: 'help', email: state.email, member_id: state.memberId, book_id: t.book_id,
-              problem_type: '期限延長の相談', has_screenshot: false, token: FORM_TOKEN,
-              details: '【期限延長の相談】\nタスク：' + t.task_id + '（' + (TASK_META[t.task_type] ? TASK_META[t.task_type].name : t.task_type) + '）\n' +
+              problem_type: release ? '作業を手放したい' : '期限延長の相談', has_screenshot: false, token: FORM_TOKEN,
+              details: (release ? '【作業を手放したい（ほかの方への引き継ぎ希望）】' : '【期限延長の相談】') + '\nタスク：' + t.task_id + '（' + (TASK_META[t.task_type] ? TASK_META[t.task_type].name : t.task_type) + '）\n' +
                        '現在の期限：' + fmtDate(t.deadline) + '\n希望：' + state.extDays + '日延長\n理由・状況：' + (reason || '（記入なし）') }, function(r2) {
       if (r2.status === 'ok') extDone(r2);
       else { setBtnLoading('extBtnText', false); toast('送信できませんでした。\n' + (r2.message || ''), 'error'); }
@@ -1971,8 +1977,12 @@ function submitExtension() {
 function extDone(res) {
   setBtnLoading('extBtnText', false);
   $('extReason').value = '';
+  $('extRelease').checked = false;
+  $('extRelease').closest('.check-item').classList.remove('checked');
   toggleExt(false);
-  toast(res.ext_message || '期限の相談を受け付けました。事務局からメールでお返事します。', 'ok', 6000);
+  toast(res.ext_message || '受け付けました。事務局からメールでお返事します。', 'ok', 7000);
+  if (res.released) { state.currentTask = null; goHome(); return; }
+  if (res.new_deadline && state.currentTask) { state.currentTask.deadline = res.new_deadline; showMyTask(state.currentTask); }
 }
 
 // ── 困ったときは ─────────────────────────────────────
