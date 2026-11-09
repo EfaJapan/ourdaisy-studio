@@ -394,6 +394,15 @@ textarea { resize: vertical; min-height: 110px; }
 .fade-in { animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 .hidden { display: none !important; }
+.credit-q { border: 2px solid var(--blue-m); border-radius: 12px; padding: 14px; background: #FAFCFF; }
+.credit-q .q { font-size: 0.92rem; font-weight: 700; color: var(--blue-d); margin-bottom: 4px; }
+.credit-name-row { display: flex; gap: 8px; margin-top: 6px; }
+.credit-name-row > div { flex: 1; min-width: 0; }
+.credit-name-row .lbl { display: block; font-size: 0.74rem; font-weight: 700; color: var(--gray); margin-bottom: 2px; }
+.credit-name-row input { width: 100%; }
+.credit-name-row input::placeholder { color: #A8B0BA; }
+.credit-preview { font-size: 0.78rem; color: var(--blue-d); margin-top: 6px; min-height: 1.2em; }
+.credit-ex { font-size: 0.76rem; color: var(--gray); line-height: 1.6; margin-top: 8px; }
 .footer { max-width: 640px; margin: 24px auto 0; text-align: center; font-size: 0.72rem; color: var(--gray); line-height: 1.7; }
 
 @media(max-width:480px) {
@@ -573,6 +582,11 @@ textarea { resize: vertical; min-height: 110px; }
         </div>
       </div>
       <div class="field">
+        <label class="field-label">制作した本に、名前を載せますか？<span class="req">（必須）</span></label>
+        <div id="creditReg"></div>
+        <div class="error-msg" id="creditRegErr">名前の載せ方を選んでください（載せる場合は、姓と名をローマ字で入力してください）</div>
+      </div>
+      <div class="field">
         <label class="field-label">メールマガジンのご案内<span class="opt">（任意）</span></label>
         <div class="check-list">
           <label class="check-item" id="newsletter-wrap">
@@ -604,6 +618,15 @@ textarea { resize: vertical; min-height: 110px; }
       <div class="greet-sub" id="welcomeMsg"></div>
 
       <div class="milestone hidden" id="milestone"><span class="ms-icon" id="msIcon">🎉</span><div id="msText"></div></div>
+
+      <!-- 名前の載せ方（まだ選んでいない人にだけ表示） -->
+      <div class="hidden" id="creditAsk" style="margin-bottom:16px;">
+        <div class="credit-q">
+          <div class="q">📚 制作した本に、名前を載せますか？</div>
+          <div id="creditHome"></div>
+          <button type="button" class="btn-primary" style="margin-top:10px;" onclick="saveCredit('creditHome')"><span id="creditHomeBtn">この内容で決める</span></button>
+        </div>
+      </div>
 
       <!-- 担当中の作業 -->
       <div class="mytask hidden" id="homeMyTask"></div>
@@ -648,8 +671,8 @@ textarea { resize: vertical; min-height: 110px; }
         <button type="button" class="choice-item" onclick="selectAction('notify', this)">
           <div class="choice-icon">🔔</div>
           <div>
-            <div class="choice-title">お知らせの受け取り方を変える</div>
-            <div class="choice-sub">「週1回まとめて」「すぐに」「しばらくお休み」から選べます。</div>
+            <div class="choice-title">お知らせ・名前の載せ方を変える</div>
+            <div class="choice-sub">新しい作業のお知らせの受け取り方と、本に名前を載せるかどうかを変えられます。</div>
           </div>
         </button>
       </div>
@@ -957,7 +980,7 @@ textarea { resize: vertical; min-height: 110px; }
   <div class="card fade-in">
     <div class="card-header">
       <span class="step-no">STEP 3</span>
-      <h2>🔔 お知らせの受け取り方を変える</h2>
+      <h2>🔔 お知らせ・名前の載せ方を変える</h2>
     </div>
     <div class="card-body">
       <button class="btn-back" onclick="goBack('sec2')">← 作業選択に戻る</button>
@@ -988,7 +1011,12 @@ textarea { resize: vertical; min-height: 110px; }
         </div>
         <p class="hint">どれを選んでも、作業の一覧は「作業を予約する」からいつでも見られます。</p>
       </div>
-      <button class="btn-primary" onclick="saveNotifyPref()"><span id="notifyBtnText">この設定で保存する</span></button>
+      <button class="btn-primary" onclick="saveNotifyPref()"><span id="notifyBtnText">お知らせの設定を保存する</span></button>
+      <div class="field" style="margin-top:26px;">
+        <label class="field-label">制作した本に、名前を載せますか？</label>
+        <div id="creditPref"></div>
+      </div>
+      <button class="btn-primary" onclick="saveCredit('creditPref')"><span id="creditPrefBtn">名前の載せ方を保存する</span></button>
     </div>
   </div>
 </div>
@@ -1130,7 +1158,8 @@ var state = {
   action: '', errorPath: '', selectedApp: '', selectedOS: '',
   notify: 'weekly', currentTask: null,
   stats: null, tasks: [], selectedTaskId: '', filterLang: '', filterMine: false,
-  autoCheck: null, extDays: 7
+  autoCheck: null, extDays: 7,
+  creditConsent: '', creditFamily: '', creditGiven: ''
 };
 
 // ── 小道具 ────────────────────────────────────────────
@@ -1212,9 +1241,95 @@ function journeyHtml(current, mode) {
   return h + '</div>';
 }
 
+// ── 名前の載せ方（2026-11-09）──────────────────────────
+//   name＝名前を載せる（ローマ字。姓を大文字・名の順。例：YAMADA Hanako）／none＝載せない（「OurDAISYボランティア」）
+//   以前の形式（漢字・かな・ニックネーム）の人は、GASが「未選択」として返すので、ホームで選び直してもらう
+var CREDIT_ANON = 'OurDAISYボランティア';
+var ROMAJI_RE = /^[A-Za-z][A-Za-z'\- ]*$/;
+function crCap(w) { return w.toLowerCase().replace(/(^|[\s\-'])([a-z])/g, function(m, p, c) { return p + c.toUpperCase(); }); }
+function crClean(v) { return String(v || '').replace(/[Ａ-Ｚａ-ｚ]/g, function(ch) { return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0); }).replace(/[\s　]+/g, ' ').trim(); }
+function renderCreditBlock(id) {
+  var nm = 'cr_' + id;
+  $(id).innerHTML =
+    '<div class="check-list">' +
+    '<label class="check-item"><input type="radio" name="' + nm + '" value="name"><div style="flex:1;"><div class="check-text">📚 名前を載せる</div>' +
+      '<div class="check-sub">ローマ字（半角の英字）で、姓・名の順に入れてください。どの国の人にも読めるためです</div>' +
+      '<div class="credit-name-row">' +
+        '<div><span class="lbl">姓（ローマ字）</span><input type="text" id="' + id + '_fam" class="cr-fam" aria-label="姓（ローマ字）" maxlength="30" autocomplete="family-name" autocapitalize="characters" spellcheck="false" placeholder="例：YAMADA"></div>' +
+        '<div><span class="lbl">名（ローマ字）</span><input type="text" id="' + id + '_giv" class="cr-giv" aria-label="名（ローマ字）" maxlength="30" autocomplete="given-name" autocapitalize="words" spellcheck="false" placeholder="例：Hanako"></div>' +
+      '</div>' +
+      '<div class="credit-preview" aria-live="polite"></div></div></label>' +
+    '<label class="check-item"><input type="radio" name="' + nm + '" value="none"><div><div class="check-text">🙈 載せない</div>' +
+      '<div class="check-sub">「' + CREDIT_ANON + '」と表示されます</div></div></label>' +
+    '</div>' +
+    '<p class="credit-ex">名前は作業ごとに、電子図書と図書館のページに載り、だれでも見られます（例：日本語の確認 / Japanese editing：YAMADA Hanako）。' +
+    '音声の確認は、図書館のページだけに載ります。あとから変えられます（できあがった電子図書の中の名前は、作り直すまで変わりません）。</p>';
+  $(id).querySelectorAll('input[type="radio"]').forEach(function(rb) {
+    rb.addEventListener('change', function() { syncRadioCards(nm); });
+  });
+  [$(id).querySelector('.cr-fam'), $(id).querySelector('.cr-giv')].forEach(function(inp) {
+    inp.addEventListener('focus', function() { setRadioValue(nm, 'name'); syncRadioCards(nm); });
+    inp.addEventListener('input', function() { creditPreview(id); });
+    inp.addEventListener('blur', function() { tidyCreditInputs(id); creditPreview(id); });
+  });
+}
+// 入力をそろえる：姓は大文字、名は頭だけ大文字（全角の英字は半角に）
+function tidyCreditInputs(id) {
+  var f = $(id).querySelector('.cr-fam'), g = $(id).querySelector('.cr-giv');
+  var fv = crClean(f.value), gv = crClean(g.value);
+  if (fv && ROMAJI_RE.test(fv)) f.value = fv.toUpperCase();
+  if (gv && ROMAJI_RE.test(gv)) g.value = crCap(gv);
+}
+function creditName(id) {
+  var fv = crClean($(id).querySelector('.cr-fam').value), gv = crClean($(id).querySelector('.cr-giv').value);
+  if (!fv || !gv || !ROMAJI_RE.test(fv) || !ROMAJI_RE.test(gv)) return { ok: false, family: fv, given: gv };
+  return { ok: true, family: fv.toUpperCase(), given: crCap(gv), full: fv.toUpperCase() + ' ' + crCap(gv) };
+}
+function creditPreview(id) {
+  var el = $(id).querySelector('.credit-preview'), n = creditName(id);
+  if (n.ok) el.textContent = '載る名前：' + n.full;
+  else if (n.family || n.given) el.textContent = (/[^A-Za-z'\- ]/.test(n.family + n.given) ? '⚠ ローマ字（半角の英字）で入力してください' : '姓と名の両方を入れてください');
+  else el.textContent = '';
+}
+function setCreditBlock(id, consent, family, given) {
+  setRadioValue('cr_' + id, consent === 'name' || consent === 'none' ? consent : '');
+  $(id).querySelector('.cr-fam').value = family || '';
+  $(id).querySelector('.cr-giv').value = given || '';
+  syncRadioCards('cr_' + id);
+  creditPreview(id);
+}
+function getCreditBlock(id) {
+  var n = creditName(id);
+  return { consent: getRadioValue('cr_' + id), family: n.family || '', given: n.given || '', ok: n.ok, full: n.full || '' };
+}
+function creditValid(c) { return c.consent === 'none' || (c.consent === 'name' && c.ok); }
+function saveCredit(id, cb) {
+  tidyCreditInputs(id);
+  var c = getCreditBlock(id);
+  if (!creditValid(c)) { toast(c.consent === 'name' ? '姓と名を、ローマ字（半角の英字）で入力してください。' : '名前の載せ方を選んでください。', 'error'); return; }
+  var btn = id === 'creditHome' ? 'creditHomeBtn' : (id === 'creditPref' ? 'creditPrefBtn' : null);
+  if (btn) setBtnLoading(btn, true, '保存中...');
+  gasCall({ action_type: 'set_credit_pref', email: state.email, credit_consent: c.consent,
+            credit_family: c.consent === 'name' ? c.family : '', credit_given: c.consent === 'name' ? c.given : '', token: FORM_TOKEN }, function(res) {
+    if (btn) setBtnLoading(btn, false);
+    if (res.status === 'ok') {
+      state.creditConsent = c.consent;
+      state.creditFamily = c.consent === 'name' ? (res.credit_family || c.family) : '';
+      state.creditGiven  = c.consent === 'name' ? (res.credit_given  || c.given)  : '';
+      $('creditAsk').classList.add('hidden');
+      if (!cb) toast('保存しました。' + (res.message ? '\n' + res.message : ''), 'ok');
+      if (cb) cb(true);
+    } else {
+      toast('保存できませんでした。\n' + (res.message || 'しばらくしてから、もう一度お試しください。'), 'error');
+      if (cb) cb(false);
+    }
+  });
+}
+
 // ── 初期化 ────────────────────────────────────────────
 window.addEventListener('load', function() {
   if (load('od_font_lg') === '1') applyFont(true);
+  ['creditReg', 'creditHome', 'creditPref'].forEach(renderCreditBlock);
   setupListeners();
   loadRemembered();
 });
@@ -1326,6 +1441,9 @@ function checkEmail(btnId) {
         state.type     = res.type;
         state.volType  = String(res.volunteer_type || '').toUpperCase();
         state.notify   = (res.notify === 'instant' || res.notify === 'pause') ? res.notify : 'weekly';
+        state.creditConsent = (typeof res.credit_consent === 'string') ? res.credit_consent : null;   // null＝古いGAS
+        state.creditFamily  = res.credit_family || '';
+        state.creditGiven   = res.credit_given  || '';
         store('ourdaisy_name', res.name || '');
         showWelcome();
       } else {
@@ -1345,7 +1463,14 @@ function showWelcome() {
   var hello = h < 10 ? 'おはようございます' : (h < 18 ? 'こんにちは' : 'こんばんは');
   $('greet').textContent = state.name + ' さん、' + hello + '！';
   $('welcomeMsg').textContent = '担当者ID：' + state.memberId +
-    (state.notify === 'pause' ? '　いまはお知らせをお休み中です。戻るときは「お知らせの受け取り方を変える」から選び直してください。' : '');
+    (state.notify === 'pause' ? '　いまはお知らせをお休み中です。戻るときは「お知らせ・名前の載せ方を変える」から選び直してください。' : '');
+  // まだ名前の載せ方を選んでいない人には、ホームで一度だけたずねる
+  if (state.creditConsent === '') {
+    setCreditBlock('creditHome', '', '', '');
+    $('creditAsk').classList.remove('hidden');
+  } else {
+    $('creditAsk').classList.add('hidden');
+  }
   showSection('sec2');
   loadHome();
 }
@@ -1361,6 +1486,8 @@ function register() {
   if (!phone || !/^[0-9\-+() ]{9,15}$/.test(phone)) { showErr('phoneErr'); valid = false; } else hideErr('phoneErr');
   if (!address) { showErr('addressErr'); valid = false; } else hideErr('addressErr');
   if (!types.length) { showErr('typeErr'); valid = false; } else hideErr('typeErr');
+  var credit = getCreditBlock('creditReg');
+  if (!creditValid(credit)) { showErr('creditRegErr'); valid = false; } else hideErr('creditRegErr');
   if (!valid) { var f = document.querySelector('#sec1b .error-msg.show'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
 
   var primaryType = types.indexOf('A') >= 0 ? 'A' : (types.indexOf('B') >= 0 ? 'B' : 'C');
@@ -1382,7 +1509,8 @@ function register() {
       state.notify   = getRadioValue('notifyReg') || 'weekly';
       store('ourdaisy_name', name);
       toast('登録しました。ようこそ、OurDAISYへ！', 'ok');
-      showWelcome();
+      state.creditConsent = '';
+      saveCredit('creditReg', function() { showWelcome(); });
     } else {
       toast('登録できませんでした。\n' + (res.message || ''), 'error');
     }
@@ -1496,7 +1624,11 @@ function selectAction(action, el) {
     if (action === 'reserve') { showSection('sec3a'); loadAvailableTasks(); }
     else if (action === 'complete') { showSection('sec3b'); loadMyTask(); }
     else if (action === 'help') { showSection('sec3c'); prefillBookId(); }
-    else if (action === 'notify') { setRadioValue('notifyPref', state.notify || 'weekly'); showSection('sec3d'); }
+    else if (action === 'notify') {
+      setRadioValue('notifyPref', state.notify || 'weekly');
+      setCreditBlock('creditPref', state.creditConsent || '', state.creditFamily, state.creditGiven);
+      showSection('sec3d');
+    }
   }, el ? 180 : 0);
 }
 function prefillBookId() {
