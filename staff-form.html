@@ -369,8 +369,10 @@ tr:hover td { background: var(--blue-l); }
     <div class="card-body">
       <div class="alert alert-info">
         「06_完成_公開待ち」にある本を、会員向けライブラリ（OurDAISY）に公開します。<br>
-        ① 書籍IDを入れて「確認する」を押すと、公開できるかを点検し、登録する内容を表示します（この時点では何も書き込みません）。<br>
-        ② 内容に問題がなければ「公開する」を押します。<br>
+        ① 書籍IDを入れて「確認する」を押すと、公開できるかを点検し、登録する内容を表示します。<br>
+        ② 点検に通ると、そのまま <b>Claude が公開前の点検</b>を始めます。最新のDAISYアプリで作り直し、本文・絵・書籍情報・音声を確かめ、
+        問題があれば直してから、<b>自動で公開</b>します（目安 20〜40分。終わったら info@ にメールが届きます）。<br>
+        直せない問題が見つかったときは公開せず、理由を info@ に知らせます。<br>
         公開すると、EPUB（電子図書のファイル）3つと表紙を「OurDAISYライブラリ公開中蔵書」のフォルダにコピーし、
         図書リスト（Booksシート）に登録して、作業フォルダを「07_公開済み」に移します。
         ライブラリ番号（BOOK-xxx）は自動で付きます。新刊案内メールは、これまでどおり図書リストのメニュー「② 新刊通知メールを送信」から送ってください。
@@ -390,17 +392,26 @@ tr:hover td { background: var(--blue-l); }
         </div>
         <div class="form-group" style="flex:0; align-self:flex-end;">
           <button class="btn btn-outline" onclick="checkPublish()">
-            <span id="pub-check-text">🔍 確認する（書き込みません）</span>
+            <span id="pub-check-text">🔍 確認して Claude の点検に回す</span>
           </button>
         </div>
         <div class="form-group" style="flex:0; align-self:flex-end;">
-          <button class="btn btn-success" id="pub-btn" onclick="submitPublish()" disabled>
-            <span id="pub-btn-text">✅ 公開する</span>
+          <button class="btn btn-outline" id="pub-btn" onclick="submitPublish()" disabled title="Claude の点検を待たずに公開します（急ぐときだけ）">
+            <span id="pub-btn-text">点検せずに公開する</span>
           </button>
         </div>
       </div>
       <div id="pub-alert"></div>
       <div id="pub-result"></div>
+    </div>
+  </div>
+
+  <!-- 2026-11-19：Claude の公開前の点検の状況 -->
+  <div class="card">
+    <div class="card-header"><h2>🤖 公開前の点検（Claude）の状況</h2></div>
+    <div class="card-body">
+      <button class="btn btn-outline" onclick="loadPrepubList()"><span id="pp-list-text">🔄 最新の状況を見る</span></button>
+      <div id="pp-list" style="margin-top:10px"></div>
     </div>
   </div>
 
@@ -729,15 +740,41 @@ function checkPublish() {
   setAlert('pub-alert', '', '');
   document.getElementById('pub-result').innerHTML = '';
   setBtnLoading('pub-check-text', true, '確認中...');
-  gasCall({ action_type: 'publish_book', book_id: bookId, dry_run: true, token: FORM_TOKEN }, function(res) {
+  // 2026-11-19：点検に通ったら、そのまま Claude に公開前の点検を依頼する（prepub:true）
+  gasCall({ action_type: 'publish_book', book_id: bookId, dry_run: true, prepub: true, token: FORM_TOKEN }, function(res) {
     setBtnLoading('pub-check-text', false);
     if (res.status !== 'ok') { setAlert('pub-alert', 'error', '❌ ' + (res.message || '確認に失敗しました')); return; }
-    setAlert('pub-alert', res.checked ? 'success' : 'error', (res.checked ? '✅ ' : '❌ ') + res.message);
+    if (!res.checked) { setAlert('pub-alert', 'error', '❌ ' + res.message); renderPublishResult(res); return; }
+    var msg = esc(res.message).replace(/\n/g, '<br>');
+    if (res.session_url) msg += '<br><a href="' + esc(res.session_url) + '" target="_blank">Claude の作業を見る</a>';
+    setAlertHtml('pub-alert', res.fire_error ? 'warn' : 'success', msg);
     renderPublishResult(res);
-    if (res.checked) {
-      pubCheckedId = bookId;
-      document.getElementById('pub-btn').disabled = false;
-    }
+    pubCheckedId = bookId;
+    document.getElementById('pub-btn').disabled = false;   // 急ぐときだけ使う（Claude の点検を待たずに公開）
+    loadPrepubList();
+  });
+}
+
+function setAlertHtml(id, type, html) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '<div class="alert alert-' + (type === 'success' ? 'success' : type === 'warn' ? 'warn' : 'error') + '">' + html + '</div>';
+}
+
+function loadPrepubList() {
+  setBtnLoading('pp-list-text', true, '読み込み中...');
+  gasCall({ action_type: 'publish_book', prepub: true, list: true, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('pp-list-text', false);
+    var box = document.getElementById('pp-list');
+    if (res.status !== 'ok') { box.innerHTML = '<div class="alert alert-error">❌ ' + esc(res.message || '読み込めませんでした') + '</div>'; return; }
+    var items = res.items || [];
+    if (!items.length) { box.innerHTML = '<p>まだ依頼はありません。</p>'; return; }
+    box.innerHTML = '<div class="table-wrap"><table><tr><th>受付</th><th>書籍ID</th><th>状態</th><th>ライブラリ番号</th><th>結果</th></tr>' +
+      items.map(function(r) {
+        return '<tr><td>' + esc(r.date) + '</td><td>' + esc(r.book_id) + '</td><td><b>' + esc(r.state) + '</b>' +
+               (r.session ? '<br><a href="' + esc(r.session) + '" target="_blank">作業</a>' : '') + '</td><td>' + esc(r.library_id) +
+               '</td><td style="white-space:pre-wrap">' + esc(String(r.result || '').slice(0, 300)) + '</td></tr>';
+      }).join('') + '</table></div>';
   });
 }
 
@@ -745,7 +782,8 @@ function submitPublish() {
   var bookId = document.getElementById('pub-book-id').value.trim().toUpperCase();
   if (!bookId) { showErr('pub-id-err'); return; }
   if (bookId !== pubCheckedId) { setAlert('pub-alert', 'warn', '先に「確認する」を押して、点検に合格してから公開してください。'); return; }
-  if (!confirm('「' + bookId + '」をライブラリに公開してよいですか？\n\n' +
+  if (!confirm('「' + bookId + '」を、Claude の点検を待たずにライブラリに公開してよいですか？\n' +
+               '（Claude が点検中の場合は、点検のあとに作り直した版で公開し直します。ふだんは点検の終わりを待ってください）\n\n' +
                '・EPUB 3つと表紙を公開用フォルダにコピーし、図書リストに登録します\n' +
                '・作業フォルダを「07_公開済み」に移します')) return;
   setAlert('pub-alert', '', '');
