@@ -364,6 +364,16 @@ tr:hover td { background: var(--blue-l); }
 
 <!-- ══ タブ4：ライブラリ公開 ══ -->
 <div class="tab-content" id="tab-publish">
+  <!-- 2026-11-19：「06_完成_公開待ち」にある本の一覧 -->
+  <div class="card">
+    <div class="card-header"><h2>📚 公開待ち（06_完成_公開待ち）の本</h2></div>
+    <div class="card-body">
+      <p style="margin:0 0 8px">「点検に回す」を押すと、下の公開処理に書籍IDが入り、そのまま Claude の点検に回します。</p>
+      <button class="btn btn-outline" onclick="loadReadyBooks()"><span id="ready-list-text">🔄 一覧を読み直す</span></button>
+      <div id="ready-list" style="margin-top:10px"></div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-header"><h2>✅ DAISYライブラリへの公開処理</h2></div>
     <div class="card-body">
@@ -450,6 +460,7 @@ function switchTab(tabId, btn) {
   // 遅延ロード
   if (tabId === 'dashboard' && !dashLoaded)  { loadDashboard(); }
   if (tabId === 'members'   && !membersLoaded) { loadMembers(); }
+  if (tabId === 'publish'   && !readyLoaded)   { loadReadyBooks(); }
 }
 
 // ════════════════════════════════════════════════════════
@@ -752,7 +763,37 @@ function checkPublish() {
     pubCheckedId = bookId;
     document.getElementById('pub-btn').disabled = false;   // 急ぐときだけ使う（Claude の点検を待たずに公開）
     loadPrepubList();
+    if (readyLoaded) loadReadyBooks();
   });
+}
+
+var readyLoaded = false;
+function loadReadyBooks() {
+  setBtnLoading('ready-list-text', true, '読み込み中...');
+  gasCall({ action_type: 'publish_book', prepub: true, ready: true, token: FORM_TOKEN }, function(res) {
+    setBtnLoading('ready-list-text', false);
+    var box = document.getElementById('ready-list');
+    if (res.status !== 'ok') { box.innerHTML = '<div class="alert alert-error">❌ ' + esc(res.message || '読み込めませんでした') + '</div>'; return; }
+    readyLoaded = true;
+    var books = res.books || [];
+    if (!books.length) { box.innerHTML = '<p>いま公開待ちの本はありません。</p>'; return; }
+    box.innerHTML = '<p style="margin:0 0 6px">' + books.length + '冊</p><div class="table-wrap"><table>' +
+      '<tr><th>書籍ID</th><th>題名</th><th>言語</th><th>06に入った日時</th><th>Claude の点検</th><th></th></tr>' +
+      books.map(function(b) {
+        var pp = b.prepub, st = pp ? esc(pp.state) + '<br><small>' + esc(pp.date) + '</small>' : '—';
+        var busy = pp && (pp.state === '点検待ち' || pp.state === '点検中');
+        return '<tr><td><a href="' + esc(b.folder_url) + '" target="_blank">' + esc(b.book_id) + '</a></td><td>' + esc(b.title) +
+               '</td><td>' + esc(b.language) + '</td><td>' + esc(b.updated) + '</td><td>' + st + '</td><td>' +
+               (busy ? '<small>点検中</small>' : '<button class="btn btn-outline" onclick="pickReadyBook(\'' + esc(b.book_id) + '\')">点検に回す</button>') +
+               '</td></tr>';
+      }).join('') + '</table></div>';
+  });
+}
+function pickReadyBook(bookId) {
+  document.getElementById('pub-book-id').value = bookId;
+  resetPublishCheck();
+  document.getElementById('pub-book-id').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  checkPublish();
 }
 
 function setAlertHtml(id, type, html) {
