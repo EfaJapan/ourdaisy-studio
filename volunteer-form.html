@@ -462,7 +462,9 @@ textarea { resize: vertical; min-height: 110px; }
         <label class="field-label" for="email">メールアドレス<span class="req">（必須）</span></label>
         <input type="email" id="email" placeholder="例：yamada@email.com" autocapitalize="off" autocorrect="off" autocomplete="email" spellcheck="false" onkeydown="if(event.key==='Enter'){checkEmail();}">
         <div class="error-msg" id="emailErr">正しいメールアドレスを入力してください</div>
+        <div class="warn-box" id="carrierWarn" style="display:none;">⚠️ 携帯電話会社のメールアドレスのようです。<br>携帯電話会社のメールは、パソコンから送るお知らせ（登録完了・作業の案内）が届かないことがあります。作業はパソコンで行うため、<strong>Gmail など、パソコンで受け取れるメールアドレス</strong>で登録してください。<br>このアドレスのまま進む場合は、もう一度「次へ進む」を押してください。</div>
         <p class="hint">📌 エファジャパン以外には公開しません。作業の連絡に使います。</p>
+        <p class="hint">📱 携帯電話会社のメールアドレス（@docomo.ne.jp・@ezweb.ne.jp・@au.com・@softbank.ne.jp・@i.softbank.jp など）は、お知らせが届かないことがあるため使わないでください。Gmail など、パソコンで受け取れるアドレスをおすすめします。</p>
       </div>
       <button class="btn-primary" onclick="checkEmail()"><span id="checkBtnText">次へ進む →</span></button>
     </div>
@@ -1418,6 +1420,9 @@ function goHome() {
 function goReserve() { setProgress(3); state.action = 'reserve'; showSection('sec3a'); loadAvailableTasks(); }
 
 // ── Step 1：メール照合 ───────────────────────────────
+// 携帯電話会社のメールのドメイン（パソコンからのメールを受け取らない設定のことが多い）
+var CARRIER_DOMAIN_RE = /@(docomo\.ne\.jp|ezweb\.ne\.jp|au\.com|biz\.ezweb\.ne\.jp|softbank\.ne\.jp|[a-z]\.vodafone\.ne\.jp|i\.softbank\.jp|disney\.ne\.jp|ymobile\.ne\.jp|y-mobile\.ne\.jp|emobile\.ne\.jp|uqmobile\.jp|rakumail\.jp|willcom\.com|pdx\.ne\.jp)$/i;
+
 function checkEmail(btnId) {
   btnId = btnId || 'checkBtnText';
   // スマホの自動大文字化でも照合できるよう、小文字にそろえる
@@ -1429,6 +1434,15 @@ function checkEmail(btnId) {
     return;
   }
   hideErr('emailErr');
+  // 携帯電話会社のアドレスは、パソコンからのメールが届かないことがあるため、1回目は注意を出して止める
+  var carrierWarn = $('carrierWarn');
+  if (CARRIER_DOMAIN_RE.test(email) && state.carrierOk !== email) {
+    if (carrierWarn) carrierWarn.style.display = 'block';
+    state.carrierOk = email;   // 同じアドレスで2回目に押したときは進む
+    if (btnId === 'quickBtnText') useOtherEmail();
+    return;
+  }
+  if (carrierWarn) carrierWarn.style.display = 'none';
   state.email = email;
   store('ourdaisy_email', email);
   setBtnLoading(btnId, true, '確認中...');
